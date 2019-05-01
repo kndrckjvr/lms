@@ -18,6 +18,11 @@ class User_model extends CI_Model
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
+    public function createUser($data) {
+        $this->db->insert("usertbl", $data);
+        return $this->db->affected_rows();
+    }
+
     public function hasValidCredentials($username, $password)
     {
         $this->db

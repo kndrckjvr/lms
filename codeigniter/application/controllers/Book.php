@@ -14,7 +14,7 @@ class Book extends CI_Controller {
     }
 
     public function search() {
-        if($userid = $this->session->userdata("user_token")) {
+        if($this->session->userdata("user_token") && $this->session->userdata("user_type") == 0) {
             $data = array("page_title" => "Library Management System | Search Books",
             "currentActive" => "Search Books");
             $this->load->view("templates/header", $data);
@@ -27,12 +27,25 @@ class Book extends CI_Controller {
     }
 
     public function reserve() {
-        if($userid = $this->session->userdata("user_token")) {
+        if($this->session->userdata("user_token") && $this->session->userdata("user_type") == 0) {
             $data = array("page_title" => "Library Management System | Reserve Book",
             "currentActive" => "Reserve Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
-            $this->load->view("book/book_search");
+            $this->load->view("book/book_reserve");
+            $this->load->view("templates/footer", $data);
+        } else {
+            redirect("login", "location");
+        }
+    }
+
+    public function create() {
+        if($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
+            $data = array("page_title" => "Library Management System | Create Book",
+            "currentActive" => "Create Book");
+            $this->load->view("templates/header", $data);
+            $this->load->view("components/nav_sidebar");
+            $this->load->view("book/book_create");
             $this->load->view("templates/footer", $data);
         } else {
             redirect("login", "location");

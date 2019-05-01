@@ -37,14 +37,14 @@
                 "auth" => 0
             ),
             array(
-                "title" => "User Profile",
-                "href" => "user/profile",
-                "icon" => "fa-user-alt",
-                "auth" => 0
-            ),
-            array(
                 "title" => "Create Book",
                 "href" => "book/create",
+                "icon" => "fa-book-medical",
+                "auth" => 1
+            ),
+            array(
+                "title" => "Create Section",
+                "href" => "section/create",
                 "icon" => "fa-book-medical",
                 "auth" => 1
             ),
@@ -61,10 +61,22 @@
                 "auth" => 1
             ),
             array(
+                "title" => "Manage Section",
+                "href" => "section/update",
+                "icon" => "fa-book",
+                "auth" => 1
+            ),
+            array(
                 "title" => "Manage User",
                 "href" => "user/update",
                 "icon" => "fa-user-edit",
                 "auth" => 1
+            ),
+            array(
+                "title" => "User Profile",
+                "href" => "user/profile",
+                "icon" => "fa-user-alt",
+                "auth" => 2
             ),
             array(
                 "title" => "Logout",

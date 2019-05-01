@@ -12,7 +12,7 @@
         <div class="col-10">
             <div class="card shadow mt-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Login</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Register</h6>
                 </div>
                 
                 <div class="card-body">
@@ -31,8 +31,15 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <input type="submit" value="Login" class="btn btn-primary btn-block" id="login-button">
-                        <a href="<?= base_url("register") ?>" role="button" class="btn btn-primary btn-block">Register</a>
+                        <div class="row">
+                            <div class="col mb-4">
+                                <label for="password">Confirm Password</label>
+                                <input type="password" name="confirm-password" class="form-control" id="confirm-password">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <input type="submit" value="Register" class="btn btn-primary btn-block" id="register-button">
+                        <a href="<?= base_url("login") ?>" role="button" class="btn btn-primary btn-block">Login</a>
                     </form>
                 </div>
             </div>
