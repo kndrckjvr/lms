@@ -39,7 +39,7 @@ $config['base_url'] = $_PROTOCOL . $_HTTP_HOST . $_PATH;
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
