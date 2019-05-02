@@ -12,7 +12,9 @@ function showSnackbar(message, type) {
     setTimeout(function(){ $("#snackbar").removeClass("show"); }, 3000);
 }
 
-$("#login-button").on('click', function() {
+$("#login-button").on('click', function(e) {
+    $(e.target.firstElementChild).show();
+    $(e.target.lastElementChild).html("Loading...");
     $("input").removeClass("is-invalid");
     $.ajax({
         url: baseUrl + "userapi/login",
@@ -23,6 +25,8 @@ $("#login-button").on('click', function() {
             password: $("#password").val()
         },
         success: function success(res) {
+            $(e.target.firstElementChild).hide();
+            $(e.target.lastElementChild).html("Login");
             if(res.response) {
                 window.location = baseUrl + "user";
             } else {
@@ -31,7 +35,7 @@ $("#login-button").on('click', function() {
             }
         },
         error: function error(err) {
-            console.log(err);
+            console.target.log(err);
         }
     });
 });

@@ -31,7 +31,13 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <input type="submit" value="Login" class="btn btn-primary btn-block" id="login-button">
+                        <button class="btn btn-primary btn-block" type="button" id="login-button">
+                            <span class="spinner-border spinner-border-sm" style="display: none;" role="status"></span>
+                            <span class="button-text">
+                                Login
+                            </span>
+                        </button>
+                        <!-- <input type="submit" value="Login" class="btn btn-primary btn-block"> -->
                         <a href="<?= base_url("register") ?>" role="button" class="btn btn-primary btn-block">Register</a>
                     </form>
                 </div>

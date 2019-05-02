@@ -38,6 +38,10 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <button class="btn btn-primary btn-block" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span class="sr-only">Loading...</span>
+                        </button>
                         <input type="submit" value="Register" class="btn btn-primary btn-block" id="register-button">
                         <a href="<?= base_url("login") ?>" role="button" class="btn btn-primary btn-block">Login</a>
                     </form>
