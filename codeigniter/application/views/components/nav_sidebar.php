@@ -56,19 +56,19 @@
             ),
             array(
                 "title" => "Manage Book",
-                "href" => "book/update",
+                "href" => "book/manage",
                 "icon" => "fa-book",
                 "auth" => 1
             ),
             array(
                 "title" => "Manage Section",
-                "href" => "section/update",
+                "href" => "section/manage",
                 "icon" => "fa-book",
                 "auth" => 1
             ),
             array(
                 "title" => "Manage User",
-                "href" => "user/update",
+                "href" => "user/manage",
                 "icon" => "fa-user-edit",
                 "auth" => 1
             ),

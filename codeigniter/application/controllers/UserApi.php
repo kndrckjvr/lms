@@ -13,9 +13,9 @@ class UserApi extends CI_Controller
     public function login()
     {
         if ($this->agent->is_browser()) {
-            if ($userdata = $this->User_model->hasValidCredentials($this->input->post("username", TRUE), $this->input->post("password", TRUE))[0]) {
-                $this->session->set_userdata("user_token", $userdata->user_id);
-                $this->session->set_userdata("user_type", $userdata->user_type);
+            if ($userdata = $this->User_model->hasValidCredentials($this->input->post("username", TRUE), $this->input->post("password", TRUE))) {
+                $this->session->set_userdata("user_token", $userdata[0]->user_id);
+                $this->session->set_userdata("user_type", $userdata[0]->user_type);
                 echo json_encode(array("response" => 1));
             } else {
                 echo json_encode(array("response" => 0, "message" => "No User Found"));

@@ -25,44 +25,17 @@ $("#login-button").on('click', function(e) {
             password: $("#password").val()
         },
         success: function success(res) {
-            $(e.target.firstElementChild).hide();
-            $(e.target.lastElementChild).html("Login");
             if(res.response) {
                 window.location = baseUrl + "user";
             } else {
+                $(e.target.firstElementChild).hide();
+                $(e.target.lastElementChild).html("Login");
                 $("input").addClass("is-invalid");
                 $(".invalid-feedback").html(res.message);
             }
         },
         error: function error(err) {
             console.target.log(err);
-        }
-    });
-});
-
-$("#create-user").on('click', function() {
-    $.ajax({
-        url: baseUrl + "userapi/create",
-        type: "POST",
-        dataType: "JSON",
-        data: {
-            username: $("#username").val(),
-            password: $("#password").val(),
-            user_type: $("#user").prop("checked") ? 0 : 1
-        },
-        success: function success(res) {
-            console.log(res);
-            if(res.response) {
-                $("#user-create-form").trigger("reset");
-                showSnackbar("Successfully Added!");
-            } else {
-                $("input").addClass("is-invalid");
-                $("#username + .invalid-feedback").html(res.username);
-                $("#password + .invalid-feedback").html(res.password);
-            }
-        },
-        error: function error(err) {
-            console.log(err);
         }
     });
 });

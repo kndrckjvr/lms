@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class User_model extends CI_Model
+class Section_model extends CI_Model
 {
 
     public function __construct()
@@ -14,12 +14,12 @@ class User_model extends CI_Model
         if ($where !== NULL) {
             $this->db->where($where);
         }
-        $query = $this->db->get("usertbl");
+        $query = $this->db->get("sectiontbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
-    public function createUser($data) {
-        $this->db->insert("usertbl", $data);
+    public function insertSection($data) {
+        $this->db->insert("sectiontbl", $data);
         return $this->db->affected_rows();
     }
 

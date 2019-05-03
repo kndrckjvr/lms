@@ -14,7 +14,7 @@ class User extends CI_Controller
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
                 "page_title" => "Library Management System",
-                "username" => $this->User_model->getInfo("usertbl", array("user_id" => $userid))[0]->username,
+                "username" => $this->User_model->getInfo(array("user_id" => $userid))[0]->username,
                 "currentActive" => "Dashboard"
             );
             $this->load->view("templates/header", $data);
@@ -22,7 +22,7 @@ class User extends CI_Controller
             $this->load->view("user/user_home");
             $this->load->view("templates/footer");
         } else {
-            redirect("login", "location");
+            show_404();
         }
     }
 
@@ -38,7 +38,7 @@ class User extends CI_Controller
             $this->load->view("user/user_create");
             $this->load->view("templates/footer", $data);
         } else {
-            redirect("login", "location");
+            show_404();
         }
     }
 
@@ -53,7 +53,7 @@ class User extends CI_Controller
             $this->load->view("user/user_profile");
             $this->load->view("templates/footer");
         } else {
-            redirect("login", "location");
+            show_404();
         }
     }
 

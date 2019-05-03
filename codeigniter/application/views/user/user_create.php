@@ -13,12 +13,12 @@
                         <div class="form-row mb-3">
                             <div class="col">
                                 <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username">
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username here">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password here">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
