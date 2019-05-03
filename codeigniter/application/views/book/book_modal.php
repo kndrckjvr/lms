@@ -43,22 +43,46 @@
                             </td>
                             <td class="w-75">
                                 <table class="table-sm col">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%"></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         <tr>
                                             <td>Book Name: </td>
-                                            <td></td>
+                                            <td><input type="text" class="form-control" id="book-name-field" disabled></td>
                                         </tr>
                                         <tr>
                                             <td>Book Author: </td>
-                                            <td></td>
+                                            <td><input type="text" class="form-control" id="book-author-field" disabled></td>
                                         </tr>
                                         <tr>
                                             <td>Section: </td>
-                                            <td></td>
+                                            <td>
+                                            <select name="book-section-field" id="book-section-field" class="form-control" disabled>
+                                                <?php
+                                                    foreach($sections as $section) {
+                                                        echo "<option value='$section->section_id'>$section->section_name</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Status: </td>
-                                            <td></td>
+                                            <td id="status-field">
+                                                <button class="btn btn-success" id="available-button">Available</button>
+                                                <button class="btn btn-primary" id="reserve-button">Reserve</button>
+                                                <button class="btn btn-warning" id="borrow-button">Borrow</button>
+                                                <button class="btn btn-info" id="return-button">Return</button>
+                                                <button class="btn btn-danger" id="disable-button">Disable</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remarks:</td>
+                                            <td id="remarks-field">None</td>
                                         </tr>
                                     </tbody>
                                 </table>

@@ -81,6 +81,12 @@ class BookApi extends CI_Controller
         $json_response["book_name"] = $this->Book_model->getInfo("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;
         $json_response["books"] = $this->Book_model->getInfo("itembooktbl", array("book_id" => $this->input->post("book_id")));
         echo json_encode($json_response);
+    }
 
+    public function getSpecificBook() {
+        $json_response = array();
+        $json_response["response"] = 1;
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("book_code" => $this->input->post("book_code"), "sectiontbl.status" => 1))[0];
+        echo json_encode($json_response);
     }
 }

@@ -21,7 +21,18 @@ class Book_model extends CI_Model
     public function getBook($page) {
         $this->db->select("book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id) as book_qty")
             ->from("booktbl")
-            ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER");
+            ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+            ->where(array("sectiontbl.status" => 1));
+        $query = $this->db->get();
+        return $query->num_rows() > 0 ? $query->result() : false;
+    }
+
+    public function getSpecificBook($data) {
+        $this->db->select("book_name, book_author, book_code, sectiontbl.section_id, itembooktbl.status")
+        ->from("booktbl")
+        ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+        ->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
+        ->where($data);
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
     }

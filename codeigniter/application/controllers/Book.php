@@ -40,7 +40,7 @@ class Book extends CI_Controller {
     public function create() {
         if($this->session->userdata("user_type") == 1) {
             $data = array("page_title" => "Library Management System | Create Book",
-            "sections" => $this->Section_model->getInfo(),
+            "sections" => $this->Section_model->getInfo(array("status" => 1)),
             "currentActive" => "Create Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
@@ -55,6 +55,7 @@ class Book extends CI_Controller {
         if($this->session->userdata("user_type") == 1) {
             $data = array("page_title" => "Library Management System | Manage Book",
             "books" => $this->Book_model->getBook($page == NULL ? "1" : $page),
+            "sections" => $this->Section_model->getInfo(array("status" => 1)),
             "currentActive" => "Manage Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
