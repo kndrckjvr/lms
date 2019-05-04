@@ -25,7 +25,6 @@ $("#create-user").on('click', function () {
             user_type: $("#user").prop("checked") ? 0 : 1
         },
         success: function success(res) {
-            console.log(res);
             if (res.response) {
                 $("#user-create-form").trigger("reset");
                 showSnackbar("Successfully Added!");
@@ -134,7 +133,6 @@ $("#create-section").on('click', function () {
 
 $("#manage-book-modal").on('show.bs.modal', function (e) {
     var status = ["Available", "Reserved", "Borrowed", "Disabled"];
-    console.log($(e.relatedTarget).attr("data-id"));
     $.ajax({
         url: baseUrl + "bookapi/getbooks",
         type: "POST",
@@ -166,7 +164,6 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
 $("#manage-book-item-modal").on('show.bs.modal', function (e) {
     $("#manage-book-modal").modal("hide");
     $("#status-field button").attr("disabled", "true");
-    console.log($(e.relatedTarget).attr("data-id"));
     $.ajax({
         url: baseUrl + "bookapi/getspecificbook",
         type: "POST",
@@ -175,11 +172,11 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             book_code: $(e.relatedTarget).attr("data-id")
         },
         success: function success(res) {
-            console.log(res)
             $("#manage-book-item-modal-title").html(res.book.book_name + " - " + res.book.book_code);
             $("#book-name-field").val(res.book.book_name);
             $("#book-author-field").val(res.book.book_author);
             $("#book-section-field").val(res.book.section_id);
+            $("#book-code-field").val(res.book.book_code);
             switch (res.book.status) {
                 case "1":
                     $("#borrow-button").removeAttr("disabled");
@@ -197,6 +194,47 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
                     $("#available-button").removeAttr("disabled");
                     break;
             }
+
+            // status type 
+            // 1 - abvailable
+            // 2 - reserved
+            // 3 - borrowed
+            // 4 - unavailable
+        },
+        error: function error(err) {
+            console.log(err);
+        }
+    });
+});
+
+function handleProcess(e) {
+    switch($(e).data("action")) {
+        case "reserve":
+            console.log("res")
+        break;
+        case "borrow":
+            console.log("brw")
+        break;
+        case "return":
+            console.log("ret")
+        break;
+    }
+}
+
+$("#user-data-modal").on('show.bs.modal', function(e) {
+    $(".modal").modal("hide");
+    $.ajax({
+        url: baseUrl + "userapi/getusers",
+        type: "POST",
+        dataType: "JSON",
+        success: function success(res) {
+            $("#user-data-modal-table tbody").html("");
+            $("#user-data-modal-title").html($(e.relatedTarget).attr("data-action"));
+            if(res.users == null) return;
+            res.users.forEach(element => {
+                $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-id='" + element.user_id + "' data-action='" + $(e.relatedTarget).attr("data-action") + "'><td>"
+                    + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
+            });
 
             // status type 
             // 1 - abvailable
@@ -236,9 +274,10 @@ $("#available-button").on('click', function () {
 });
 
 $("#reserve-button").on('click', function () {
+
     // logic
-    // open users modal first 5 lang search button is the key + pagination
-    // pick a user
+    // open users modal(<< tapos na to) first 5 lang search button is the key + pagination
+    // pick a user (<< tapos na to)
     // reserve the book
     // save the end date of reservation
     // tas pag lumagpas na yung end date na nakalagay sa remarks

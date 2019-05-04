@@ -36,9 +36,9 @@ class UserApi extends CI_Controller
     public function create()
     {
         if ($this->agent->is_browser()) {
-            if ($this->session->userdata("user_type") != 1) return;
+            if ($this->session->userdata("user_type") != 1) show_404();
         } elseif ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) return;
+            if (empty($this->session->post("token"))) show_404();
         } else {
             return;
         }
@@ -61,5 +61,21 @@ class UserApi extends CI_Controller
                 echo json_encode(array("response" => 0, "message" => "Error Found"));
             }
         }
+    }
+
+    public function getusers()
+    {
+        if ($this->agent->is_browser()) {
+            if ($this->session->userdata("user_type") != 1) show_404();
+        } elseif ($this->agent->is_mobile()) {
+            if (empty($this->session->post("token"))) show_404();
+        } else {
+            return;
+        }
+
+        echo json_encode(array(
+            "response" => 1,
+            "users" => $this->User_model->getInfo()
+        ));
     }
 }
