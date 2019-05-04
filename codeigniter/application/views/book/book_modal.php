@@ -78,9 +78,9 @@
                                             <td>Status: </td>
                                             <td id="status-field">
                                                 <button class="btn btn-success" data-action="available" id="available-button">Available</button>
-                                                <button class="btn btn-primary" data-action="reserve" id="reserve-button" data-toggle="modal" data-target="#user-data-modal">Reserve</button>
-                                                <button class="btn btn-warning" data-action="borrow" id="borrow-button" data-toggle="modal" data-target="#user-data-modal">Borrow</button>
-                                                <button class="btn btn-info" data-action="return" id="return-button" data-toggle="modal" data-target="#user-data-modal">Return</button>
+                                                <button class="btn btn-primary" data-action="reserve" data-token="" id="reserve-button" data-toggle="modal" data-target="#user-data-modal">Reserve</button>
+                                                <button class="btn btn-warning" data-action="borrow" data-token="" id="borrow-button" data-toggle="modal" data-target="#user-data-modal">Borrow</button>
+                                                <button class="btn btn-info" data-action="return" data-token="" id="return-button" data-toggle="modal" data-target="#user-data-modal">Return</button>
                                                 <button class="btn btn-danger" data-action="disable" id="disable-button">Disable</button>
                                             </td>
                                         </tr>

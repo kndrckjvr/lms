@@ -177,6 +177,7 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             $("#book-author-field").val(res.book.book_author);
             $("#book-section-field").val(res.book.section_id);
             $("#book-code-field").val(res.book.book_code);
+            $("#manage-book-item-modal-table tbody button").attr("data-token", res.book.itembook_id);
             switch (res.book.status) {
                 case "1":
                     $("#borrow-button").removeAttr("disabled");
@@ -208,17 +209,45 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
 });
 
 function handleProcess(e) {
+    // transaction handler
+    // transaction types
+    // 1 - reserve
+    // 2 - borrow
+    // 3 - returned
+    // 4 - lost
+    // 5 - paid
+    var status = 0;
+
     switch($(e).data("action")) {
         case "reserve":
-            console.log("res")
+            status = 1;
         break;
         case "borrow":
-            console.log("brw")
+            status = 2;
         break;
         case "return":
-            console.log("ret")
+            status = 3;
         break;
     }
+
+    $.ajax({
+        url: baseUrl + "transactionapi/create",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            itembook_id: $(e).data("token"),
+            status: status
+        },
+        success: function(res) {
+            if(res.response) {
+                $(".modal").modal("hide");
+                showSnackbar("Sucessfully " + $(e).data("action") + " book.");
+            }
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
 }
 
 $("#user-data-modal").on('show.bs.modal', function(e) {
@@ -232,7 +261,7 @@ $("#user-data-modal").on('show.bs.modal', function(e) {
             $("#user-data-modal-title").html($(e.relatedTarget).attr("data-action"));
             if(res.users == null) return;
             res.users.forEach(element => {
-                $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-id='" + element.user_id + "' data-action='" + $(e.relatedTarget).attr("data-action") + "'><td>"
+                $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e.relatedTarget).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e.relatedTarget).attr("data-action") + "'><td>"
                     + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
             });
 

@@ -28,7 +28,7 @@ class Book_model extends CI_Model
     }
 
     public function getSpecificBook($data) {
-        $this->db->select("book_name, book_author, book_code, sectiontbl.section_id, itembooktbl.status")
+        $this->db->select("itembook_id, book_name, book_author, book_code, sectiontbl.section_id, itembooktbl.status")
         ->from("booktbl")
         ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
         ->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
