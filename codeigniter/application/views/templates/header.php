@@ -11,4 +11,8 @@
     <link rel="stylesheet" href="<?= base_url("css/custom.css"); ?>">
 </head>
 <body>
+<div class="loader-wrapper">
+    <div class="loader"></div>
+    <div class="loader slow"></div>
+</div>
 <div id="wrapper">

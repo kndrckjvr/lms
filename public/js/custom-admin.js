@@ -13,8 +13,17 @@ function formatDate(date) {
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
 }
 
+function complete() {
+    $(".loader-wrapper").fadeOut("slow");
+}
+
+function isLoading(id) {
+    $(".loader-wrapper").fadeIn("slow");
+}
+
 $("#create-user").on('click', function () {
     $("input").removeClass("is-invalid");
+    isLoading();
     $.ajax({
         url: baseUrl + "userapi/create",
         type: "POST",
@@ -41,12 +50,14 @@ $("#create-user").on('click', function () {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
 $("#create-book").on('click', function () {
     $("input").removeClass("is-invalid");
+    isLoading();
     $.ajax({
         url: baseUrl + "bookapi/create",
         type: "POST",
@@ -79,7 +90,8 @@ $("#create-book").on('click', function () {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
@@ -102,6 +114,7 @@ $("#book-image-file").change(function () {
 
 $("#create-section").on('click', function () {
     $("input").removeClass("is-invalid");
+    isLoading();
     $.ajax({
         url: baseUrl + "sectionapi/create",
         type: "POST",
@@ -127,12 +140,14 @@ $("#create-section").on('click', function () {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
 $("#manage-book-modal").on('show.bs.modal', function (e) {
     var status = ["Available", "Reserved", "Borrowed", "Disabled"];
+    isLoading();
     $.ajax({
         url: baseUrl + "bookapi/getbooks",
         type: "POST",
@@ -157,13 +172,15 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
 $("#manage-book-item-modal").on('show.bs.modal', function (e) {
     $("#manage-book-modal").modal("hide");
     $("#status-field button").attr("disabled", "true");
+    isLoading();
     $.ajax({
         url: baseUrl + "bookapi/getspecificbook",
         type: "POST",
@@ -204,7 +221,8 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
@@ -218,18 +236,19 @@ function handleProcess(e) {
     // 5 - paid
     var status = 0;
 
-    switch($(e).data("action")) {
+    switch ($(e).data("action")) {
         case "reserve":
             status = 1;
-        break;
+            break;
         case "borrow":
             status = 2;
-        break;
+            break;
         case "return":
             status = 3;
-        break;
+            break;
     }
 
+    isLoading();
     $.ajax({
         url: baseUrl + "transactionapi/create",
         type: "POST",
@@ -238,20 +257,22 @@ function handleProcess(e) {
             itembook_id: $(e).data("token"),
             status: status
         },
-        success: function(res) {
-            if(res.response) {
+        success: function (res) {
+            if (res.response) {
                 $(".modal").modal("hide");
                 showSnackbar("Sucessfully " + $(e).data("action") + " book.");
             }
         },
-        error: function(err) {
+        error: function (err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     })
 }
 
-$("#user-data-modal").on('show.bs.modal', function(e) {
+$("#user-data-modal").on('show.bs.modal', function (e) {
     $(".modal").modal("hide");
+    isLoading();
     $.ajax({
         url: baseUrl + "userapi/getusers",
         type: "POST",
@@ -259,7 +280,7 @@ $("#user-data-modal").on('show.bs.modal', function(e) {
         success: function success(res) {
             $("#user-data-modal-table tbody").html("");
             $("#user-data-modal-title").html($(e.relatedTarget).attr("data-action"));
-            if(res.users == null) return;
+            if (res.users == null) return;
             res.users.forEach(element => {
                 $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e.relatedTarget).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e.relatedTarget).attr("data-action") + "'><td>"
                     + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
@@ -273,7 +294,8 @@ $("#user-data-modal").on('show.bs.modal', function(e) {
         },
         error: function error(err) {
             console.log(err);
-        }
+        },
+        complete: complete()
     });
 });
 
@@ -340,4 +362,8 @@ $("#borrow-buton").on('click', function () {
 
 $("#edit-book-item").on('click', function () {
 
+});
+
+$(document).ready(function () {
+    
 });
