@@ -14,16 +14,20 @@ function formatDate(date) {
 }
 
 function complete() {
-    $(".loader-wrapper").fadeOut("slow");
+    isLoading(false);
 }
 
-function isLoading(id) {
-    $(".loader-wrapper").fadeIn("slow");
+function isLoading(loading) {
+    if(loading) {
+        $(".loader-wrapper").fadeIn("slow");
+    } else {
+        $(".loader-wrapper").fadeOut("slow");
+    }
 }
 
 $("#create-user").on('click', function () {
     $("input").removeClass("is-invalid");
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "userapi/create",
         type: "POST",
@@ -57,7 +61,7 @@ $("#create-user").on('click', function () {
 
 $("#create-book").on('click', function () {
     $("input").removeClass("is-invalid");
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "bookapi/create",
         type: "POST",
@@ -114,7 +118,7 @@ $("#book-image-file").change(function () {
 
 $("#create-section").on('click', function () {
     $("input").removeClass("is-invalid");
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "sectionapi/create",
         type: "POST",
@@ -147,7 +151,7 @@ $("#create-section").on('click', function () {
 
 $("#manage-book-modal").on('show.bs.modal', function (e) {
     var status = ["Available", "Reserved", "Borrowed", "Disabled"];
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "bookapi/getbooks",
         type: "POST",
@@ -163,7 +167,6 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
                     + element.book_code + "</td><td class='text-center'>" + status[element.status - 1] + "</td><td class='text-center'>"
                     + formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
             });
-
             // status type 
             // 1 - abvailable
             // 2 - reserved
@@ -180,7 +183,7 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
 $("#manage-book-item-modal").on('show.bs.modal', function (e) {
     $("#manage-book-modal").modal("hide");
     $("#status-field button").attr("disabled", "true");
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "bookapi/getspecificbook",
         type: "POST",
@@ -248,7 +251,7 @@ function handleProcess(e) {
             break;
     }
 
-    isLoading();
+    isLoading(true);
     $.ajax({
         url: baseUrl + "transactionapi/create",
         type: "POST",
@@ -270,19 +273,42 @@ function handleProcess(e) {
     })
 }
 
+$("#search-user-button").on('click', function(e) {
+    getUser(e.currentTarget, $("#search-user-field").val());
+});
+
 $("#user-data-modal").on('show.bs.modal', function (e) {
     $(".modal").modal("hide");
-    isLoading();
+    getUser(e.relatedTarget, "");
+    $("#user-data-modal-title").html($(e.relatedTarget).attr("data-action").replace(/\b\w/g, function (l) {
+        return l.toUpperCase();
+    }));
+    $("#search-user-button").attr({
+        "data-token": $(e.relatedTarget).attr("data-token"),
+        "data-action": $(e.relatedTarget).attr("data-action")
+    });
+});
+
+function getUser(e, searchText) {
+    console.log(e);
+    isLoading(true);
     $.ajax({
         url: baseUrl + "userapi/getusers",
         type: "POST",
         dataType: "JSON",
+        data: {
+            search_text: searchText,
+            action: $(e).attr("data-action"),
+            itembook_id: $(e).attr("data-token")
+        },
         success: function success(res) {
             $("#user-data-modal-table tbody").html("");
-            $("#user-data-modal-title").html($(e.relatedTarget).attr("data-action"));
-            if (res.users == null) return;
+            if (res.users == null) {
+                $("#user-data-modal-table tbody").html("<tr><td colspan='3'>No Users Found.</td></tr>");
+                return;
+            }
             res.users.forEach(element => {
-                $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e.relatedTarget).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e.relatedTarget).attr("data-action") + "'><td>"
+                $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e).attr("data-action") + "'><td>"
                     + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
             });
 
@@ -297,7 +323,7 @@ $("#user-data-modal").on('show.bs.modal', function (e) {
         },
         complete: complete()
     });
-});
+}
 
 $("#available-button").on('click', function () {
     // logic

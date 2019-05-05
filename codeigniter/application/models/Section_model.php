@@ -9,7 +9,7 @@ class Section_model extends CI_Model
         parent::__construct();
     }
 
-    public function getInfo($where = NULL)
+    public function getSections($where = NULL)
     {
         if ($where !== NULL) {
             $this->db->where($where);
@@ -21,17 +21,5 @@ class Section_model extends CI_Model
     public function insertSection($data) {
         $this->db->insert("sectiontbl", $data);
         return $this->db->affected_rows();
-    }
-
-    public function hasValidCredentials($username, $password)
-    {
-        $this->db
-            ->from('usertbl')
-            ->where(array(
-                'username' => $username,
-                'password' => sha1($password)
-            ));
-        $query = $this->db->get();
-        return $query->num_rows() > 0 ? $query->result() : false;
     }
 }

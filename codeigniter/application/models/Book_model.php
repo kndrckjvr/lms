@@ -9,7 +9,7 @@ class Book_model extends CI_Model
         parent::__construct();
     }
 
-    public function getInfo($table, $where = NULL)
+    public function getBooks($table, $where = NULL)
     {
         if ($where !== NULL) {
             $this->db->where($where);

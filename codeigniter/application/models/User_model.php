@@ -9,12 +9,19 @@ class User_model extends CI_Model
         parent::__construct();
     }
 
-    public function getInfo($where = NULL)
+    public function getUsers($where = NULL)
     {
         if ($where !== NULL) {
             $this->db->where($where);
         }
-        $query = $this->db->get("usertbl");
+        $query = $this->db->select("user_id, username, status, user_type")->get("usertbl");
+        return $query->num_rows() > 0 ? $query->result() : false;
+    }
+
+    public function searchUser($search) {
+        $this->db->like("username", $search, "both");
+        $this->db->limit("10");
+        $query = $this->db->select("user_id, username, status, user_type")->get("usertbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
@@ -26,6 +33,7 @@ class User_model extends CI_Model
     public function hasValidCredentials($username, $password)
     {
         $this->db
+            ->select("user_id, username, status, user_type")
             ->from('usertbl')
             ->where(array(
                 'username' => $username,

@@ -14,7 +14,7 @@ class User extends CI_Controller
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
                 "page_title" => "Library Management System",
-                "username" => $this->User_model->getInfo(array("user_id" => $userid))[0]->username,
+                "username" => $this->User_model->getUsers(array("user_id" => $userid))[0]->username,
                 "currentActive" => "Dashboard"
             );
             $this->load->view("templates/header", $data);

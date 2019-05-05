@@ -113,6 +113,19 @@
                 </button>
                 </div>
             <div class="modal-body">
+                <div class="row mb-2">
+                    <div class="col-5"></div>
+                    <form class="col-7" onsubmit="return false;">
+                        <div class="input-group">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." id="search-user-field">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="search-user-button">
+                            <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                        </div>
+                    </form>
+                </div>
                 <table class="table-sm table-hover col" id="user-data-modal-table">
                     <thead>
                         <tr>

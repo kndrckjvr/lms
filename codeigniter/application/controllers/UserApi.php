@@ -13,9 +13,9 @@ class UserApi extends CI_Controller
     public function login()
     {
         if ($this->agent->is_browser()) {
-            if ($userdata = $this->User_model->hasValidCredentials($this->input->post("username", TRUE), $this->input->post("password", TRUE))) {
-                $this->session->set_userdata("user_token", $userdata[0]->user_id);
-                $this->session->set_userdata("user_type", $userdata[0]->user_type);
+            if ($userData = $this->User_model->hasValidCredentials($this->input->post("username", TRUE), $this->input->post("password", TRUE))) {
+                $this->session->set_userdata("user_token", $userData[0]->user_id);
+                $this->session->set_userdata("user_type", $userData[0]->user_type);
                 echo json_encode(array("response" => 1));
             } else {
                 echo json_encode(array("response" => 0, "message" => "No User Found"));
@@ -73,9 +73,19 @@ class UserApi extends CI_Controller
             return;
         }
 
+        if($this->input->post("action") == "borrow") {
+            if($userid = $this->Transaction_model->getTransactionsByBook(array("transactiontbl.itembook_id" => $this->input->post("itembook_id")))) {
+                echo json_encode(array(
+                    "response" => 1,
+                    "users" => $this->User_model->getUsers(array("user_id" => $userid[0]->user_id))
+                ));
+                return;
+            }
+        }
+        
         echo json_encode(array(
             "response" => 1,
-            "users" => $this->User_model->getInfo()
+            "users" => $this->User_model->searchUser($this->input->post("search_text"))
         ));
     }
 }
