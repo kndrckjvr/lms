@@ -1,0 +1,12 @@
+git status  -- check status of the git repo
+git pull    -- fetch if your code is not updated
+git add .   -- add all files that have been changed
+git commit -m "<Enter Message Here>"  -- to commit all changes "<Enter Message Here>"
+git push origin dev-yuji    -- push changes to remote/internet
+
+
+-- sequence of commands
+git status  -- pag may nakitang error about pull use "git pull"
+git add .   -- add lahat ng files
+git commit -m "<Enter Message Here>" -- commit all added files change ulit yung message ah
+git push origin dev-yuji    -- push changes
