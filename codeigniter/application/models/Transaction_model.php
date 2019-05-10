@@ -14,15 +14,17 @@ class Transaction_model extends CI_Model
         if ($where !== NULL) {
             $this->db->where($where);
         }
-        $query = $this->db->get("transactionstbl");
+        $query = $this->db->limit(1)->order_by('id',"DESC")->get("transactionstbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
     
     public function getTransactionsByBook($data) {
-        $this->db->select("user_id")
+        $this->db->select("user_id, transactiontbl.status, transaction_id")
             ->from("transactiontbl")
             ->join("itembooktbl", "transactiontbl.itembook_id = itembooktbl.itembook_id", "LEFT OUTER")
-            ->where($data);
+            ->where($data)
+            ->limit(1)
+            ->order_by('transaction_id',"DESC");
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
     }

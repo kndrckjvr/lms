@@ -87,6 +87,21 @@ class BookApi extends CI_Controller
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book"] = $this->Book_model->getSpecificBook(array("book_code" => $this->input->post("book_code"), "sectiontbl.status" => 1))[0];
+        switch($json_response["book"]->status) {
+            case 1:
+                $json_response["remarks"] = "Available";
+            break;
+            case 2:
+                $json_response["remarks"] = "Reserved by " 
+                    . $this->User_model->getUsers(array("user_id" => $this->Transaction_model->getTransactionsByBook(array("book_code" => $this->input->post("book_code")))));
+            break;
+            case 3:
+                $json_response["remarks"] = "Borrowed by ";
+            break;
+            case 4:
+                $json_response["remarks"] = "Disabled by ";
+            break;
+        }
         echo json_encode($json_response);
     }
 }

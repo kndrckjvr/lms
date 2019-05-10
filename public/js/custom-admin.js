@@ -152,6 +152,7 @@ $("#create-section").on('click', function () {
 $("#manage-book-modal").on('show.bs.modal', function (e) {
     var status = ["Available", "Reserved", "Borrowed", "Disabled"];
     isLoading(true);
+    $("#manage-book-modal-table tbody").html("");
     $.ajax({
         url: baseUrl + "bookapi/getbooks",
         type: "POST",
@@ -160,7 +161,6 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
             book_id: $(e.relatedTarget).attr("data-id")
         },
         success: function success(res) {
-            $("#manage-book-modal-table tbody").html("");
             $("#manage-book-modal-title").html(res.book_name);
             res.books.forEach(element => {
                 $("#manage-book-modal-table tbody").append("<tr style='cursor: pointer;' data-id='" + element.book_code + "' data-toggle='modal' data-target='#manage-book-item-modal'><td>"
@@ -197,6 +197,7 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             $("#book-author-field").val(res.book.book_author);
             $("#book-section-field").val(res.book.section_id);
             $("#book-code-field").val(res.book.book_code);
+            $("#remarks-field").html(res.remarks);
             $("#manage-book-item-modal-table tbody button").attr("data-token", res.book.itembook_id);
             switch (res.book.status) {
                 case "1":
@@ -235,8 +236,9 @@ function handleProcess(e) {
     // 1 - reserve
     // 2 - borrow
     // 3 - returned
-    // 4 - lost
+    // 4 - unpaid
     // 5 - paid
+    // 6 - disabled
     var status = 0;
 
     switch ($(e).data("action")) {
@@ -266,7 +268,7 @@ function handleProcess(e) {
                 showSnackbar("Sucessfully " + $(e).data("action") + " book.");
             }
         },
-        error: function (err) {
+        error: function error(err) {
             console.log(err);
         },
         complete: complete()
@@ -290,7 +292,7 @@ $("#user-data-modal").on('show.bs.modal', function (e) {
 });
 
 function getUser(e, searchText) {
-    console.log(e);
+    $("#user-data-modal-table tbody").html("");
     isLoading(true);
     $.ajax({
         url: baseUrl + "userapi/getusers",
@@ -302,7 +304,6 @@ function getUser(e, searchText) {
             itembook_id: $(e).attr("data-token")
         },
         success: function success(res) {
-            $("#user-data-modal-table tbody").html("");
             if (res.users == null) {
                 $("#user-data-modal-table tbody").html("<tr><td colspan='3'>No Users Found.</td></tr>");
                 return;
