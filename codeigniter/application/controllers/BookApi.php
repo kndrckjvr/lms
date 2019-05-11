@@ -93,13 +93,15 @@ class BookApi extends CI_Controller
             break;
             case 2:
                 $json_response["remarks"] = "Reserved by " 
-                    . $this->User_model->getUsers(array("user_id" => $this->Transaction_model->getTransactionsByBook(array("book_code" => $this->input->post("book_code")))));
+                    . $this->User_model->getUsers(array("user_id" => $this->Transaction_model->getTransactionsByBook(array("book_code" => $this->input->post("book_code")))[0]->user_id))[0]->username;
             break;
             case 3:
-                $json_response["remarks"] = "Borrowed by ";
+                $json_response["remarks"] = "Borrowed by "
+                . $this->User_model->getUsers(array("user_id" => $this->Transaction_model->getTransactionsByBook(array("book_code" => $this->input->post("book_code")))[0]->user_id))[0]->username;
             break;
             case 4:
-                $json_response["remarks"] = "Disabled by ";
+                $json_response["remarks"] = "Disabled by "
+                . $this->User_model->getUsers(array("user_id" => $this->Transaction_model->getTransactionsByBook(array("book_code" => $this->input->post("book_code")))[0]->user_id))[0]->username;
             break;
         }
         echo json_encode($json_response);
