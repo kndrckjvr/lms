@@ -27,7 +27,7 @@
                                 <th>Book Name</th>
                                 <th>Book Author</th>
                                 <th>Book Section</th>
-                                <th class="text-center">Available Quantity</th>
+                                <th class="text-center">Quantity</th>
                             </tr>
                         </thead>
                         <tbody>

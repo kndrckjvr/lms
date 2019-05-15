@@ -19,7 +19,7 @@ class Transaction_model extends CI_Model
     }
     
     public function getTransactionsByBook($data) {
-        $this->db->select("user_id, transactiontbl.status, transaction_id")
+        $this->db->select("user_id, transactiontbl.status, transaction_id, transaction_date")
             ->from("transactiontbl")
             ->join("itembooktbl", "transactiontbl.itembook_id = itembooktbl.itembook_id", "LEFT OUTER")
             ->where($data)
@@ -27,5 +27,10 @@ class Transaction_model extends CI_Model
             ->order_by('transaction_id',"DESC");
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
+    }
+
+    public function createTransaction($data) {
+        $this->db->insert("transactiontbl", $data);
+        return $this->db->affected_rows();
     }
 }

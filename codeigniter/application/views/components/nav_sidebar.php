@@ -73,6 +73,12 @@
                 "auth" => 1
             ),
             array(
+                "title" => "Manage Payment",
+                "href" => "transaction/pay",
+                "icon" => "fa-money-bill-alt",
+                "auth" => 1
+            ),
+            array(
                 "title" => "User Profile",
                 "href" => "user/profile",
                 "icon" => "fa-user-alt",

@@ -17,8 +17,28 @@ function complete() {
     isLoading(false);
 }
 
+function errorHandler(jqxhr, exception, err) {
+    var msg = "";
+    if (jqXHR.status === 0) {
+        msg = "No Connection Found.";
+    } else if (jqXHR.status == 404) {
+        msg = "Page Not Found 404.";
+    } else if (jqXHR.status == 500) {
+        msg = "Internal Server Error [500].";
+    } else if (exception === 'parsererror') {
+        msg = "JSON Requested Parsing Failed.";
+    } else if (exception === 'timeout') {
+        msg = "It took a long time to respond.";
+    } else if (exception === 'abort') {
+        msg = "Request Aborted.";
+    } else {
+        msg = "Uncaught Error: " + jqXHR.responseText + ".";
+    }
+    showSnackbar("Error: " + msg, "error");
+}
+
 function isLoading(loading) {
-    if(loading) {
+    if (loading) {
         $(".loader-wrapper").fadeIn("slow");
     } else {
         $(".loader-wrapper").fadeOut("slow");
@@ -52,8 +72,8 @@ $("#create-user").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -92,8 +112,8 @@ $("#create-book").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -142,8 +162,8 @@ $("#create-section").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -173,8 +193,8 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
             // 3 - borrowed
             // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -223,22 +243,14 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             // 3 - borrowed
             // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
 });
 
 function handleProcess(e) {
-    // transaction handler
-    // transaction types
-    // 1 - reserve
-    // 2 - borrow
-    // 3 - returned
-    // 4 - unpaid
-    // 5 - paid
-    // 6 - disabled
     var status = 0;
 
     switch ($(e).data("action")) {
@@ -251,6 +263,12 @@ function handleProcess(e) {
         case "return":
             status = 3;
             break;
+        case "disable":
+            status = 5;
+            break;
+        case "available":
+            status = 6;
+            break;
     }
 
     isLoading(true);
@@ -259,23 +277,26 @@ function handleProcess(e) {
         type: "POST",
         dataType: "JSON",
         data: {
-            itembook_id: $(e).data("token"),
-            status: status
+            itembook_id: $(e).attr("data-token"),
+            status: status,
+            user_id: $(e).attr("data-id")
         },
         success: function (res) {
             if (res.response) {
                 $(".modal").modal("hide");
-                showSnackbar("Sucessfully " + $(e).data("action") + " book.");
+                showSnackbar("Sucessfully " + $(e).data("action").replace(/\b\w/g, function (l) {
+                    return l.toUpperCase();
+                }) + " book.");
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     })
 }
 
-$("#search-user-button").on('click', function(e) {
+$("#search-user-button").on('click', function (e) {
     getUser(e.currentTarget, $("#search-user-field").val());
 });
 
@@ -312,85 +333,43 @@ function getUser(e, searchText) {
                 $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e).attr("data-action") + "'><td>"
                     + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
             });
-
-            // status type 
-            // 1 - abvailable
-            // 2 - reserved
-            // 3 - borrowed
-            // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
 }
 
-$("#available-button").on('click', function () {
-    // logic
-    // check kung anong status dati 
-    // kung reserve tanggalin yung reservation ni user
-    // kung disabled naman wala gagawin
-    // change status to available
-
-    swal({
-        title: "Are you sure?",
-        text: "This will change the status of the book into Available!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    })
-        .then((willDelete) => {
-            if (willDelete) {
-                swal("Poof! Your imaginary file has been deleted!", {
-                    icon: "success",
-                });
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
+$("#available-button").on('click', function (e) {
+    handleProcess(e.currentTarget);
 });
 
-$("#reserve-button").on('click', function () {
-
-    // logic
-    // open users modal(<< tapos na to) first 5 lang search button is the key + pagination
-    // pick a user (<< tapos na to)
-    // reserve the book
-    // save the end date of reservation
-    // tas pag lumagpas na yung end date na nakalagay sa remarks
-    // pwede na available
-
-    // swal({
-    //     title: "Are you sure?",
-    //     text: "This will change the status of the book into Available!",
-    //     icon: "warning",
-    //     buttons: true,
-    //     dangerMode: true,
-    //   })
-    //   .then((willDelete) => {
-    //     if (willDelete) {
-    //       swal("Poof! Your imaginary file has been deleted!", {
-    //         icon: "success",
-    //       });
-    //     } else {
-    //       swal("Your imaginary file is safe!");
-    //     }
-    //   });
+$("#disable-button").on('click', function (e) {
+    handleProcess(e.currentTarget);
 });
 
-
-$("#borrow-buton").on('click', function () {
-    // logic
-    // open users modal first 5 lang search button is the key + pagination
-    // pick a user
-    // borrow the book sav
-});
+// swal({
+//     title: "Are you sure?",
+//     text: "This will change the status of the book into Available!",
+//     icon: "warning",
+//     buttons: true,
+//     dangerMode: true,
+//   })
+//   .then((willDelete) => {
+//     if (willDelete) {
+//       swal("Poof! Your imaginary file has been deleted!", {
+//         icon: "success",
+//       });
+//     } else {
+//       swal("Your imaginary file is safe!");
+//     }
+//   });
 
 $("#edit-book-item").on('click', function () {
 
 });
 
 $(document).ready(function () {
-    
+
 });

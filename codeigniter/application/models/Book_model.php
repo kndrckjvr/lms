@@ -58,4 +58,12 @@ class Book_model extends CI_Model
         $this->db->insert("booktbl", $data);
         return $this->db->insert_id();
     }
+
+    public function updateBook($table, $data, $where = NULL) {
+        if($where != NULL) {
+            $this->db->where($where);
+        }
+        $this->db->update($table, $data);
+        return $this->db->affected_rows();
+    }
 }
