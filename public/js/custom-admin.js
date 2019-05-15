@@ -17,8 +17,28 @@ function complete() {
     isLoading(false);
 }
 
+function errorHandler(jqxhr, exception, err) {
+    var msg = "";
+    if (jqXHR.status === 0) {
+        msg = "No Connection Found.";
+    } else if (jqXHR.status == 404) {
+        msg = "Page Not Found 404.";
+    } else if (jqXHR.status == 500) {
+        msg = "Internal Server Error [500].";
+    } else if (exception === 'parsererror') {
+        msg = "JSON Requested Parsing Failed.";
+    } else if (exception === 'timeout') {
+        msg = "It took a long time to respond.";
+    } else if (exception === 'abort') {
+        msg = "Request Aborted.";
+    } else {
+        msg = "Uncaught Error: " + jqXHR.responseText + ".";
+    }
+    showSnackbar("Error: " + msg, "error");
+}
+
 function isLoading(loading) {
-    if(loading) {
+    if (loading) {
         $(".loader-wrapper").fadeIn("slow");
     } else {
         $(".loader-wrapper").fadeOut("slow");
@@ -52,8 +72,8 @@ $("#create-user").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -92,8 +112,8 @@ $("#create-book").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -142,16 +162,18 @@ $("#create-section").on('click', function () {
                 }
             }
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
 });
 
 $("#manage-book-modal").on('show.bs.modal', function (e) {
-    var status = ["Available", "Reserved", "Borrowed", "Disabled"];
+    var statusType = ["Available", "Reserved", "Borrowed", "Disabled"];
+    var status = ["success", "primary", "warning", "danger"];
     isLoading(true);
+    $("#manage-book-modal-table tbody").html("");
     $.ajax({
         url: baseUrl + "bookapi/getbooks",
         type: "POST",
@@ -160,11 +182,10 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
             book_id: $(e.relatedTarget).attr("data-id")
         },
         success: function success(res) {
-            $("#manage-book-modal-table tbody").html("");
             $("#manage-book-modal-title").html(res.book_name);
             res.books.forEach(element => {
                 $("#manage-book-modal-table tbody").append("<tr style='cursor: pointer;' data-id='" + element.book_code + "' data-toggle='modal' data-target='#manage-book-item-modal'><td>"
-                    + element.book_code + "</td><td class='text-center'>" + status[element.status - 1] + "</td><td class='text-center'>"
+                    + element.book_code + "</td><td class='text-center'><span class='badge badge-" + status[element.status - 1] + "'>" + statusType[element.status - 1] + "</span></td><td class='text-center'>"
                     + formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
             });
             // status type 
@@ -173,8 +194,8 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
             // 3 - borrowed
             // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
@@ -197,6 +218,7 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             $("#book-author-field").val(res.book.book_author);
             $("#book-section-field").val(res.book.section_id);
             $("#book-code-field").val(res.book.book_code);
+            $("#remarks-field").html(res.remarks);
             $("#manage-book-item-modal-table tbody button").attr("data-token", res.book.itembook_id);
             switch (res.book.status) {
                 case "1":
@@ -222,21 +244,14 @@ $("#manage-book-item-modal").on('show.bs.modal', function (e) {
             // 3 - borrowed
             // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
 });
 
 function handleProcess(e) {
-    // transaction handler
-    // transaction types
-    // 1 - reserve
-    // 2 - borrow
-    // 3 - returned
-    // 4 - lost
-    // 5 - paid
     var status = 0;
 
     switch ($(e).data("action")) {
@@ -249,6 +264,12 @@ function handleProcess(e) {
         case "return":
             status = 3;
             break;
+        case "disable":
+            status = 5;
+            break;
+        case "available":
+            status = 6;
+            break;
     }
 
     isLoading(true);
@@ -257,23 +278,26 @@ function handleProcess(e) {
         type: "POST",
         dataType: "JSON",
         data: {
-            itembook_id: $(e).data("token"),
-            status: status
+            itembook_id: $(e).attr("data-token"),
+            status: status,
+            user_id: $(e).attr("data-id")
         },
         success: function (res) {
             if (res.response) {
                 $(".modal").modal("hide");
-                showSnackbar("Sucessfully " + $(e).data("action") + " book.");
+                showSnackbar("Sucessfully " + $(e).data("action").replace(/\b\w/g, function (l) {
+                    return l.toUpperCase();
+                }) + " book.");
             }
         },
-        error: function (err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     })
 }
 
-$("#search-user-button").on('click', function(e) {
+$("#search-user-button").on('click', function (e) {
     getUser(e.currentTarget, $("#search-user-field").val());
 });
 
@@ -290,7 +314,7 @@ $("#user-data-modal").on('show.bs.modal', function (e) {
 });
 
 function getUser(e, searchText) {
-    console.log(e);
+    $("#user-data-modal-table tbody").html("");
     isLoading(true);
     $.ajax({
         url: baseUrl + "userapi/getusers",
@@ -302,7 +326,6 @@ function getUser(e, searchText) {
             itembook_id: $(e).attr("data-token")
         },
         success: function success(res) {
-            $("#user-data-modal-table tbody").html("");
             if (res.users == null) {
                 $("#user-data-modal-table tbody").html("<tr><td colspan='3'>No Users Found.</td></tr>");
                 return;
@@ -311,85 +334,43 @@ function getUser(e, searchText) {
                 $("#user-data-modal-table tbody").append("<tr style='cursor: pointer;' onclick='handleProcess(this)' data-token='" + $(e).attr("data-token") + "' data-id='" + element.user_id + "' data-action='" + $(e).attr("data-action") + "'><td>"
                     + element.username + "</td><td class='text-center'>" + 0 + "</td><td class='text-center'>" + element.status + "</td></tr>")
             });
-
-            // status type 
-            // 1 - abvailable
-            // 2 - reserved
-            // 3 - borrowed
-            // 4 - unavailable
         },
-        error: function error(err) {
-            console.log(err);
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
         },
         complete: complete()
     });
 }
 
-$("#available-button").on('click', function () {
-    // logic
-    // check kung anong status dati 
-    // kung reserve tanggalin yung reservation ni user
-    // kung disabled naman wala gagawin
-    // change status to available
-
-    swal({
-        title: "Are you sure?",
-        text: "This will change the status of the book into Available!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    })
-        .then((willDelete) => {
-            if (willDelete) {
-                swal("Poof! Your imaginary file has been deleted!", {
-                    icon: "success",
-                });
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
+$("#available-button").on('click', function (e) {
+    handleProcess(e.currentTarget);
 });
 
-$("#reserve-button").on('click', function () {
-
-    // logic
-    // open users modal(<< tapos na to) first 5 lang search button is the key + pagination
-    // pick a user (<< tapos na to)
-    // reserve the book
-    // save the end date of reservation
-    // tas pag lumagpas na yung end date na nakalagay sa remarks
-    // pwede na available
-
-    // swal({
-    //     title: "Are you sure?",
-    //     text: "This will change the status of the book into Available!",
-    //     icon: "warning",
-    //     buttons: true,
-    //     dangerMode: true,
-    //   })
-    //   .then((willDelete) => {
-    //     if (willDelete) {
-    //       swal("Poof! Your imaginary file has been deleted!", {
-    //         icon: "success",
-    //       });
-    //     } else {
-    //       swal("Your imaginary file is safe!");
-    //     }
-    //   });
+$("#disable-button").on('click', function (e) {
+    handleProcess(e.currentTarget);
 });
 
-
-$("#borrow-buton").on('click', function () {
-    // logic
-    // open users modal first 5 lang search button is the key + pagination
-    // pick a user
-    // borrow the book sav
-});
+// swal({
+//     title: "Are you sure?",
+//     text: "This will change the status of the book into Available!",
+//     icon: "warning",
+//     buttons: true,
+//     dangerMode: true,
+//   })
+//   .then((willDelete) => {
+//     if (willDelete) {
+//       swal("Poof! Your imaginary file has been deleted!", {
+//         icon: "success",
+//       });
+//     } else {
+//       swal("Your imaginary file is safe!");
+//     }
+//   });
 
 $("#edit-book-item").on('click', function () {
 
 });
 
 $(document).ready(function () {
-    
+
 });

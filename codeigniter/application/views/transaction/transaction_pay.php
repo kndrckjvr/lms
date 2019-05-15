@@ -4,7 +4,7 @@
         <div class="col-10">
             <div class="card shadow mt-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Manage Books</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Manage Payment</h6>
                 </div>
                 
                 <div class="card-body">
@@ -24,21 +24,19 @@
                     <table class="table-sm table-hover col" id="manage-book-table">
                         <thead>
                             <tr>
-                                <th>Book Name</th>
-                                <th>Book Author</th>
-                                <th>Book Section</th>
-                                <th class="text-center">Quantity</th>
+                                <th class="w-75">Username</th>
+                                <th style="width: 10%" class="text-center">User Type</th>
+                                <th style="width: 10%" class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if($books != null) foreach($books as $book) { ?>
-                            <tr data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#manage-book-modal" style="cursor: pointer;">
-                                <td><?= $book->book_name ?></td>
-                                <td><?= $book->book_author ?></td>
-                                <td><?= $book->section_name ?></td>
-                                <td class="text-center"><?= $book->book_qty ?></td>
+                            <?php foreach($users as $user): ?>
+                            <tr data-id="<?= $user->user_id ?>" data-toggle="modal" data-target="#manage-user-modal" style="cursor: pointer;">
+                                <td><?= $user->username ?></td>
+                                <td class="text-center"><span class="badge badge-<?php echo ($user->user_type == 1) ? "info" : "primary" ; ?>"><?php echo ($user->user_type == 1) ? "<i class='fas fa-user-shield'></i>&nbsp;Admin" : "<i class='fas fa-user-alt'></i>&nbsp;User" ; ?></span></td>
+                                <td class="text-center"><span class="badge badge-<?php echo ($user->status == 1) ? "success" : "danger" ; ?>"><?php echo ($user->status == 1) ? "Active" : "Inactive" ; ?></span></td>
                             </tr>
-                            <?php } else { ?><tr><td colspan="4" class="text-center">No Book Found.</td></tr><?php } ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

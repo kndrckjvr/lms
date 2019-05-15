@@ -32,7 +32,7 @@
             ),
             array(
                 "title" => "Transactions",
-                "href" => "reports/transaction",
+                "href" => "transaction/reports",
                 "icon" => "fa-list",
                 "auth" => 0
             ),
@@ -70,6 +70,12 @@
                 "title" => "Manage User",
                 "href" => "user/manage",
                 "icon" => "fa-user-edit",
+                "auth" => 1
+            ),
+            array(
+                "title" => "Manage Payment",
+                "href" => "transaction/pay",
+                "icon" => "fa-money-bill-alt",
                 "auth" => 1
             ),
             array(

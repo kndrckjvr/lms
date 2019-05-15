@@ -42,6 +42,23 @@ class User extends CI_Controller
         }
     }
 
+    public function manage()
+    {
+        if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
+            $data = array(
+                "page_title" => "Library Management System | Manage User",
+                "currentActive" => "Manage User",
+                "users" => $this->User_model->getUsers()
+            );
+            $this->load->view("templates/header", $data);
+            $this->load->view("components/nav_sidebar");
+            $this->load->view("user/user_manage");
+            $this->load->view("templates/footer", $data);
+        } else {
+            show_404();
+        }
+    }
+
     public function profile() {
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
@@ -50,7 +67,8 @@ class User extends CI_Controller
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
-            $this->load->view("user/user_profile");
+            $this->load->view("components/wip");
+            //$this->load->view("user/user_profile");
             $this->load->view("templates/footer");
         } else {
             show_404();

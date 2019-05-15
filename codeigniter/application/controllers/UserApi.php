@@ -73,13 +73,15 @@ class UserApi extends CI_Controller
             return;
         }
 
-        if($this->input->post("action") == "borrow") {
+        if($this->input->post("action") == "borrow" || $this->input->post("action") == "return") {
             if($userid = $this->Transaction_model->getTransactionsByBook(array("transactiontbl.itembook_id" => $this->input->post("itembook_id")))) {
-                echo json_encode(array(
-                    "response" => 1,
-                    "users" => $this->User_model->getUsers(array("user_id" => $userid[0]->user_id))
-                ));
-                return;
+                if($userid[0]->status == 1 || $userid[0]->status == 2) {
+                    echo json_encode(array(
+                        "response" => 1,
+                        "users" => $this->User_model->getUsers(array("user_id" => $userid[0]->user_id))
+                    ));
+                    return;
+                }
             }
         }
         

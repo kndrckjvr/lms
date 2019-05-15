@@ -4,7 +4,7 @@
         <div class="col-10">
             <div class="card shadow mt-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Manage Books</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Manage Section</h6>
                 </div>
                 
                 <div class="card-body">
@@ -24,21 +24,19 @@
                     <table class="table-sm table-hover col" id="manage-book-table">
                         <thead>
                             <tr>
-                                <th>Book Name</th>
-                                <th>Book Author</th>
-                                <th>Book Section</th>
-                                <th class="text-center">Quantity</th>
+                                <th class="w-75">Section Name</th>
+                                <th style="width: 15%">Section Code</th>
+                                <th style="width: 10%" class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if($books != null) foreach($books as $book) { ?>
-                            <tr data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#manage-book-modal" style="cursor: pointer;">
-                                <td><?= $book->book_name ?></td>
-                                <td><?= $book->book_author ?></td>
-                                <td><?= $book->section_name ?></td>
-                                <td class="text-center"><?= $book->book_qty ?></td>
+                            <?php foreach($sections as $section): ?>
+                            <tr data-id="<?= $section->section_id ?>" data-toggle="modal" data-target="#manage-section-modal" style="cursor: pointer;">
+                                <td><?= $section->section_name ?></td>
+                                <td><?= $section->section_code ?></td>
+                                <td class="text-center"><span class="badge badge-<?php echo ($section->status == 1) ? "success" : "danger" ; ?>"><?php echo ($section->status == 1) ? "Active" : "Inactive" ; ?></span></td>
                             </tr>
-                            <?php } else { ?><tr><td colspan="4" class="text-center">No Book Found.</td></tr><?php } ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

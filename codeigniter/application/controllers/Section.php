@@ -16,7 +16,25 @@ class Section extends CI_Controller
             $this->load->view("section/section_create");
             $this->load->view("templates/footer", $data);
         } else {
-            redirect("login", "location");
+            show_404();
+        }
+    }
+
+    public function manage()
+    {
+        if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
+            $data = array(
+                "page_title" => "Library Management System | Manage Section",
+                "currentActive" => "Manage Section",
+                "sections" => $this->Section_model->getSections()
+            );
+            $this->load->view("templates/header", $data);
+            $this->load->view("components/nav_sidebar");
+            $this->load->view("section/section_manage");
+            $this->load->view("section/section_modal");
+            $this->load->view("templates/footer", $data);
+        } else {
+            show_404();
         }
     }
 }
