@@ -32,7 +32,7 @@
             ),
             array(
                 "title" => "Transactions",
-                "href" => "reports/transaction",
+                "href" => "transaction/reports",
                 "icon" => "fa-list",
                 "auth" => 0
             ),

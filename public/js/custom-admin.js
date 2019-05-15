@@ -170,7 +170,8 @@ $("#create-section").on('click', function () {
 });
 
 $("#manage-book-modal").on('show.bs.modal', function (e) {
-    var status = ["Available", "Reserved", "Borrowed", "Disabled"];
+    var statusType = ["Available", "Reserved", "Borrowed", "Disabled"];
+    var status = ["success", "primary", "warning", "danger"];
     isLoading(true);
     $("#manage-book-modal-table tbody").html("");
     $.ajax({
@@ -184,7 +185,7 @@ $("#manage-book-modal").on('show.bs.modal', function (e) {
             $("#manage-book-modal-title").html(res.book_name);
             res.books.forEach(element => {
                 $("#manage-book-modal-table tbody").append("<tr style='cursor: pointer;' data-id='" + element.book_code + "' data-toggle='modal' data-target='#manage-book-item-modal'><td>"
-                    + element.book_code + "</td><td class='text-center'>" + status[element.status - 1] + "</td><td class='text-center'>"
+                    + element.book_code + "</td><td class='text-center'><span class='badge badge-" + status[element.status - 1] + "'>" + statusType[element.status - 1] + "</span></td><td class='text-center'>"
                     + formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
             });
             // status type 
