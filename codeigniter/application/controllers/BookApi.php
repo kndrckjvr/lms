@@ -8,9 +8,7 @@ class BookApi extends CI_Controller
     {
         parent::__construct();
         $this->load->library(array("user_agent", "form_validation"));
-        if ($this->agent->is_browser()) {
-            if ($this->session->userdata("user_type") != 1) show_404();
-        } elseif ($this->agent->is_mobile()) {
+        if ($this->agent->is_mobile()) {
             if (empty($this->session->post("token"))) show_404();
         } else {
             return;
@@ -19,6 +17,9 @@ class BookApi extends CI_Controller
 
     public function create()
     {
+        if ($this->agent->is_browser()) {
+            if ($this->session->userdata("user_type") != 1) show_404();
+        }
         $json_response = array();
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
@@ -72,6 +73,9 @@ class BookApi extends CI_Controller
 
     public function getBooks()
     {
+        if ($this->agent->is_browser()) {
+            if ($this->session->userdata("user_type") != 1) show_404();
+        }
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book_name"] = $this->Book_model->getBooks("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;
@@ -81,6 +85,9 @@ class BookApi extends CI_Controller
 
     public function getSpecificBook()
     {
+        if ($this->agent->is_browser()) {
+            if ($this->session->userdata("user_type") != 1) show_404();
+        }
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book"] = $this->Book_model->getSpecificBook(array("itembook_id" => $this->input->post("itembook_id"), "sectiontbl.status" => 1))[0];
@@ -106,6 +113,9 @@ class BookApi extends CI_Controller
 
     public function updateBook()
     {
+        if ($this->agent->is_browser()) {
+            if ($this->session->userdata("user_type") != 1) show_404();
+        }
         $json_response = array();
 
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
@@ -130,10 +140,16 @@ class BookApi extends CI_Controller
             //     else
             //         $where[$key] = $value;
             // }
-            if($this->Book_model->updateBook("booktbl", $data, $where)) {
+            if ($this->Book_model->updateBook("booktbl", $data, $where)) {
                 $json_response["response"] = 1;
             }
         }
+        echo json_encode($json_response);
+    }
+
+    public function searchBook()
+    {
+        $json_response["books"] = $this->Book_model->getBook($this->input->post("book_name"));
         echo json_encode($json_response);
     }
 }

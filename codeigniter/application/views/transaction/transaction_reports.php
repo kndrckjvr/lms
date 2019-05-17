@@ -50,12 +50,13 @@
                                 </tr>
                             <?php
                         }
-                    } else { 
+                    } else {
                         ?>
-                        <tr>
-                            <td colspan="5" class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center">No Data Found.<td>
-                        </tr>
-                    <?php
+                            <tr>
+                                <td colspan="5" class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center">No Data Found.
+                                <td>
+                            </tr>
+                        <?php
                     }
                     ?>
                     </tbody>

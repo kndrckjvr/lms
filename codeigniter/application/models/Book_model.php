@@ -18,10 +18,11 @@ class Book_model extends CI_Model
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
-    public function getBook($page) {
+    public function getBook($bookName) {
         $this->db->select("book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id) as book_qty")
             ->from("booktbl")
             ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+            ->like("book_name", $bookName, "both")
             ->where(array("sectiontbl.status" => 1));
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
