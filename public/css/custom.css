@@ -130,3 +130,7 @@
         transform: rotate(360deg);
     }
 }
+
+#transaction-reports-table thead tr th, #transaction-reports-table tbody tr th {
+    font-family:Nunito !important;
+}

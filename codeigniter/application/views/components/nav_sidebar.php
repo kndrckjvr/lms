@@ -31,12 +31,6 @@
                 "auth" => 0
             ),
             array(
-                "title" => "Transactions",
-                "href" => "transaction/reports",
-                "icon" => "fa-list",
-                "auth" => 0
-            ),
-            array(
                 "title" => "Book Manager",
                 "href" => "book/manager",
                 "icon" => "fa-book",
@@ -59,6 +53,12 @@
                 "href" => "transaction/pay",
                 "icon" => "fa-money-bill-alt",
                 "auth" => 1
+            ),
+            array(
+                "title" => "Transactions",
+                "href" => "transaction/reports",
+                "icon" => "fa-list",
+                "auth" => 2
             ),
             array(
                 "title" => "User Profile",
