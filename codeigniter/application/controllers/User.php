@@ -26,32 +26,17 @@ class User extends CI_Controller
         }
     }
 
-    public function create()
+    public function manager()
     {
         if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
             $data = array(
-                "page_title" => "Library Management System | Create User",
-                "currentActive" => "Create User"
-            );
-            $this->load->view("templates/header", $data);
-            $this->load->view("components/nav_sidebar");
-            $this->load->view("user/user_create");
-            $this->load->view("templates/footer", $data);
-        } else {
-            show_404();
-        }
-    }
-
-    public function manage()
-    {
-        if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
-            $data = array(
-                "page_title" => "Library Management System | Manage User",
-                "currentActive" => "Manage User",
+                "page_title" => "Library Management System | User Manager",
+                "currentActive" => "User Manager",
                 "users" => $this->User_model->getUsers()
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
+            $this->load->view("user/user_create");
             $this->load->view("user/user_manage");
             $this->load->view("templates/footer", $data);
         } else {

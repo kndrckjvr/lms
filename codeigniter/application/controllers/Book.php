@@ -37,29 +37,16 @@ class Book extends CI_Controller {
         }
     }
 
-    public function create() {
+    public function manager() {
         if($this->session->userdata("user_type") == 1) {
-            $data = array("page_title" => "Library Management System | Create Book",
+            $data = array("page_title" => "Library Management System | Book Manager",
+            "books" => $this->Book_model->getBook("1"),
             "sections" => $this->Section_model->getSections(array("status" => 1)),
             "book_section_code" => $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code . sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code_number + 1),
-            "currentActive" => "Create Book");
+            "currentActive" => "Book Manager");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
             $this->load->view("book/book_create");
-            $this->load->view("templates/footer", $data);
-        } else {
-            show_404();
-        }
-    }
-
-    public function manage($page = NULL) {
-        if($this->session->userdata("user_type") == 1) {
-            $data = array("page_title" => "Library Management System | Manage Book",
-            "books" => $this->Book_model->getBook($page == NULL ? "1" : $page),
-            "sections" => $this->Section_model->getSections(array("status" => 1)),
-            "currentActive" => "Manage Book");
-            $this->load->view("templates/header", $data);
-            $this->load->view("components/nav_sidebar");
             $this->load->view("book/book_manage");
             $this->load->view("book/book_modal");
             $this->load->view("templates/footer", $data);

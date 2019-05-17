@@ -45,6 +45,52 @@ function isLoading(loading) {
     }
 }
 
+function handleProcess(e) {
+    var status = 0;
+
+    switch ($(e).data("action")) {
+        case "reserve":
+            status = 1;
+            break;
+        case "borrow":
+            status = 2;
+            break;
+        case "return":
+            status = 3;
+            break;
+        case "disable":
+            status = 5;
+            break;
+        case "available":
+            status = 6;
+            break;
+    }
+
+    isLoading(true);
+    $.ajax({
+        url: baseUrl + "transactionapi/create",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            itembook_id: $(e).attr("data-token"),
+            status: status,
+            user_id: $(e).attr("data-id")
+        },
+        success: function (res) {
+            if (res.response) {
+                $(".modal").modal("hide");
+                showSnackbar("Sucessfully " + $(e).data("action").replace(/\b\w/g, function (l) {
+                    return l.toUpperCase();
+                }) + " book.");
+            }
+        },
+        error: function error(jqxhr, err, textStatus) {
+            errorHandler(jqxhr, err, textStatus);
+        },
+        complete: complete()
+    })
+}
+
 $(document).ready(function () {
 
 });

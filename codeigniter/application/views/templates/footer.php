@@ -1,3 +1,5 @@
+    </div>
+</div>
 </div>
 <div id="snackbar"></div>
     <script src="<?= base_url("js/popper.min.js") ?>"></script>

@@ -7,10 +7,10 @@
             <div class="mx-3">LMS</div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-1"></div>
         <div class="col-10">
-            <div class="card shadow mt-4">
+            <div class="card shadow mb-5">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Login</h6>
                 </div>

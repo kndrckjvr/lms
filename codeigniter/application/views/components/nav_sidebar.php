@@ -1,4 +1,4 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" style="max-height: 100vh; overflow: auto;">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= base_url("user") ?>">
@@ -37,39 +37,21 @@
                 "auth" => 0
             ),
             array(
-                "title" => "Create Book",
-                "href" => "book/create",
-                "icon" => "fa-book-medical",
-                "auth" => 1
-            ),
-            array(
-                "title" => "Create Section",
-                "href" => "section/create",
-                "icon" => "fa-book-medical",
-                "auth" => 1
-            ),
-            array(
-                "title" => "Create User",
-                "href" => "user/create",
-                "icon" => "fa-user-plus",
-                "auth" => 1
-            ),
-            array(
-                "title" => "Manage Book",
-                "href" => "book/manage",
+                "title" => "Book Manager",
+                "href" => "book/manager",
                 "icon" => "fa-book",
                 "auth" => 1
             ),
             array(
-                "title" => "Manage Section",
-                "href" => "section/manage",
-                "icon" => "fa-book",
+                "title" => "Section Manager",
+                "href" => "section/manager",
+                "icon" => "fa-sort-alpha-up",
                 "auth" => 1
             ),
             array(
-                "title" => "Manage User",
-                "href" => "user/manage",
-                "icon" => "fa-user-edit",
+                "title" => "User Manager",
+                "href" => "user/manager",
+                "icon" => "fa-user-cog",
                 "auth" => 1
             ),
             array(
@@ -115,3 +97,5 @@
       </div>
 
 </ul>
+<div id="content-wrapper" class="d-flex flex-column">
+    <div class="container-fluid">        

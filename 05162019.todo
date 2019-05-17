@@ -1,18 +1,21 @@
-book editor
-user editor
-section editor
-user profile admin and user
-search books ni user
-reserve books ni user
+// need
+book editor done 4:33 AM
 transaction viewer
 report generations
-logs
-forgot password.....
-registration.....
-dashboards // baka welcome na katulad lang sa dating phplib
-file uploading
-penalty
-singleton yung itembook code // nagawa na to pero may problem pag nagpalit ng section
+search books ni user
+reserve books ni user
+
+// need 2
+penalty dynamic
+forgot password
+registration
+section editor
+user editor
+
+// need 3
+user profile admin and user
+singleton yung itembook code 
+// nagawa na to pero may problem pag nagpalit ng section
 // solution get book_code iterate all books na ililipat + 1 per book sa book code 
 //  SELECT `book_code` FROM `itembooktbl` 
     LEFT OUTER JOIN `booktbl` ON itembooktbl.book_id = booktbl.book_id 
@@ -21,4 +24,6 @@ singleton yung itembook code // nagawa na to pero may problem pag nagpalit ng se
     LIMIT 1
 // after insert count all books under tas update yung section_code_number ng section na yun
 
-https://stackoverflow.com/questions/10899384/uploading-both-data-and-files-in-one-form-using-ajax
+logs
+file uploading
+// https://stackoverflow.com/questions/10899384/uploading-both-data-and-files-in-one-form-using-ajax
