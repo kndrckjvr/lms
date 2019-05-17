@@ -43,3 +43,43 @@
         <div class="col-1"></div>
     </div>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+    
+
+$("#create-user").on('click', function () {
+    $("input").removeClass("is-invalid");
+        isLoading(true);
+        $.ajax({
+            url: baseUrl + "userapi/create",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                username: $("#username").val(),
+                password: $("#password").val(),
+                user_type: $("#user").prop("checked") ? 0 : 1
+            },
+            success: function success(res) {
+                if (res.response) {
+                    $("#user-create-form").trigger("reset");
+                    showSnackbar("Successfully Added!");
+                } else {
+                    if (res.username) {
+                        $("#username + .invalid-feedback").html(res.username);
+                        $("#username").addClass("is-invalid");
+                    }
+                    if (res.password) {
+                        $("#password + .invalid-feedback").html(res.password);
+                        $("#password").addClass("is-invalid");
+                    }
+                }
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    });
+});
+</script>

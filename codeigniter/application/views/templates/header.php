@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= base_url("css/bootstrap.min.css"); ?>">
     <link rel="stylesheet" href="<?= base_url("css/custom.css"); ?>">
+    <script src="<?= base_url("js/jquery.min.js") ?>"></script>
+    <script>
+        var baseUrl = "<?= base_url() ?>";
+    </script>
 </head>
 <body>
 <div class="loader-wrapper">

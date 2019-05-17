@@ -41,6 +41,7 @@ class Book extends CI_Controller {
         if($this->session->userdata("user_type") == 1) {
             $data = array("page_title" => "Library Management System | Create Book",
             "sections" => $this->Section_model->getSections(array("status" => 1)),
+            "book_section_code" => $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code . sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code_number + 1),
             "currentActive" => "Create Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");

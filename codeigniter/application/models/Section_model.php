@@ -22,4 +22,13 @@ class Section_model extends CI_Model
         $this->db->insert("sectiontbl", $data);
         return $this->db->affected_rows();
     }
+
+    public function getCurrentCode($where) {
+        $query = $this->db->select("section_code_number, section_code")
+            ->from("sectiontbl")
+            ->where($where)
+            ->limit(1);
+        $query = $this->db->get();
+        return $query->num_rows() > 0 ? $query->result() : false;
+    }
 }

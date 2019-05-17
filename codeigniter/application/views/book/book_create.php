@@ -25,7 +25,7 @@
                         <div class="form-row mb-3">
                             <div class="col">
                                 <label for="book-author">Book Code</label>
-                                <input type="text" class="form-control" id="book-code" name="book-code" placeholder="Enter Book Code">
+                                <input type="text" class="form-control" id="book-code" name="book-code" disabled value="<?= $book_section_code ?>">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col">
@@ -59,3 +59,83 @@
         <div class="col-1"></div>
     </div>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+    $("#book-section").on('change', function(e) {
+        isLoading(true);
+        $.ajax({
+            url: baseUrl + "sectionapi/getnextcode",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                section_value: $(e.currentTarget).val()
+            },
+            success: function success(res) {
+                $("#book-code").val(res.value);
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    });
+
+    $("#create-book").on('click', function () {
+        $("input").removeClass("is-invalid");
+        isLoading(true);
+        $.ajax({
+            url: baseUrl + "bookapi/create",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                book_name: $("#book-name").val(),
+                book_author: $("#book-author").val(),
+                book_code: $("#book-code").val(),
+                book_section: $("#book-section").val(),
+                book_image_file: $("#book-image-file").val()
+            },
+            success: function success(res) {
+                if (res.response) {
+                    $("#book-create-form").trigger("reset");
+                    showSnackbar("Successfully Added!");
+                } else {
+                    if (res.book_name) {
+                        $("#book-name + .invalid-feedback").html(res.book_name);
+                        $("#book-name").addClass("is-invalid");
+                    }
+                    if (res.book_author) {
+                        $("#book-author + .invalid-feedback").html(res.book_author);
+                        $("#book-author").addClass("is-invalid");
+                    }
+                    if (res.book_code) {
+                        $("#book-code + .invalid-feedback").html(res.book_code);
+                        $("#book-code").addClass("is-invalid");
+                    }
+                }
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    });
+
+    $("#upload-image-div").on('click', function () {
+        $("#book-image-file").click()
+    });
+
+    $("#book-image-file").change(function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                $("#upload-image-div").css("background-image", "url(" + reader.result + ")");
+            }
+
+            reader.readAsDataURL(this.files[0]);
+        }
+        $("#upload-image-div p").hide()
+    });
+});
+</script>

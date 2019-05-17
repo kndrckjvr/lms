@@ -42,4 +42,15 @@ class SectionApi extends CI_Controller
         }
         echo json_encode($json_response);
     }
+
+    public function getSection() {
+        $json_response["value"] = $this->Section_model->getSections(array("section_id" => $this->input->post("section_id")))[0];
+        echo json_encode($json_response);
+    }
+
+    public function getNextCode()
+    {
+        $json_response["value"] = $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("section_value")))[0]->section_code . sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("section_value")))[0]->section_code_number + 1);
+        echo json_encode($json_response);
+    }
 }

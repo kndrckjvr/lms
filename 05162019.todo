@@ -12,4 +12,13 @@ registration.....
 dashboards // baka welcome na katulad lang sa dating phplib
 file uploading
 penalty
-singleton yung itembook code
+singleton yung itembook code // nagawa na to pero may problem pag nagpalit ng section
+// solution get book_code iterate all books na ililipat + 1 per book sa book code 
+//  SELECT `book_code` FROM `itembooktbl` 
+    LEFT OUTER JOIN `booktbl` ON itembooktbl.book_id = booktbl.book_id 
+    LEFT OUTER JOIN `sectiontbl` ON booktbl.section_id = sectiontbl.section_id
+    ORDER BY book_code DESC 
+    LIMIT 1
+// after insert count all books under tas update yung section_code_number ng section na yun
+
+https://stackoverflow.com/questions/10899384/uploading-both-data-and-files-in-one-form-using-ajax

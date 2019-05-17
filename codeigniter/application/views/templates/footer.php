@@ -1,6 +1,5 @@
 </div>
 <div id="snackbar"></div>
-    <script src="<?= base_url("js/jquery.min.js") ?>"></script>
     <script src="<?= base_url("js/popper.min.js") ?>"></script>
     <script src="<?= base_url("js/jquery.easing.js") ?>"></script>
     <script src="<?= base_url("js/bootstrap.min.js") ?>"></script>
@@ -9,10 +8,6 @@
     <script src="<?= base_url("js/custom.js") ?>"></script>
     <?php if(!empty($this->session->userdata("user_type"))) if($this->session->userdata("user_type") == 1) ?>
     <script src="<?= base_url("js/custom-admin.js") ?>"></script>
-    <?php ?>
-    <script>
-        var baseUrl = "<?= base_url() ?>";
-    </script>
     <!-- <script src="../public/js/custom.js"></script> -->
 </body>
 </html>

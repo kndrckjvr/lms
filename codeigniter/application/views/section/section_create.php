@@ -30,3 +30,40 @@
         <div class="col-1"></div>
     </div>
 </div>
+
+<script>
+jQuery(document).ready(function ($) {
+    $("#create-section").on('click', function () {
+        $("input").removeClass("is-invalid");
+        isLoading(true);
+        $.ajax({
+            url: baseUrl + "sectionapi/create",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                section_name: $("#section-name").val(),
+                section_code: $("#section-code").val()
+            },
+            success: function success(res) {
+                if (res.response) {
+                    $("#section-create-form").trigger("reset");
+                    showSnackbar("Successfully Added!");
+                } else {
+                    if (res.section_name) {
+                        $("#section-name + .invalid-feedback").html(res.section_name);
+                        $("#section-name").addClass("is-invalid");
+                    }
+                    if (res.section_code) {
+                        $("#section-code + .invalid-feedback").html(res.section_code);
+                        $("#section-code").addClass("is-invalid");
+                    }
+                }
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    });
+});
+</script>

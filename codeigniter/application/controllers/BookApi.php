@@ -20,23 +20,14 @@ class BookApi extends CI_Controller
     public function create()
     {
         $json_response = array();
-
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
         $this->form_validation->set_rules('book_code', 'Book Code', 'trim|required');
-
+        
         if ($this->form_validation->run() == FALSE) {
             $json_response = array("response" => 0);
-            if(form_error("book_name")) {
-                $json_response["book_name"] = form_error("book_name");
-            }
-
-            if(form_error("book_author")) {
-                $json_response["book_author"] = form_error("book_author");
-            }
-            
-            if(form_error("book_code")) {
-                $json_response["book_code"] = form_error("book_code");
+            foreach($this->form_validation->error_array() as $key => $value) {
+                $json_response[$key] = $value;
             }
         } else {
             $data = array(
@@ -79,14 +70,14 @@ class BookApi extends CI_Controller
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book_name"] = $this->Book_model->getBooks("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;
-        $json_response["books"] = $this->Book_model->getBooks("itembooktbl", array("book_id" => $this->input->post("book_id")));
+        $json_response["books"] = $this->Book_model->getBookItems(array("booktbl.book_id" => $this->input->post("book_id")));
         echo json_encode($json_response);
     }
 
     public function getSpecificBook() {
         $json_response = array();
         $json_response["response"] = 1;
-        $json_response["book"] = $this->Book_model->getSpecificBook(array("book_code" => $this->input->post("book_code"), "sectiontbl.status" => 1))[0];
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("itembook_id" => $this->input->post("itembook_id"), "sectiontbl.status" => 1))[0];
         switch($json_response["book"]->status) {
             case 1:
                 $json_response["remarks"] = "Available";
