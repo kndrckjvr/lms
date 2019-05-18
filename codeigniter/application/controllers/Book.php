@@ -28,6 +28,7 @@ class Book extends CI_Controller {
     public function reserve() {
         if($this->session->userdata("user_type") == 0) {
             $data = array("page_title" => "Library Management System | Reserve Book",
+            "books" => $this->Book_model->getBook(""),
             "currentActive" => "Reserve Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
