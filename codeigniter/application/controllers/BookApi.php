@@ -73,9 +73,6 @@ class BookApi extends CI_Controller
 
     public function getBooks()
     {
-        if ($this->agent->is_browser()) {
-            if ($this->session->userdata("user_type") != 1) show_404();
-        }
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book_name"] = $this->Book_model->getBooks("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;

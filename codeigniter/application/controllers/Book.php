@@ -33,6 +33,7 @@ class Book extends CI_Controller {
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
             $this->load->view("book/book_reserve");
+            $this->load->view("book/book_modal");
             $this->load->view("templates/footer", $data);
         } else {
             show_404();

@@ -147,9 +147,66 @@
     </div>
 </div>
 
+<div class="modal fade" id="reserve-book-modal" tabindex="-1" role="dialog" aria-labelledby="reserve-book-modal-title" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="m-0 font-weight-bold text-primary" id="reserve-book-modal-title">Loading...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table-sm table-hover col" id="reserve-book-modal-table">
+                    <thead>
+                        <tr>
+                            <th>Book Code</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Added Date</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     jQuery(document).ready(function($) {
         var editing = false;
+
+        $("#reserve-book-modal").on('show.bs.modal', function(e) {
+            var statusType = ["Available", "Reserved", "Borrowed", "Disabled"];
+            var status = ["success", "primary", "warning", "danger"];
+            isLoading(true);
+            $("#reserve-book-modal-table tbody").html("");
+            $.ajax({
+                url: baseUrl + "bookapi/getbooks",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    book_id: $(e.relatedTarget).attr("data-id")
+                },
+                success: function success(res) {
+                    $("#reserve-book-modal-title").html(res.book_name);
+                    res.books.forEach(element => {
+                        $("#reserve-book-modal-table tbody").append("<tr style='cursor: pointer;' data-id='" + element.itembook_id + "' onclick='reserveBook(this)'><td>" +
+                            element.section_code + element.book_code + "</td><td class='text-center'><span class='badge badge-" + status[element.status - 1] + "'>" + statusType[element.status - 1] + "</span></td><td class='text-center'>" +
+                            formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
+                    });
+                    // status type 
+                    // 1 - abvailable
+                    // 2 - reserved
+                    // 3 - borrowed
+                    // 4 - unavailable
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            });
+        });
 
         $("#manage-book-modal").on('show.bs.modal', function(e) {
             var statusType = ["Available", "Reserved", "Borrowed", "Disabled"];

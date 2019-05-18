@@ -72,4 +72,31 @@ class TransactionApi extends CI_Controller
         }
         //echo json_encode(array("response" => 1));
     }
+
+    public function userCreate()
+    {
+        $transactionData = array(
+            "transaction_date" => strtotime("now"),
+            "return_date" => 0,
+            "amount_paid" => 0,
+            "status" => 1,
+            "itembook_id" => $this->input->post("itembook_id"),
+            "user_id" => $this->session->userdata("user_token")
+        );
+
+        $itemBookData = array(
+            "itembook_id" => $transactionData["itembook_id"],
+            "status" => 2
+        );
+
+        if ($this->Transaction_model->createTransaction($transactionData)) {
+            if ($this->Book_model->updateBook("itembooktbl", array("status" => $itemBookData["status"]), array("itembook_id" => $itemBookData["itembook_id"]))) {
+                echo json_encode(array(
+                    "response" => 1,
+                    "data" => $transactionData
+                ));
+                return;
+            }
+        }
+    }
 }
