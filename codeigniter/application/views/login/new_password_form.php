@@ -20,19 +20,25 @@
                     <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
-                                <label for="email">Email</label>
-                                <input type="email" name="email" class="form-control" id="email">
+                                <label for="new_password">New Password</label>
+                                <input type="password" class="form-control" id="new_password">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <button class="btn btn-primary btn-block" type="button" id="submit-button">
+                        <div class="row">
+                            <div class="col mb-4">
+                                <label for="confirm_new_password">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm_new_password">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="button" id="new-password-button">
                             <span class="spinner-border spinner-border-sm" style="display: none;" role="status"></span>
                             <span class="button-text">
                                 Submit
                             </span>
                         </button>
                         <!-- <input type="submit" value="Login" class="btn btn-primary btn-block"> -->
-                        <a href="<?= base_url("login") ?>" role="button" class="btn btn-primary btn-block">Login</a>
                     </form>
                 </div>
             </div>
@@ -40,9 +46,3 @@
         <div class="col-1"></div>
     </div>
 </div>
-
-<!-- <script>
-    jQuery(document).ready(function($) {
-        
-    });
-</script> -->

@@ -28,4 +28,18 @@ class Login extends CI_Controller
 		$this->load->view('login/forgot_password_form');
 		$this->load->view('templates/footer');
 	}
+
+	public function new_password() {
+		if ($this->session->userdata("user_token")) redirect("user", "location");
+		if ($this->uri->segment(3)) {
+			$data = array('page_title' => "Library Management System");
+			$this->load->view('templates/header', $data);
+			$this->load->view('login/new_password_form');
+			$this->load->view('templates/footer');
+		}
+		else{
+			redirect(base_url());
+		}
+		
+	}
 }

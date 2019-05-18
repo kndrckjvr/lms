@@ -30,6 +30,15 @@ class User_model extends CI_Model
         return $this->db->affected_rows();
     }
 
+    public function resetPassword($ndata,$id=NULL){
+        if (!empty($id)) {
+            $this->db->where($id);
+        }
+        
+        $this->db->update("usertbl",$ndata);
+        return $this->db->affected_rows();
+    }
+
     public function hasValidCredentials($username, $password)
     {
         $this->db

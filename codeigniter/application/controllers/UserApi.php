@@ -65,6 +65,82 @@ class UserApi extends CI_Controller
         echo json_encode($json_response);
     }
 
+    public function reset_password(){
+        if ($this->agent->is_browser()) {
+            $json_response = array();
+            $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+
+            if ($this->form_validation->run() == FALSE) {
+                $json_response = array("response" => 0);
+                foreach ($this->form_validation->error_array() as $key => $value) {
+                    $json_response[$key] = $value;
+                }
+            } else{
+                $this->load->helper('string');
+                $code = random_string('alnum',6);
+                $email = $this->input->post("email");
+                $data = array("password_code" => $code);
+                if ($this->User_model->resetPassword($data,array("email" => $email))) {
+                    $this->email->from('bryanbernardo9828@gmail.com', 'NAME');
+                    $this->email->to($email);
+
+                    $this->email->subject('Reset Password');
+
+                    $reset_link = array('code' => $code);
+
+                    $this->email->message($this->load->view('templates/reset_password',$reset_link,true));
+                    
+                    if(!$this->email->send()){
+                        $this->email->print_debugger();
+                    }
+                    else{
+                        $json_response = array("response" => 1);
+                    }
+                    
+                } else {
+                    $json_response = array("response" => 0, "message" => "Error Found");
+                }
+            }
+
+        } elseif ($this->agent->is_mobile()) {
+            echo "mobile";
+        } else {
+            echo "unknown";
+        }
+        echo json_encode($json_response);
+    }
+
+    public function reset_password_confirm(){
+        $new_password = $this->input->post("new_password");
+        $code = $this->input->post("code");
+        if ($this->agent->is_browser()) {
+            $json_response = array();
+            $this->form_validation->set_rules('new_password', 'New Password', 'trim|required');
+            $this->form_validation->set_rules('confirm_new_password', 'Confirm New Password', 'trim|required|matches[new_password]');
+
+            if ($this->form_validation->run() == FALSE) {
+                $json_response = array("response" => 0);
+                foreach ($this->form_validation->error_array() as $key => $value) {
+                    $json_response[$key] = $value;
+                }
+            } else{
+                $data = array("password" => sha1($new_password));
+                if ($this->User_model->resetPassword($data,array("password_code" => $code))) {
+                    $json_response = array("response" => 1);
+                } else {
+                    $json_response = array("response" => 0, "message" => "Error Found");
+                }
+
+            }
+
+        } elseif ($this->agent->is_mobile()) {
+            echo "mobile";
+        } else {
+            echo "unknown";
+        }
+        echo json_encode($json_response);
+    }
+
     public function logout()
     {
         $this->session->sess_destroy();
