@@ -34,7 +34,7 @@ class UserApi extends CI_Controller
 
             $this->form_validation->set_rules('username', 'Username', 'trim|required|alpha_numeric');
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[usertbl.email]');
-            $this->form_validation->set_rules('password', 'Password', 'trim|required');
+            $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
             $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
 
             if ($this->form_validation->run() == FALSE) {
