@@ -31,8 +31,8 @@
                     </thead>
                     <tbody>
                         <?php if ($books != null) foreach ($books as $book) { ?>
-                            <tr data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#manage-book-modal" style="cursor: pointer;">
-                                <td><?= $book->book_name ?></td>
+                            <tr class="book-class" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#manage-book-modal" style="cursor: pointer;">
+                                <td class="book-name-class"><?= $book->book_name ?></td>
                                 <td><?= $book->book_author ?></td>
                                 <td><?= $book->section_name ?></td>
                                 <td class="text-center"><?= $book->book_qty ?></td>

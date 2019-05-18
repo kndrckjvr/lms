@@ -1,3 +1,4 @@
+<?php date_default_timezone_set("Asia/Manila"); ?>
 <div class="row mt-4">
     <div class="col-1"></div>
     <div class="col-10">

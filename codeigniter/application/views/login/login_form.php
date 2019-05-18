@@ -39,6 +39,7 @@
                         </button>
                         <!-- <input type="submit" value="Login" class="btn btn-primary btn-block"> -->
                         <a href="<?= base_url("register") ?>" role="button" class="btn btn-primary btn-block">Register</a>
+                        <a href="<?= base_url("forgot_password") ?>" role="button" class="btn btn-primary btn-block">Forgot Password</a>
                     </form>
                 </div>
             </div>
