@@ -38,11 +38,12 @@ class TransactionApi extends CI_Controller
                 if ($lastTransactionData = $this->Transaction_model->getTransactionsByBook(array("transactiontbl.itembook_id" => $this->input->post("itembook_id")))) {
                     $transactionData["user_id"] = $lastTransactionData[0]->user_id;
                 }
+                $penalty = $this->Penalty_model->getPenalty($lastTransactionData[0]->transaction_date);
                 $transactionData["return_date"] = strtotime("now");
-                if (strtotime("now") > strtotime("+3 day", $lastTransactionData[0]->transaction_date)) {
+                if (strtotime("now") > strtotime("+" . $penalty[0]->penalty_day ." day", $lastTransactionData[0]->transaction_date)) {
                     // penalty table
-                    // if SELECT penaltyAmount, penaltyDays FROM penaltytbl WHERE penaltyImplementationDate < lastDateTrans ORDER BY ID DESC  
-                    $transactionData["amount_paid"] = 20 * ceil((strtotime("now") - strtotime("+3 day", $lastTransactionData[0]->transaction_date)) / 86400);
+                    // if SELECT penaltyAmount, penaltyDays FROM penaltytbl WHERE penalty_date < lastDateTrans ORDER BY ID DESC  
+                    $transactionData["amount_paid"] = $penalty[0]->penalty_amount * ceil((strtotime("now") - strtotime("+" . $penalty[0]->penalty_day ." day", $lastTransactionData[0]->transaction_date)) / 86400);
                 }
                 $itemBookData["status"] = 1;
                 break;
@@ -60,6 +61,11 @@ class TransactionApi extends CI_Controller
                 break;
         }
         // echo $itemBookData["itembook_id"];
+        // echo json_encode(array(
+        //     "response" => 1,
+        //     "data" => $transactionData,
+        //     "query" => $this->db->last_query()
+        // ));
         // die();
         if ($this->Transaction_model->createTransaction($transactionData)) {
             if ($this->Book_model->updateBook("itembooktbl", array("status" => $itemBookData["status"]), array("itembook_id" => $itemBookData["itembook_id"]))) {
