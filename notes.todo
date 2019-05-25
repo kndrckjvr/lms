@@ -1,18 +1,24 @@
-// need
-book editor             done 4:33 AM
-transaction viewer      done 5:30 AM
-report generations      done 5:30 AM
-search books ni user    done 6:03 AM
-reserve books ni user   done
-
-// need 2
-penalty dynamic
+// need 
+penalty dynamic         done pero di pa naeedit
 forgot password         done
 registration            done
 section editor
 user editor
+manage payment
+pagination all
+    - book manager
+    - section manager
+    - user manager
+    - manage payment
+    - transaction report
+    - book search
+    - book reserve
+search features
+user expiry
 
-// need 3
+// less prio
+unpaid price
+number of books reserved
 user profile admin and user
 singleton yung itembook code 
 // nagawa na to pero may problem pag nagpalit ng section
