@@ -100,7 +100,6 @@ function printReport() {
 }
 
 function reserveBook(e) {
-    console.log($(e).data("id"));
     swal({
         title: "Reserve this Book?",
         text: "This will be reserved to you.",

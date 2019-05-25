@@ -1,7 +1,5 @@
 // need 
 penalty dynamic         done pero di pa naeedit
-forgot password         done
-registration            done
 section editor
 user editor
 manage payment
@@ -15,11 +13,19 @@ pagination all
     - book reserve
 search features
 user expiry
+min_length[8] add strength analyzer 
+redo code functions for code consistency
+user profile admin and user
+add min max length for validation 255
+editable error messages
+comment
+select on section
+ayusin pa yung author
+author + multiple
 
 // less prio
 unpaid price
-number of books reserved
-user profile admin and user
+number of books reserved and borrowed
 singleton yung itembook code 
 // nagawa na to pero may problem pag nagpalit ng section
 // solution get book_code iterate all books na ililipat + 1 per book sa book code 
@@ -29,7 +35,6 @@ singleton yung itembook code
     ORDER BY book_code DESC 
     LIMIT 1
 // after insert count all books under tas update yung section_code_number ng section na yun
-
 logs
 file uploading
 // https://stackoverflow.com/questions/10899384/uploading-both-data-and-files-in-one-form-using-ajax

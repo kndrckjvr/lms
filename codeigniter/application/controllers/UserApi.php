@@ -115,7 +115,7 @@ class UserApi extends CI_Controller
         $code = $this->input->post("code");
         if ($this->agent->is_browser()) {
             $json_response = array();
-            $this->form_validation->set_rules('new_password', 'New Password', 'trim|required');
+            $this->form_validation->set_rules('new_password', 'New Password', 'trim|required|min_length[6]');
             $this->form_validation->set_rules('confirm_new_password', 'Confirm New Password', 'trim|required|matches[new_password]');
 
             if ($this->form_validation->run() == FALSE) {
@@ -204,19 +204,4 @@ class UserApi extends CI_Controller
             "users" => $this->User_model->searchUser($this->input->post("search_text"))
         ));
     }
-
-    // public function sampleemail(){
-    //     $this->email->from('bryanbernardo9828@gmail.com', 'NAME');
-    //     $this->email->to('bryanbernardo9828@gmail.com');
-
-    //     $this->email->subject('Reset Password');
-    //     $this->email->message("Sample Email");
-        
-    //     if(!$this->email->send()){
-    //         $this->email->print_debugger();
-    //     }
-    //     else{
-    //         echo "Emaill Sent";
-    //     }
-    // }
 }

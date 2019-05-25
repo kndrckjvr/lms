@@ -195,11 +195,6 @@
                             element.section_code + element.book_code + "</td><td class='text-center'><span class='badge badge-" + status[element.status - 1] + "'>" + statusType[element.status - 1] + "</span></td><td class='text-center'>" +
                             formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
                     });
-                    // status type 
-                    // 1 - abvailable
-                    // 2 - reserved
-                    // 3 - borrowed
-                    // 4 - unavailable
                 },
                 error: function error(jqxhr, err, textStatus) {
                     errorHandler(jqxhr, err, textStatus);
@@ -227,11 +222,6 @@
                             element.section_code + element.book_code + "</td><td class='text-center'><span class='badge badge-" + status[element.status - 1] + "'>" + statusType[element.status - 1] + "</span></td><td class='text-center'>" +
                             formatDate(new Date(element.created_at * 1000)) + "</td></tr>")
                     });
-                    // status type 
-                    // 1 - abvailable
-                    // 2 - reserved
-                    // 3 - borrowed
-                    // 4 - unavailable
                 },
                 error: function error(jqxhr, err, textStatus) {
                     errorHandler(jqxhr, err, textStatus);
@@ -281,12 +271,6 @@
                             $("#available-button").removeAttr("disabled");
                             break;
                     }
-
-                    // status type 
-                    // 1 - abvailable
-                    // 2 - reserved
-                    // 3 - borrowed
-                    // 4 - unavailable
                 },
                 error: function error(jqxhr, err, textStatus) {
                     errorHandler(jqxhr, err, textStatus);
@@ -319,29 +303,11 @@
             handleProcess(e.currentTarget);
         });
 
-        // swal({
-        //     title: "Are you sure?",
-        //     text: "This will change the status of the book into Available!",
-        //     icon: "warning",
-        //     buttons: true,
-        //     dangerMode: true,
-        //   })
-        //   .then((willDelete) => {
-        //     if (willDelete) {
-        //       swal("Poof! Your imaginary file has been deleted!", {
-        //         icon: "success",
-        //       });
-        //     } else {
-        //       swal("Your imaginary file is safe!");
-        //     }
-        //   });
-
         $("#manage-book-item-modal").on('hidden.bs.modal', function(e) {
             editing = false;
         });
 
         $("#edit-book-item").on('click', function(e) {
-            console.log( $(e.currentTarget).attr("data-id"));
             if (editing) {
                 swal({
                         title: "Are you sure?",
