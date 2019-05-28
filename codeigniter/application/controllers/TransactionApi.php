@@ -79,6 +79,17 @@ class TransactionApi extends CI_Controller
         //echo json_encode(array("response" => 1));
     }
 
+    public function pageChange() {
+        $json_response = array(
+            "response" => 1,
+            "currentPage" => $this->input->post("page"),
+            "pages" => $this->Transaction_model->getTransactionPages(($this->session->userdata("user_type") == 0 ? array("user_id" => $this->session->userdata("user_type")) : array())),
+            "transactionData" => $this->Transaction_model->getTransaction(($this->session->userdata("user_type") == 0 ? array("user_id" => $this->session->userdata("user_type")) : array()), ($this->input->post("page") - 1) * 10)
+        );
+
+        echo json_encode($json_response);
+    }
+
     public function userCreate()
     {
         $transactionData = array(
