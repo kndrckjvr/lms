@@ -43,17 +43,17 @@
                         if ($transactions) {
                             foreach ($transactions as $transaction) { ?>
                                 <tr data-id="<?= $transaction->transaction_id ?>" data-toggle="modal" data-target="#manage-user-modal" style="cursor: pointer;">
-                                    <td class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center"><?= $transaction->transaction_id ?></td>
-                                    <td class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center"><?= date("F d, Y", $transaction->transaction_date) ?></td>
-                                    <td class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center"><span class="badge badge-<?= $transaction_status[$transaction->status - 1] ?>"><?= $transaction_type[$transaction->status - 1] ?></span></td>
-                                    <td class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center"><span class="badge badge-<?php echo ($transaction->user_type == 1) ? "info" : "primary"; ?>"><?php echo ($transaction->user_type == 1) ? "<i class='fas fa-user-shield'></i>" : "<i class='fas fa-user-alt'></i>"; ?>&nbsp;<?= $transaction->username ?></span></td>
+                                    <td class="text-center"><?= $transaction->transaction_id ?></td>
+                                    <td class="text-center"><?= date("F d, Y", $transaction->transaction_date) ?></td>
+                                    <td class="text-center"><span class="badge badge-<?= $transaction_status[$transaction->status - 1] ?>"><?= $transaction_type[$transaction->status - 1] ?></span></td>
+                                    <td class="text-center"><span class="badge badge-<?php echo ($transaction->user_type == 1) ? "info" : "primary"; ?>"><?php echo ($transaction->user_type == 1) ? "<i class='fas fa-user-shield'></i>" : "<i class='fas fa-user-alt'></i>"; ?>&nbsp;<?= $transaction->username ?></span></td>
                                 </tr>
                             <?php
                         }
                     } else {
                         ?>
                             <tr>
-                                <td colspan="5" class="text-center" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center">No Data Found.
+                                <td colspan="5" class="text-center">No Data Found.
                                 <td>
                             </tr>
                         <?php
@@ -64,15 +64,15 @@
                 <nav class="mt-2" style="float: right;">
                     <ul class="pagination pagination-sm">
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            <a class="page-link" href="#" onclick="changePage('prev')" tabindex="-1" aria-disabled="true">Previous</a>
                         </li>
                         <?php for($i = 1; $i <= $pages; $i++) {?>
                         <li class="page-item<?= (($i == 1) ? " active" : "") ?>" onclick="changePage(<?= $i ?>)">
                             <a class="page-link" href="#"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></a>
                         </li>
                         <?php } ?>
-                        <li class="page-item<?= (($pages == 1) ? " disabled" : "") ?>">
-                            <a class="page-link" href="#">Next</a>
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="changePage('next')">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -84,14 +84,16 @@
 
 <script>
 var statusType = ["Reserve", "Borrow", "Return", "Pay", "Deactivate", "Activate"],
-    statusClass = ["primary", "warning", "info", "secondary", "danger", "success"]
+    statusClass = ["primary", "warning", "info", "secondary", "danger", "success"],
+    currentPage = 1;
 function changePage(e) {
+    isLoading(true);
     $.ajax({
         url: baseUrl + "transactionapi/pagechange",
         type: "POST",
         dataType: "JSON",
         data: {
-            page: e
+            page: (e == 'next') ? currentPage + 1 : ((e == 'prev') ? currentPage - 1 : e)
         },
         success: function success(res) {
             $("#transaction-reports-table tbody").html("");
@@ -99,19 +101,50 @@ function changePage(e) {
             res.transactionData.forEach(data => {
                 $("#transaction-reports-table tbody").append(
                     "<tr data-id='" +  data.transaction_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" + 
-                        "<td class='text-center' style='font-family:\'Segoe UI\', Tahoma, Geneva, Verdana, sans-serif; text-align: center'>" +  data.transaction_id + "</td>" +
-                        "<td class='text-center' style='font-family:\'Segoe UI\', Tahoma, Geneva, Verdana, sans-serif; text-align: center'>" +  formatDate(new Date(data.transaction_date * 1000)) + "</td>" +
-                        "<td class='text-center' style='font-family:\'Segoe UI\', Tahoma, Geneva, Verdana, sans-serif; text-align: center'><span class='badge badge-" + statusClass[data.status - 1] + "'>" + statusType[data.status - 1] + "</span></td>" +
-                        "<td class='text-center' style='font-family:\'Segoe UI\', Tahoma, Geneva, Verdana, sans-serif; text-align: center'>" + 
+                        "<td class='text-center'>" +  data.transaction_id + "</td>" +
+                        "<td class='text-center'>" +  formatDate(new Date(data.transaction_date * 1000)) + "</td>" +
+                        "<td class='text-center'><span class='badge badge-" + statusClass[data.status - 1] + "'>" + statusType[data.status - 1] + "</span></td>" +
+                        "<td class='text-center'>" + 
                             "<span class='badge badge-" + ((data.user_type == 1) ? 'info' : 'primary') + "'>" + ((data.user_type == 1) ? '<i class=\'fas fa-user-shield\'></i>' : '<i class=\'fas fa-user-alt\'></i>') + "&nbsp;" +  data.username + "</span></td>" + 
                     "</tr>");
             });
+
             $(".page-item").removeClass("active");
             $($(".page-item")[res.currentPage]).addClass("active");
+            
+            currentPage = parseInt(res.currentPage);
+
+            if(currentPage == 1) {
+                $($(".page-item")[0]).addClass("disabled");
+            } else {
+                $($(".page-item")[0]).removeClass("disabled");
+            }
+            
+            if(currentPage == res.pages) {
+                $($(".page-item")[$(".page-item").length - 1]).addClass("disabled");
+            } else {
+                $($(".page-item")[$(".page-item").length - 1]).removeClass("disabled");
+            }
         },
         error: function error(err) {
 
-        }
+        },
+        complete: complete()
     });
+}
+
+function printReport() {
+    var divToPrint = document.getElementById('transaction-reports-table');
+    var newWin = window.open("");
+    newWin.document.write("<html>");
+    newWin.document.write("<head><title>Print Transaction</title>");
+    newWin.document.write('<link type="text/css" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">');
+    newWin.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">');
+    newWin.document.write('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">');
+    newWin.document.write('<link rel="stylesheet" href="<?= base_url("css/custom.css"); ?>">');
+    newWin.document.write("</head><body>");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.document.write("</body></html>");
+    newWin.print();
 }
 </script>

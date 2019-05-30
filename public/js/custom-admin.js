@@ -91,14 +91,6 @@ function handleProcess(e) {
     })
 }
 
-function printReport() {
-    var divToPrint = document.getElementById('transaction-reports-table');
-    var newWin = window.open("");
-    newWin.document.write(divToPrint.outerHTML);
-    newWin.print();
-    newWin.close();
-}
-
 function reserveBook(e) {
     swal({
         title: "Reserve this Book?",
