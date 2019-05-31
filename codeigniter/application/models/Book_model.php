@@ -19,9 +19,10 @@ class Book_model extends CI_Model
     }
 
     public function getBook($bookName) {
-        $this->db->select("book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id) as book_qty")
+        $this->db->select("booktbl.book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
             ->from("booktbl")
             ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+            //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
             ->like("book_name", $bookName, "both")
             ->or_like("book_author", $bookName, "both")
             ->or_like("section_name", $bookName, "both")
@@ -78,5 +79,16 @@ class Book_model extends CI_Model
         }
         $this->db->update($table, $data);
         return $this->db->affected_rows();
+    }
+
+    public function getBookByPage($where, $start) {
+        $this->db->select("*")
+            ->from("booktbl")
+            ->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
+            ->where($where)
+            ->limit(10, $start)
+            ->order_by('book_id',"DESC");
+        $query = $this->db->get();
+        return $query->num_rows() > 0 ? $query->result() : false;
     }
 }
