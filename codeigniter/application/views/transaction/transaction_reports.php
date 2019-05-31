@@ -20,7 +20,7 @@
                     <div class="col-8"></div>
                     <form class="col-4" onsubmit="return false">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for...">
+                            <input type="text" class="form-control bg-light border-0 small" id="search-field" placeholder="Search for...">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
@@ -71,7 +71,7 @@
                             <a class="page-link" href="#"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></a>
                         </li>
                         <?php } ?>
-                        <li class="page-item">
+                        <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?>">
                             <a class="page-link" href="#" onclick="changePage('next')">Next</a>
                         </li>
                     </ul>
@@ -86,6 +86,7 @@
 var statusType = ["Reserve", "Borrow", "Return", "Pay", "Deactivate", "Activate"],
     statusClass = ["primary", "warning", "info", "secondary", "danger", "success"],
     currentPage = 1;
+
 function changePage(e) {
     isLoading(true);
     $.ajax({
@@ -135,7 +136,7 @@ function changePage(e) {
 
 function printReport() {
     var divToPrint = document.getElementById('transaction-reports-table');
-    var newWin = window.open("");
+    var newWin = window.open("", "Print Transaction", "width=200&height=200");
     newWin.document.write("<html>");
     newWin.document.write("<head><title>Print Transaction</title>");
     newWin.document.write('<link type="text/css" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">');
@@ -146,5 +147,6 @@ function printReport() {
     newWin.document.write(divToPrint.outerHTML);
     newWin.document.write("</body></html>");
     newWin.print();
+    newWin.close();
 }
 </script>

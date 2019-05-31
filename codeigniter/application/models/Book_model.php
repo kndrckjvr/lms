@@ -23,6 +23,8 @@ class Book_model extends CI_Model
             ->from("booktbl")
             ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
             ->like("book_name", $bookName, "both")
+            ->or_like("book_author", $bookName, "both")
+            ->or_like("section_name", $bookName, "both")
             ->where(array("sectiontbl.status" => 1));
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
