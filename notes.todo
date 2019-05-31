@@ -3,7 +3,7 @@ penalty dynamic         done pero di pa naeedit
 section editor
 user editor
 manage payment
-pagination all            ken - finished na for transaction (date due: 05/31 12am)
+pagination all            ken - finished na for transaction (date due: 06/02 12am)
     - book manager          will sunod ko na yung iba later
     - section manager
     - user manager
@@ -19,7 +19,7 @@ user profile admin and user
 add min max length for validation 255           bry
 editable error messages                         bry
 comment                                         yuji
-select on section <<< nakalimutan ko to HAHAHAH - ken
+select on section <<< gets ko na sa search to nagawa ko na for books search
 ayusin pa yung author <<< existing na yung table pero di pa naayos
 author + multiple <<< exisiting na yung table pero di pa naayos
 
