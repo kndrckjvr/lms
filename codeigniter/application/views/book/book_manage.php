@@ -11,9 +11,9 @@
                     <div class="col-8"></div>
                     <form class="col-4" onsubmit="return false">
                         <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for...">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." id="search-field">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
+                            <button class="btn btn-primary" type="button" id="search-button">
                                 <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
@@ -40,8 +40,108 @@
                         <?php } else { ?><tr><td colspan="4" class="text-center">No Book Found.</td></tr><?php } ?>
                     </tbody>
                 </table>
+                <nav class="mt-2" style="float: right;">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item disabled prev">
+                            <button class="page-link" onclick="changePage('prev')" tabindex="-1" aria-disabled="true">Previous</button>
+                        </li>
+                        <?php for($i = 1; $i <= $pages; $i++) {?>
+                        <li class="page-item<?= (($i == 1) ? " active" : "") ?> page-number" onclick="changePage(<?= $i ?>)">
+                            <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
+                        </li>
+                        <?php } ?>
+                        <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?> next">
+                            <button class="page-link" onclick="changePage('next')">Next</button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
     <div class="col-1"></div>
 </div>
+<script>
+var currentPage = 1;
+function changePage(e) {
+    isLoading(true);
+    $.ajax({
+        url: baseUrl + "bookapi/pagechange",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            page: (e == 'next') ? currentPage + 1 : ((e == 'prev') ? currentPage - 1 : e),
+            book_name: $("#search-field").val()
+        },
+        success: function success(res) {
+            $("#manage-book-table tbody").html("");
+            
+            if (res.bookData) {
+                res.bookData.forEach(element => {
+                    $("#manage-book-table tbody").append(
+                    "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#manage-book-modal' style='cursor: pointer;'><td>"+ element.book_name +"</td><td>"+ element.book_author +"</td><td>"+ element.section_name +"</td><td class='text-center'>"+ element.book_qty +"</td></tr>")
+                });
+            } else {
+                $("#manage-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+            }
+
+            $(".page-item").removeClass("active");
+            $($(".page-item")[res.currentPage]).addClass("active");
+            
+            currentPage = parseInt(res.currentPage);
+
+            if(currentPage == 1) {
+                $($(".page-item")[0]).addClass("disabled");
+            } else {
+                $($(".page-item")[0]).removeClass("disabled");
+            }
+            
+            if(currentPage == res.pages) {
+                $($(".page-item")[$(".page-item").length - 1]).addClass("disabled");
+            } else {
+                $($(".page-item")[$(".page-item").length - 1]).removeClass("disabled");
+            }
+        },
+        error: function error(err) {
+
+        },
+        complete: complete()
+    });
+}
+
+jQuery(document).ready(function($) {
+    $("#search-button").on("click", function(e) {
+        isLoading(true)
+        $.ajax({
+            url: baseUrl + "bookapi/searchbook",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                book_name: $("#search-field").val()
+            },
+            success: function success(res) {
+                $("#manage-book-table tbody").html("");
+                if (res.books) {
+                    res.books.forEach(element => {
+                        $("#manage-book-table tbody").append(
+                        "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#manage-book-modal' style='cursor: pointer;'><td>"+ element.book_name +"</td><td>"+ element.book_author +"</td><td>"+ element.section_name +"</td><td class='text-center'>"+ element.book_qty +"</td></tr>")
+                    });
+                } else {
+                    $("#manage-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                }
+
+                $("li.page-item.page-number").remove();
+                
+                currentPage = 1;
+
+                for(var i = 1; i <= res.pages; i++) {
+                    $("li.page-item.next").before("<li class='page-item" + ((i == 1) ? " active" : "") + " page-number' onclick='changePage(" + i + ")'><button class='page-link'>" + i + "</button></li>", )
+                }
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    });
+});
+</script>

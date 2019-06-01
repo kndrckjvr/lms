@@ -31,7 +31,7 @@
                     </thead>
                     <tbody>
                         <?php if ($books != null) foreach ($books as $book) { ?>
-                            <tr class="book-class" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#manage-book-modal" style="cursor: pointer;">
+                            <tr class="book-class" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#view-book-modal" style="cursor: pointer;">
                                 <td class="book-name-class"><?= $book->book_name ?></td>
                                 <td><?= $book->book_author ?></td>
                                 <td><?= $book->section_name ?></td>
@@ -63,7 +63,7 @@
                     if (res.books) {
                         res.books.forEach(element => {
                             $("#search-book-table tbody").append(
-                            "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#manage-book-modal' style='cursor: pointer;'><td>"+ element.book_name +"</td><td>"+ element.book_author +"</td><td>"+ element.section_name +"</td><td class='text-center'>"+ element.book_qty +"</td></tr>")
+                            "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#view-book-modal' style='cursor: pointer;'><td>"+ element.book_name +"</td><td>"+ element.book_author +"</td><td>"+ element.section_name +"</td><td class='text-center'>"+ element.book_qty +"</td></tr>")
                         });
                     } else {
                     $("#search-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");

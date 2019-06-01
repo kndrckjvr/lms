@@ -9,8 +9,7 @@ class Transaction_model extends CI_Model
         parent::__construct();
     }
 
-    public function getTransactions($where = NULL)
-    {
+    public function getTransactions($where = NULL) {
         if ($where !== NULL) {
             $this->db->where($where);
         }
@@ -46,8 +45,7 @@ class Transaction_model extends CI_Model
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
-    public function getTransactionPages($where = NULL)
-    {
+    public function getTransactionPages($where = NULL) {
         if ($where !== NULL) {
             $this->db->where($where);
         }
