@@ -59,15 +59,15 @@
                 </table>
                 <nav class="mt-2" style="float: right;">
                     <ul class="pagination pagination-sm">
-                        <li class="page-item disabled">
+                        <li class="page-item disabled prev">
                             <button class="page-link" onclick="changePage('prev')" tabindex="-1" aria-disabled="true">Previous</button>
                         </li>
                         <?php for ($i = 1; $i <= $pages; $i++) { ?>
-                            <li class="page-item<?= (($i == 1) ? " active" : "") ?>" onclick="changePage(<?= $i ?>)">
+                            <li class="page-item<?= (($i == 1) ? " active" : "") ?> page-number" onclick="changePage(<?= $i ?>)">
                                 <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
                             </li>
                         <?php } ?>
-                        <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?>">
+                        <li class="page-item<?= (($pages == 0 || $pages == 1) ? " disabled" : "") ?> next">
                             <button class="page-link" onclick="changePage('next')">Next</button>
                         </li>
                     </ul>
@@ -90,7 +90,8 @@
             type: "POST",
             dataType: "JSON",
             data: {
-                page: (e == 'next') ? currentPage + 1 : ((e == 'prev') ? currentPage - 1 : e)
+                page: (e == 'next') ? currentPage + 1 : ((e == 'prev') ? currentPage - 1 : e),
+                search_text: $("#search-field").val()
             },
             success: function success(res) {
                 $("#transaction-reports-table tbody").html("");
@@ -135,4 +136,46 @@
         newWin.print();
         newWin.close();
     }
+
+    jQuery(document).ready(function($) {
+        $("#search-field").donetyping(function() {
+            isLoading(true)
+            $.ajax({
+                url: baseUrl + "transactionapi/search",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    search_text: $("#search-field").val()
+                },
+                success: function success(res) {
+                    $("#transaction-reports-table tbody").html("");
+
+                    res.transactionData.forEach(data => {
+                        $("#transaction-reports-table tbody").append(
+                            "<tr data-id='" + data.transaction_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" +
+                            "<td class='text-center'>" + data.transaction_id + "</td>" +
+                            "<td class='text-center'>" + formatDate(new Date(data.transaction_date * 1000)) + "</td>" +
+                            "<td class='text-center'><span class='badge badge-" + statusClass[data.status - 1] + "'>" + statusType[data.status - 1] + "</span></td>" +
+                            "<td class='text-center'>" +
+                            "<span class='badge badge-" + ((data.user_type == 1) ? 'info' : 'primary') + "'>" + ((data.user_type == 1) ? '<i class=\'fas fa-user-shield\'></i>' : '<i class=\'fas fa-user-alt\'></i>') + "&nbsp;" + data.username + "</span></td>" +
+                            "</tr>");
+                    });
+
+                    $("li.page-item.page-number").remove();
+
+                    currentPage = 1;
+
+                    pageHandler(currentPage, res.pages);
+
+                    for (var i = 1; i <= res.pages; i++) {
+                        $("li.page-item.next").before("<li class='page-item" + ((i == 1) ? " active" : "") + " page-number' onclick='changePage(" + i + ")'><button class='page-link'>" + i + "</button></li>", )
+                    }
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            });
+        });
+    });
 </script>
