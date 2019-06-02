@@ -1,18 +1,18 @@
 function showSnackbar(message, type) {
     $("#snackbar").html(message);
-    switch(type) {
+    switch (type) {
         case "error":
             $("#snackbar").css("background-color", "#e74a3b");
-        break;
+            break;
         default:
             $("#snackbar").css("background-color", "#1cc88a");
-        break
+            break
     }
     $("#snackbar").addClass("show");
-    setTimeout(function(){ $("#snackbar").removeClass("show"); }, 3000);
+    setTimeout(function () { $("#snackbar").removeClass("show"); }, 3000);
 }
 
-$("#login-button").on('click', function(e) {
+$("#login-button").on('click', function (e) {
     $(e.target.firstElementChild).show();
     $(e.target.lastElementChild).html("Loading...");
     $("input").removeClass("is-invalid");
@@ -25,8 +25,8 @@ $("#login-button").on('click', function(e) {
             password: $("#password").val()
         },
         success: function success(res) {
-            
-            if(res.response) {
+
+            if (res.response) {
                 window.location = baseUrl + "user";
             } else {
                 $(e.target.firstElementChild).hide();
@@ -42,7 +42,7 @@ $("#login-button").on('click', function(e) {
 });
 
 
-$("#register-button").on('click', function(e) {
+$("#register-button").on('click', function (e) {
     $(e.target.firstElementChild).show();
     $(e.target.lastElementChild).html("Loading...");
     $("input").removeClass("is-invalid");
@@ -57,7 +57,7 @@ $("#register-button").on('click', function(e) {
             confirm_password: $("#confirm_password").val()
         },
         success: function success(res) {
-            if(res.response) {
+            if (res.response) {
                 window.location = baseUrl + "login";
             } else {
                 $(e.target.firstElementChild).hide();
@@ -87,7 +87,7 @@ $("#register-button").on('click', function(e) {
 });
 
 
-$("#submit-button").on('click', function(e) {
+$("#submit-button").on('click', function (e) {
     $(e.target.firstElementChild).show();
     $(e.target.lastElementChild).html("Loading...");
     $("input").removeClass("is-invalid");
@@ -99,7 +99,7 @@ $("#submit-button").on('click', function(e) {
             email: $("#email").val()
         },
         success: function success(res) {
-            if(res.response) {
+            if (res.response) {
                 window.location = baseUrl + "login";
             } else {
                 $(e.target.firstElementChild).hide();
@@ -115,7 +115,7 @@ $("#submit-button").on('click', function(e) {
     });
 });
 
-$("#new-password-button").on('click', function(e) {
+$("#new-password-button").on('click', function (e) {
     $(e.target.firstElementChild).show();
     $(e.target.lastElementChild).html("Loading...");
     $("input").removeClass("is-invalid");
@@ -133,7 +133,7 @@ $("#new-password-button").on('click', function(e) {
         },
         success: function success(res) {
             // console.log(res);
-            if(res.response) {
+            if (res.response) {
                 window.location = baseUrl + "login";
             } else {
                 $(e.target.firstElementChild).hide();
@@ -155,7 +155,46 @@ $("#new-password-button").on('click', function(e) {
     });
 });
 
+function pageHandler(currentPage, pages) {
+    if (currentPage == 1) {
+        $(".page-item.prev").addClass("disabled");
+    } else {
+        $(".page-item.prev").removeClass("disabled");
+    }
 
+    if (currentPage == pages || pages == 0) {
+        $(".page-item.next").addClass("disabled");
+    } else {
+        $(".page-item.next").removeClass("disabled");
+    }
+}
+
+;
+(function ($) {
+    $.fn.extend({
+        donetyping: function (callback, timeout) {
+            timeout = timeout || 1e3;
+            var timeoutReference,
+                doneTyping = function (el) {
+                    if (!timeoutReference) return;
+                    timeoutReference = null;
+                    callback.call(el);
+                };
+            return this.each(function (i, el) {
+                var $el = $(el);
+                $el.is(':input') && $el.on('keyup keypress paste', function (e) {
+                    if (e.type == 'keyup' && e.keyCode != 8) return;
+                    if (timeoutReference) clearTimeout(timeoutReference);
+                    timeoutReference = setTimeout(function () {
+                        doneTyping(el);
+                    }, timeout);
+                }).on('blur', function () {
+                    doneTyping(el);
+                });
+            });
+        }
+    });
+})(jQuery);
 // document.getElementById("book-search-field").onkeyup = function(){
 //   var name_value = $("#book-search-field").val().toLowerCase();
 //   $(".book-class").each(function () {

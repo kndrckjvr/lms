@@ -32,7 +32,8 @@ class User extends CI_Controller
             $data = array(
                 "page_title" => "Library Management System | User Manager",
                 "currentActive" => "User Manager",
-                "users" => $this->User_model->getUsers()
+                "pages" => $this->User_model->getUserPages(),
+                "users" => $this->User_model->getUserByPages(0)
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
@@ -44,7 +45,8 @@ class User extends CI_Controller
         }
     }
 
-    public function profile() {
+    public function profile()
+    {
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
                 "page_title" => "Library Management System",

@@ -10,7 +10,7 @@ class Section extends CI_Controller
             $data = array(
                 "page_title" => "Library Management System | Section Manager",
                 "currentActive" => "Section Manager",
-                "pages" => $this->Section_model->getSectionPages(""),
+                "pages" => $this->Section_model->getSectionPages(),
                 "sections" => $this->Section_model->getSectionByPages(0)
             );
             $this->load->view("templates/header", $data);

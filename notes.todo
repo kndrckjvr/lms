@@ -3,6 +3,8 @@ penalty dynamic editor
 section editor
 user editor
 manage payment
+user profile admin and user
+user reserve redesign     bry
 pagination all            ken (date due: 06/02 12am)
     - book manager          *   done
     - section manager       *   copy this to all during code consistency
@@ -15,11 +17,9 @@ search features             ken - same lang to ng status sa pagination
 user expiry                 ken - done // explanation : pag di na ginagamit yung system for 2 hours mag lologout siya matic
 min_length[8] add strength analyzer             bry
 redo code functions for code consistency        ken - after lahat
-user profile admin and user
 add min max length for validation 255           bry
 editable error messages                         bry
 comment                                         yuji
-select on section - ken done
 ayusin pa yung author <<< existing na yung table pero di pa naayos
 author + multiple <<< exisiting na yung table pero di pa naayos
 

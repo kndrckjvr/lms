@@ -43,7 +43,7 @@ class Section_model extends CI_Model
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
-    public function getSectionPages($searchText)
+    public function getSectionPages($searchText = "")
     {
         $query = $this->db->like("section_name", $searchText, "both")
             ->or_like("section_code", $searchText, "both")

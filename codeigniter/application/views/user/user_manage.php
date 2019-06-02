@@ -11,16 +11,11 @@
                     <div class="col-8"></div>
                     <form class="col-4" onsubmit="return false">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for...">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
+                            <input type="text" class="form-control bg-light border-0 small" id="search-field" placeholder="Search for...">
                         </div>
                     </form>
                 </div>
-                <table class="table-sm table-hover col" id="manage-book-table">
+                <table class="table-sm table-hover col" id="manage-user-table">
                     <thead>
                         <tr>
                             <th class="w-75">Username</th>
@@ -64,23 +59,28 @@
     function changePage(e) {
         isLoading(true);
         $.ajax({
-            url: baseUrl + "bookapi/pagechange",
+            url: baseUrl + "userapi/pagechange",
             type: "POST",
             dataType: "JSON",
             data: {
                 page: (e == 'next') ? currentPage + 1 : ((e == 'prev') ? currentPage - 1 : e),
-                book_name: $("#book-search-field").val()
+                search_text: $("#search-field").val()
             },
             success: function success(res) {
-                $("#search-book-table tbody").html("");
+                $("#manage-user-table tbody").html("");
 
-                if (res.bookData) {
-                    res.bookData.forEach(element => {
-                        $("#search-book-table tbody").append(
-                            "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#view-book-modal' style='cursor: pointer;'><td>" + element.book_name + "</td><td>" + element.book_author + "</td><td>" + element.section_name + "</td><td class='text-center'>" + element.book_qty + "</td></tr>")
+                if (res.userData) {
+                    res.userData.forEach(element => {
+                        $("#manage-user-table tbody").append(
+                            "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" +
+                            "<td>" + element.username + "</td>" +
+                            "<td class='text-center'><span class='badge badge-" + ((element.user_type == 1) ? "primary'><i class='fas fa-user-shield'></i>&nbsp;Admin" : "info'><i class='fas fa-user-alt'></i>&nbsp;User") + "</span></td>" +
+                            "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? "success'>Active" : "danger'>Inactive") + "</span></td>" +
+                            "</tr>"
+                        );
                     });
                 } else {
-                    $("#search-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                    $("#manage-user-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
                 }
 
                 $(".page-item").removeClass("active");
@@ -88,17 +88,7 @@
 
                 currentPage = parseInt(res.currentPage);
 
-                if (currentPage == 1) {
-                    $($(".page-item")[0]).addClass("disabled");
-                } else {
-                    $($(".page-item")[0]).removeClass("disabled");
-                }
-
-                if (currentPage == res.pages) {
-                    $($(".page-item")[$(".page-item").length - 1]).addClass("disabled");
-                } else {
-                    $($(".page-item")[$(".page-item").length - 1]).removeClass("disabled");
-                }
+                pageHandler(currentPage, res.pages);
             },
             error: function error(err) {
 
@@ -108,29 +98,36 @@
     }
 
     jQuery(document).ready(function($) {
-        $("#book-search-button").on('click', function(e) {
+        $("#search-field").donetyping(function() {
             isLoading(true)
             $.ajax({
-                url: baseUrl + "bookapi/searchbook",
+                url: baseUrl + "userapi/searchuser",
                 type: "POST",
                 dataType: "JSON",
                 data: {
-                    book_name: $("#book-search-field").val()
+                    search_text: $("#search-field").val()
                 },
                 success: function success(res) {
-                    $("#search-book-table tbody").html("");
-                    if (res.books) {
-                        res.books.forEach(element => {
-                            $("#search-book-table tbody").append(
-                                "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#view-book-modal' style='cursor: pointer;'><td>" + element.book_name + "</td><td>" + element.book_author + "</td><td>" + element.section_name + "</td><td class='text-center'>" + element.book_qty + "</td></tr>")
+                    $("#manage-user-table tbody").html("");
+                    if (res.userData) {
+                        res.userData.forEach(element => {
+                            $("#manage-user-table tbody").append(
+                                "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" +
+                                "<td>" + element.username + "</td>" +
+                                "<td class='text-center'><span class='badge badge-" + ((element.user_type == 1) ? "primary'><i class='fas fa-user-shield'></i>&nbsp;Admin" : "info'><i class='fas fa-user-alt'></i>&nbsp;User") + "</span></td>" +
+                                "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? "success'>Active" : "danger'>Inactive") + "</span></td>" +
+                                "</tr>"
+                            );
                         });
                     } else {
-                        $("#search-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                        $("#manage-user-table tbody").html("<td colspan='3' class='text-center'>No User Found.</td>");
                     }
 
                     $("li.page-item.page-number").remove();
 
                     currentPage = 1;
+
+                    pageHandler(currentPage, res.pages);
 
                     for (var i = 1; i <= res.pages; i++) {
                         $("li.page-item.next").before("<li class='page-item" + ((i == 1) ? " active" : "") + " page-number' onclick='changePage(" + i + ")'><button class='page-link'>" + i + "</button></li>", )

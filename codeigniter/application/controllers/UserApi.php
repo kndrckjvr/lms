@@ -7,7 +7,7 @@ class UserApi extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->library(array("user_agent", "form_validation",'email'));
+        $this->load->library(array("user_agent", "form_validation", 'email'));
     }
 
     public function login()
@@ -50,7 +50,7 @@ class UserApi extends CI_Controller
                     "user_type" => 0,
                     "status" => 1,
                     "created_at" => time()
-                );                
+                );
                 if ($this->User_model->createUser($data)) {
                     $json_response = array("response" => 1);
                 } else {
@@ -65,7 +65,8 @@ class UserApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function reset_password(){
+    public function reset_password()
+    {
         if ($this->agent->is_browser()) {
             $json_response = array();
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
@@ -75,12 +76,12 @@ class UserApi extends CI_Controller
                 foreach ($this->form_validation->error_array() as $key => $value) {
                     $json_response[$key] = $value;
                 }
-            } else{
+            } else {
                 $this->load->helper('string');
-                $code = random_string('alnum',6);
+                $code = random_string('alnum', 6);
                 $email = $this->input->post("email");
                 $data = array("password_code" => $code);
-                if ($this->User_model->resetPassword($data,array("email" => $email))) {
+                if ($this->User_model->resetPassword($data, array("email" => $email))) {
                     $this->email->from('bryanbernardo9828@gmail.com', 'NAME');
                     $this->email->to($email);
 
@@ -88,20 +89,17 @@ class UserApi extends CI_Controller
 
                     $reset_link = array('code' => $code);
 
-                    $this->email->message($this->load->view('templates/reset_password',$reset_link,true));
-                    
-                    if(!$this->email->send()){
+                    $this->email->message($this->load->view('templates/reset_password', $reset_link, true));
+
+                    if (!$this->email->send()) {
                         $this->email->print_debugger();
-                    }
-                    else{
+                    } else {
                         $json_response = array("response" => 1);
                     }
-                    
                 } else {
                     $json_response = array("response" => 0, "message" => "Error Found");
                 }
             }
-
         } elseif ($this->agent->is_mobile()) {
             echo "mobile";
         } else {
@@ -110,7 +108,8 @@ class UserApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function reset_password_confirm(){
+    public function reset_password_confirm()
+    {
         $new_password = $this->input->post("new_password");
         $code = $this->input->post("code");
         if ($this->agent->is_browser()) {
@@ -123,16 +122,14 @@ class UserApi extends CI_Controller
                 foreach ($this->form_validation->error_array() as $key => $value) {
                     $json_response[$key] = $value;
                 }
-            } else{
+            } else {
                 $data = array("password" => sha1($new_password));
-                if ($this->User_model->resetPassword($data,array("password_code" => $code))) {
+                if ($this->User_model->resetPassword($data, array("password_code" => $code))) {
                     $json_response = array("response" => 1);
                 } else {
                     $json_response = array("response" => 0, "message" => "Error Found");
                 }
-
             }
-
         } elseif ($this->agent->is_mobile()) {
             echo "mobile";
         } else {
@@ -187,9 +184,9 @@ class UserApi extends CI_Controller
             return;
         }
 
-        if($this->input->post("action") == "borrow" || $this->input->post("action") == "return") {
-            if($userid = $this->Transaction_model->getTransactionsByBook(array("transactiontbl.itembook_id" => $this->input->post("itembook_id")))) {
-                if($userid[0]->status == 1 || $userid[0]->status == 2) {
+        if ($this->input->post("action") == "borrow" || $this->input->post("action") == "return") {
+            if ($userid = $this->Transaction_model->getTransactionsByBook(array("transactiontbl.itembook_id" => $this->input->post("itembook_id")))) {
+                if ($userid[0]->status == 1 || $userid[0]->status == 2) {
                     echo json_encode(array(
                         "response" => 1,
                         "users" => $this->User_model->getUsers(array("user_id" => $userid[0]->user_id))
@@ -198,10 +195,31 @@ class UserApi extends CI_Controller
                 }
             }
         }
-        
+
         echo json_encode(array(
             "response" => 1,
             "users" => $this->User_model->searchUser($this->input->post("search_text"))
         ));
+    }
+
+    public function searchUser()
+    {
+        $json_response = array(
+            "pages" => $this->User_model->getUserPages($this->input->post("search_text")),
+            "userData" => $this->User_model->getUserByPages(0, $this->input->post("search_text"))
+        );
+        echo json_encode($json_response);
+    }
+
+    public function pageChange()
+    {
+        $json_response = array(
+            "response" => 1,
+            "currentPage" => $this->input->post("page"),
+            "pages" => $this->User_model->getUserPages($this->input->post("search_text")),
+            "userData" => $this->User_model->getUserByPages(($this->input->post("page") - 1) * 10, $this->input->post("search_text"))
+        );
+
+        echo json_encode($json_response);
     }
 }

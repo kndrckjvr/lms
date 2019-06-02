@@ -8,7 +8,8 @@ class Transaction extends CI_Controller
             $data = array(
                 "page_title" => "Library Management System | Manage Payment",
                 "currentActive" => "Manage Payment",
-                "users" => $this->User_model->getUsers()
+                "pages" => $this->User_model->getUserPages(),
+                "users" => $this->User_model->getUserByPages(0)
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
