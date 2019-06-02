@@ -82,17 +82,6 @@ class Book_model extends CI_Model
         return $this->db->affected_rows();
     }
 
-    public function getBookByPage($where, $start) {
-        $this->db->select("*")
-            ->from("booktbl")
-            ->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
-            ->where($where)
-            ->limit(10, $start)
-            ->order_by('book_id',"DESC");
-        $query = $this->db->get();
-        return $query->num_rows() > 0 ? $query->result() : false;
-    }
-
     public function getBookPages($bookName)
     {
         $this->db->select("booktbl.book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")

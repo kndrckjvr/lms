@@ -64,15 +64,15 @@
                 <nav class="mt-2" style="float: right;">
                     <ul class="pagination pagination-sm">
                         <li class="page-item disabled">
-                            <a class="page-link" href="#" onclick="changePage('prev')" tabindex="-1" aria-disabled="true">Previous</a>
+                            <button class="page-link" onclick="changePage('prev')" tabindex="-1" aria-disabled="true">Previous</button>
                         </li>
                         <?php for($i = 1; $i <= $pages; $i++) {?>
                         <li class="page-item<?= (($i == 1) ? " active" : "") ?>" onclick="changePage(<?= $i ?>)">
-                            <a class="page-link" href="#"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></a>
+                            <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
                         </li>
                         <?php } ?>
                         <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?>">
-                            <a class="page-link" href="#" onclick="changePage('next')">Next</a>
+                            <button class="page-link" onclick="changePage('next')">Next</button>
                         </li>
                     </ul>
                 </nav>

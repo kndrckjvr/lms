@@ -53,4 +53,24 @@ class SectionApi extends CI_Controller
         $json_response["value"] = $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("section_value")))[0]->section_code . sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("section_value")))[0]->section_code_number + 1);
         echo json_encode($json_response);
     }
+
+    public function searchSection()
+    {
+        $json_response = array(
+            "pages" => $this->Section_model->getSectionPages($this->input->post("search_text")),
+            "sectionData" => $this->Section_model->getSectionByPages(0, $this->input->post("search_text"))
+        );
+        echo json_encode($json_response);
+    }
+
+    public function pageChange() {
+        $json_response = array(
+            "response" => 1,
+            "currentPage" => $this->input->post("page"),
+            "pages" => $this->Section_model->getSectionPages($this->input->post("search_text")),
+            "sectionData" => $this->Section_model->getSectionByPages(($this->input->post("page") - 1) * 10, $this->input->post("search_text"))
+        );
+
+        echo json_encode($json_response);
+    }
 }

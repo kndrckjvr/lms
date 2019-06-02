@@ -1,25 +1,25 @@
 // need 
-penalty dynamic         done pero di pa naeedit
+penalty dynamic editor
 section editor
 user editor
 manage payment
-pagination all            ken - finished na for transaction (date due: 06/02 12am)
-    - book manager          will sunod ko na yung iba later
-    - section manager
+pagination all            ken (date due: 06/02 12am)
+    - book manager          *   done
+    - section manager       *   copy this to all during code consistency
     - user manager
     - manage payment
-    - transaction report    *
-    - book search
-    - book reserve
-search features             ken - finished na yung sa book cocopy ko nalang sa iba
-user expiry                 ken - existing na ata to session expiration
+    - transaction report    *   done
+    - book search           *   done
+    - book reserve          *   done
+search features             ken - same lang to ng status sa pagination
+user expiry                 ken - done // explanation : pag di na ginagamit yung system for 2 hours mag lologout siya matic
 min_length[8] add strength analyzer             bry
 redo code functions for code consistency        ken - after lahat
 user profile admin and user
 add min max length for validation 255           bry
 editable error messages                         bry
 comment                                         yuji
-select on section <<< gets ko na sa search to nagawa ko na for books search
+select on section - ken done
 ayusin pa yung author <<< existing na yung table pero di pa naayos
 author + multiple <<< exisiting na yung table pero di pa naayos
 

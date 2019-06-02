@@ -15,6 +15,7 @@ class Book extends CI_Controller {
         if($this->session->userdata("user_type") == 0) {
             $data = array("page_title" => "Library Management System | Search Books",
             "books" => $this->Book_model->getBook("", 0),
+            "pages" => $this->Book_model->getBookPages(""),
             "currentActive" => "Search Books");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
@@ -29,6 +30,7 @@ class Book extends CI_Controller {
         if($this->session->userdata("user_type") == 0) {
             $data = array("page_title" => "Library Management System | Reserve Book",
             "books" => $this->Book_model->getBook("", 0),
+            "pages" => $this->Book_model->getBookPages(""),
             "currentActive" => "Reserve Book");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
