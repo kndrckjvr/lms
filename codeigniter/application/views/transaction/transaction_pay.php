@@ -25,7 +25,7 @@
                     </thead>
                     <tbody>
                         <?php foreach ($users as $user) : ?>
-                            <tr data-id="<?= $user->user_id ?>" data-toggle="modal" data-target="#manage-user-modal" style="cursor: pointer;">
+                            <tr data-id="<?= $user->user_id ?>" data-toggle="modal" data-target="#manage-payment-modal" style="cursor: pointer;">
                                 <td><?= $user->username ?></td>
                                 <td class="text-center"><span class="badge badge-<?php echo ($user->user_type == 1) ? "info" : "primary"; ?>"><?php echo ($user->user_type == 1) ? "<i class='fas fa-user-shield'></i>&nbsp;Admin" : "<i class='fas fa-user-alt'></i>&nbsp;User"; ?></span></td>
                                 <td class="text-center"><span class="badge badge-<?php echo ($user->status == 1) ? "success" : "danger"; ?>"><?php echo ($user->status == 1) ? "Active" : "Inactive"; ?></span></td>
@@ -73,7 +73,7 @@
                 if (res.userData) {
                     res.userData.forEach(element => {
                         $("#manage-payment-table tbody").append(
-                            "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" +
+                            "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-payment-modal' style='cursor: pointer;'>" +
                             "<td>" + element.username + "</td>" +
                             "<td class='text-center'><span class='badge badge-" + ((element.user_type == 1) ? "primary'><i class='fas fa-user-shield'></i>&nbsp;Admin" : "info'><i class='fas fa-user-alt'></i>&nbsp;User") + "</span></td>" +
                             "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? "success'>Active" : "danger'>Inactive") + "</span></td>" +
@@ -113,7 +113,7 @@
                     if (res.userData) {
                         res.userData.forEach(element => {
                             $("#manage-payment-table tbody").append(
-                                "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-user-modal' style='cursor: pointer;'>" +
+                                "<tr data-id='" + element.user_id + "' data-toggle='modal' data-target='#manage-payment-modal' style='cursor: pointer;'>" +
                                 "<td>" + element.username + "</td>" +
                                 "<td class='text-center'><span class='badge badge-" + ((element.user_type == 1) ? "primary'><i class='fas fa-user-shield'></i>&nbsp;Admin" : "info'><i class='fas fa-user-alt'></i>&nbsp;User") + "</span></td>" +
                                 "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? "success'>Active" : "danger'>Inactive") + "</span></td>" +
