@@ -14,10 +14,10 @@
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Login</h6>
                 </div>
-                
+
                 <div class="card-body">
-                    <form onsubmit="return false" method="post">
-                    <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
+                    <form method="post" id="login-form">
+                        <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
                                 <label for="username">Username</label>
@@ -31,24 +31,53 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <button class="btn btn-primary btn-block" type="button" id="login-button">
+                        <button class="btn btn-primary btn-block" type="submit" id="login-button">
                             <span class="spinner-border spinner-border-sm" style="display: none;" role="status"></span>
                             <span class="button-text">
                                 Login
                             </span>
                         </button>
-                        <div class="row mt-2">
-                            <div class="col-6">
-                                <a href="<?= base_url("forgot_password") ?>" role="button" class="btn btn-primary btn-block">Forgot Password</a>
-                            </div>
-                            <div class="col-6">
-                                <a href="<?= base_url("register") ?>" role="button" class="btn btn-primary btn-block">Register</a>
-                            </div>
-                        </div>
                     </form>
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <a href="<?= base_url("forgot_password") ?>" role="button" class="btn btn-primary btn-block">Forgot Password</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="<?= base_url("register") ?>" role="button" class="btn btn-primary btn-block">Register</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-1"></div>
     </div>
 </div>
+
+<script>
+    $("#login-form").submit(function(e) {
+        e.preventDefault();
+        $("span.spinner-border.spinner-border-sm").show();
+        $("#login-button span.button-text").html("Loading...");
+
+        $.ajax({
+            url: baseUrl + "userapi/login",
+            type: "POST",
+            dataType: "JSON",
+            data: new FormData(this),
+            processData: false,
+            success: function success(res) {
+                if (res.response) {
+                    window.location = baseUrl + "user";
+                } else {
+                    $("span.spinner-border.spinner-border-sm").hide();
+                    $("#login-button").html("Login");
+                    $("input").addClass("is-invalid");
+                    $(".invalid-feedback").html(res.message);
+                }
+            },
+            error: function error(err) {
+                console.target.log(err);
+            }
+        });
+    });
+</script>
