@@ -42,60 +42,62 @@
                                 </div>
                             </td>
                             <td class="w-75">
-                                <table class="table-sm col">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 20%"></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Book Name: </td>
-                                            <td>
-                                                <input type="text" class="form-control" id="book-name-field" disabled>
-                                                <div class="invalid-feedback"></div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Book Author: </td>
-                                            <td>
-                                                <input type="text" class="form-control" id="book-author-field" disabled>
-                                                <div class="invalid-feedback"></div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Book Code: </td>
-                                            <td><input type="text" class="form-control" id="book-code-field" disabled></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Section: </td>
-                                            <td>
-                                                <select name="book-section-field" id="book-section-field" class="form-control" disabled>
-                                                    <?php
-                                                    foreach ($sections as $section) {
-                                                        echo "<option value='$section->section_id'>$section->section_name</option>";
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status: </td>
-                                            <td id="status-field">
-                                                <button class="btn btn-success" data-action="available" id="available-button">Available</button>
-                                                <button class="btn btn-primary" data-action="reserve" data-token="" id="reserve-button" data-toggle="modal" data-target="#user-data-modal">Reserve</button>
-                                                <button class="btn btn-warning" data-action="borrow" data-token="" id="borrow-button" data-toggle="modal" data-target="#user-data-modal">Borrow</button>
-                                                <button class="btn btn-info" data-action="return" data-token="" id="return-button" data-toggle="modal" data-target="#user-data-modal">Return</button>
-                                                <button class="btn btn-danger" data-action="disable" id="disable-button">Disable</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Remarks:</td>
-                                            <td id="remarks-field">None</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <form method="post" id="update-book">
+                                    <table class="table-sm col">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%"></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Book Name: </td>
+                                                <td>
+                                                    <input type="text" class="form-control" id="book-name-field" disabled>
+                                                    <div class="invalid-feedback"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Book Author: </td>
+                                                <td>
+                                                    <input type="text" class="form-control" id="book-author-field" disabled>
+                                                    <div class="invalid-feedback"></div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Book Code: </td>
+                                                <td><input type="text" class="form-control" id="book-code-field" disabled></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Section: </td>
+                                                <td>
+                                                    <select name="book-section-field" id="book-section-field" class="form-control" disabled>
+                                                        <?php
+                                                        foreach ($sections as $section) {
+                                                            echo "<option value='$section->section_id'>$section->section_name</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Status: </td>
+                                                <td id="status-field">
+                                                    <button class="btn btn-success" data-action="available" id="available-button">Available</button>
+                                                    <button class="btn btn-primary" data-action="reserve" data-token="" id="reserve-button" data-toggle="modal" data-target="#user-data-modal">Reserve</button>
+                                                    <button class="btn btn-warning" data-action="borrow" data-token="" id="borrow-button" data-toggle="modal" data-target="#user-data-modal">Borrow</button>
+                                                    <button class="btn btn-info" data-action="return" data-token="" id="return-button" data-toggle="modal" data-target="#user-data-modal">Return</button>
+                                                    <button class="btn btn-danger" data-action="disable" id="disable-button">Disable</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Remarks:</td>
+                                                <td id="remarks-field">None</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
                             </td>
                         </tr>
                     </tbody>

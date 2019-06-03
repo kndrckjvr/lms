@@ -21,9 +21,9 @@ class BookApi extends CI_Controller
             if ($this->session->userdata("user_type") != 1) show_404();
         }
         $json_response = array();
-        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
-        $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
-        $this->form_validation->set_rules('book_code', 'Book Code', 'trim|required');
+        $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
+        $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book-code', 'Book Code', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $json_response = array("response" => 0);
@@ -32,18 +32,18 @@ class BookApi extends CI_Controller
             }
         } else {
             $data = array(
-                "book_name" => $this->input->post("book_name"),
-                "book_author" => $this->input->post("book_author"),
-                "section_id" => $this->input->post("book_section")
+                "book_name" => $this->input->post("book-name"),
+                "book_author" => $this->input->post("book-author"),
+                "section_id" => $this->input->post("book-section")
             );
             if ($bookData = $this->Book_model->bookAvailable($data)) {
                 $data = array(
                     "book_id" => $bookData[0]->book_id,
-                    "book_code" => $this->input->post("book_code")
+                    "book_code" => $this->input->post("book-code")
                 );
                 if ($this->Book_model->isBookCodeUnique($data)) {
                     $data = array(
-                        "book_id" => $bookData[0]->book_id, "book_code" => $this->input->post("book_code"),
+                        "book_id" => $bookData[0]->book_id, "book_code" => $this->input->post("book-code"),
                         "status" => 1, "created_at" => strtotime("now")
                     );
                     if ($this->Book_model->insertBookItem($data)) {
@@ -57,7 +57,7 @@ class BookApi extends CI_Controller
             } else {
                 if ($bookId = $this->Book_model->insertBook($data)) {
                     $data = array(
-                        "book_id" => $bookId, "book_code" => $this->input->post("book_code"),
+                        "book_id" => $bookId, "book_code" => $this->input->post("book-code"),
                         "status" => 1, "created_at" => strtotime("now")
                     );
                     if ($this->Book_model->insertBookItem($data)) {
@@ -115,8 +115,8 @@ class BookApi extends CI_Controller
         }
         $json_response = array();
 
-        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
-        $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
+        $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $json_response = array("response" => 0);
@@ -125,11 +125,11 @@ class BookApi extends CI_Controller
             }
         } else {
             $data = array(
-                "book_name" => $this->input->post("book_name"),
-                "book_author" => $this->input->post("book_author")
+                "book_name" => $this->input->post("book-name"),
+                "book_author" => $this->input->post("book-author")
             );
             $where = array(
-                "book_id" => $this->input->post("book_id")
+                "book_id" => $this->input->post("book-id")
             );
             // foreach ($this->input->post() as $key => $value) {
             //     if ($key != "book_id")

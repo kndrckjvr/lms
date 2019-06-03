@@ -55,6 +55,12 @@
                 "auth" => 1
             ),
             array(
+                "title" => "Manage Penalty",
+                "href" => "penalty/manager",
+                "icon" => "fa-dollar-sign",
+                "auth" => 1
+            ),
+            array(
                 "title" => "Transactions",
                 "href" => "transaction/reports",
                 "icon" => "fa-list",

@@ -7,7 +7,7 @@
             </div>
             
             <div class="card-body">
-                <form onsubmit="return false" method="post" id="book-create-form">
+                <form onsubmit="return false" method="post" id="book-create-form" enctype="multipart/form-data">
                 <!-- <form action="<?= base_url("bookapi/create") ?>" method="post"> -->
                     <div class="form-row mb-3">
                         <div class="col">
@@ -78,21 +78,19 @@ jQuery(document).ready(function($) {
             complete: complete()
         });
     });
+    
 
-    $("#create-book").on('click', function () {
+    $("#book-create-form").submit(function (e) {
         $("input").removeClass("is-invalid");
         isLoading(true);
         $.ajax({
             url: baseUrl + "bookapi/create",
             type: "POST",
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            cache: false,
             dataType: "JSON",
-            data: {
-                book_name: $("#book-name").val(),
-                book_author: $("#book-author").val(),
-                book_code: $("#book-code").val(),
-                book_section: $("#book-section").val(),
-                book_image_file: $("#book-image-file").val()
-            },
             success: function success(res) {
                 if (res.response) {
                     $("#book-create-form").trigger("reset");
