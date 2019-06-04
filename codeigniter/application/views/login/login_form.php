@@ -62,9 +62,11 @@
         $.ajax({
             url: baseUrl + "userapi/login",
             type: "POST",
-            dataType: "JSON",
             data: new FormData(this),
             processData: false,
+            contentType: false,
+            cache: false,
+            dataType: "JSON",
             success: function success(res) {
                 if (res.response) {
                     window.location = baseUrl + "user";

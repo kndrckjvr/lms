@@ -18,7 +18,7 @@ class UserApi extends CI_Controller
                 $this->session->set_userdata("user_type", $userData[0]->user_type);
                 echo json_encode(array("response" => 1));
             } else {
-                echo json_encode(array("response" => 0, "message" => "No User Found"));
+                echo json_encode(array("response" => 0, "message" => "No User Found", "userna" => $_POST));
             }
         } elseif ($this->agent->is_mobile()) {
             echo "mobile";
