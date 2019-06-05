@@ -21,7 +21,7 @@
                     </div>
                     <div class="row" style="width: 30%; float: right;">
                         <div class="col mb-4">
-                            <button class="btn btn-primary btn-block">Proceed</button>
+                            <button class="btn btn-primary btn-block" type="submit">Proceed</button>
                         </div>
                     </div>
                 </form>
@@ -31,9 +31,11 @@
 </div>
 
 <script>
-    jQuery(document).ready(function ($) {
+    var user_id = 0;
+    jQuery(document).ready(function($) {
         $("#manage-payment-modal").on('show.bs.modal', function(e) {
             $("#manage-payment-modal-title").html("Loading...");
+            user_id = $(e.relatedTarget).data("id");
             isLoading(true);
             $.ajax({
                 url: baseUrl + "penaltyapi/getpenalty",
@@ -42,7 +44,7 @@
                 data: {
                     user_id: $(e.relatedTarget).data("id")
                 },
-                success: function (res) {
+                success: function(res) {
                     $("#manage-payment-modal-title").html("Payment");
                     $("#penalties").val(res.penalties);
                 },
@@ -52,5 +54,37 @@
                 complete: complete()
             })
         });
+
+        $("#manage-payment-modal").on("hidden.bs.modal", function() {
+            user_id = 0;
+        });
+
+        $("#manage-payment-form").submit(function(e) {
+            e.preventDefault();
+            isLoading(true);
+            $.ajax({
+                url: baseUrl + "transactionapi/create",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    payment: $("#payment").val(),
+                    user_id: user_id,
+                    status: 4
+                },
+                success: function(res) {
+                    if(res.response == 0) {
+                        swal(res.errorMessage + "!", {
+                            icon: "warning",
+                        });
+
+                        return;
+                    }
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            })
+        })
     });
 </script>

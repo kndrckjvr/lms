@@ -40,16 +40,29 @@ class TransactionApi extends CI_Controller
                 }
                 $penalty = $this->Penalty_model->getPenalty($lastTransactionData[0]->transaction_date);
                 $transactionData["return_date"] = strtotime("now");
-                if (strtotime("now") > strtotime("+" . $penalty[0]->penalty_day ." day", $lastTransactionData[0]->transaction_date)) {
+                if (strtotime("now") > strtotime("+" . $penalty[0]->penalty_day . " day", $lastTransactionData[0]->transaction_date)) {
                     // penalty table
                     // if SELECT penaltyAmount, penaltyDays FROM penaltytbl WHERE penalty_date < lastDateTrans ORDER BY ID DESC  
-                    $transactionData["amount_paid"] = $penalty[0]->penalty_amount * ceil((strtotime("now") - strtotime("+" . $penalty[0]->penalty_day ." day", $lastTransactionData[0]->transaction_date)) / 86400);
+                    $transactionData["amount_paid"] = $penalty[0]->penalty_amount * ceil((strtotime("now") - strtotime("+" . $penalty[0]->penalty_day . " day", $lastTransactionData[0]->transaction_date)) / 86400);
                 }
                 $itemBookData["status"] = 1;
                 break;
             case "4":
                 // logic
                 // save transaction amount paid
+                $transactionData["itembook_id"] = 0;
+                $transactionData["amount_paid"] = $this->input->post("payment");
+                
+                $penalties = $this->Transaction_model->getUserPenalties(array("user_id" => $this->input->post("user_id"), "status" => "3"));
+                $paid = $this->Transaction_model->getUserPaid(array("user_id" => $this->input->post("user_id"), "status" => "4"));
+                
+                if ($transactionData["amount_paid"] > ($penalties - $paid)) {
+                    echo json_encode(array(
+                        "response" => 0,
+                        "errorMessage" => "Amount Paid is greater than the penalty"
+                    ));
+                    return;
+                }
                 break;
             case "5":
                 $transactionData["user_id"] = $this->session->userdata("user_token");
@@ -68,6 +81,12 @@ class TransactionApi extends CI_Controller
         // ));
         // die();
         if ($this->Transaction_model->createTransaction($transactionData)) {
+            if ($transactionData["status"] == 4) {
+                echo json_encode(array(
+                    "response" => 1
+                ));
+                return;
+            }
             if ($this->Book_model->updateBook("itembooktbl", array("status" => $itemBookData["status"]), array("itembook_id" => $itemBookData["itembook_id"]))) {
                 echo json_encode(array(
                     "response" => 1,
