@@ -18,7 +18,7 @@ class UserApi extends CI_Controller
                 $this->session->set_userdata("user_type", $userData[0]->user_type);
                 echo json_encode(array("response" => 1));
             } else {
-                echo json_encode(array("response" => 0, "message" => "No User Found", "userna" => $_POST));
+                echo json_encode(array("response" => 0, "message" => "No User Found"));
             }
         } elseif ($this->agent->is_mobile()) {
             echo "mobile";
@@ -65,6 +65,33 @@ class UserApi extends CI_Controller
         echo json_encode($json_response);
     }
 
+    public function check_password($password){
+        $bad_regex = "/^[a-z][^A-Z]\S{5,}$/";
+        $bad_regex2 = "/^[A-Z][^a-z]\S{5,}$/";
+        $weak_regex = "/^(?=.*[a-z])(?=.*[A-Z])\S{5,}$/";
+        $weak_regex2 = "/^(?=.*[A-Z])(?=.*[0-9])\S{5,}$/";
+        $good_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])\S{5,}$/";
+        $strong_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^\&*+=._-])\S{5,}$/";
+
+        if (preg_match($bad_regex, $password) || preg_match($bad_regex2, $password)) {
+            $this->form_validation->set_message('check_password', 'No account exist');
+            return false;
+        }
+        if (preg_match($weak_regex, $password) || preg_match($weak_regex2, $password)) {
+            $this->form_validation->set_message('check_password', 'No account exist');
+            return false;
+        }
+        if (preg_match($good_regex, $password)) {
+            $this->form_validation->set_message('check_password', 'No account exist');
+            return false;
+        }
+        if (preg_match($strong_regex, $password)) {
+            $this->form_validation->set_message('check_password', 'No account exist');
+            return false;
+        }
+    }
+
+
     public function reset_password()
     {
         if ($this->agent->is_browser()) {
@@ -107,6 +134,7 @@ class UserApi extends CI_Controller
         }
         echo json_encode($json_response);
     }
+
 
     public function reset_password_confirm()
     {

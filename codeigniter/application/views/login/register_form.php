@@ -44,6 +44,13 @@
                                 <label for="password">Confirm Password</label>
                                 <input type="password" name="confirm-password" class="form-control" id="confirm_password">
                                 <div class="invalid-feedback"></div>
+                                <br>
+                                <span>Password strength: <strong id="str"></strong></span>
+                                <ul>
+                                  <li>Use minimum of 6 Characters</li>
+                                  <li>Besides letters, include at least a number or symbol (!@#$%^&*+=._-)</li>
+                                  <li>Password is case sensitive</li>
+                                </ul>
                             </div>
                         </div>
                         <button class="btn btn-primary btn-block" type="button" id="register-button">

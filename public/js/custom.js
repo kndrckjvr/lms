@@ -12,6 +12,36 @@ function showSnackbar(message, type) {
     setTimeout(function () { $("#snackbar").removeClass("show"); }, 3000);
 }
 
+$("#login-button").on('click', function (e) {
+    $(e.target.firstElementChild).show();
+    $(e.target.lastElementChild).html("Loading...");
+    $("input").removeClass("is-invalid");
+    $.ajax({
+        url: baseUrl + "userapi/login",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            username: $("#username").val(),
+            password: $("#password").val()
+        },
+        success: function success(res) {
+
+            if (res.response) {
+                window.location = baseUrl + "user";
+            } else {
+                $(e.target.firstElementChild).hide();
+                $(e.target.lastElementChild).html("Login");
+                $("input").addClass("is-invalid");
+                $(".invalid-feedback").html(res.message);
+            }
+        },
+        error: function error(err) {
+            console.target.log(err);
+        }
+    });
+});
+
+
 $("#register-button").on('click', function (e) {
     $(e.target.firstElementChild).show();
     $(e.target.lastElementChild).html("Loading...");
@@ -69,6 +99,7 @@ $("#submit-button").on('click', function (e) {
             email: $("#email").val()
         },
         success: function success(res) {
+            console.log(res);
             if (res.response) {
                 window.location = baseUrl + "login";
             } else {
@@ -80,7 +111,7 @@ $("#submit-button").on('click', function (e) {
             }
         },
         error: function error(err) {
-            console.target.log(err);
+            console.log(err.responseText);
         }
     });
 });
@@ -165,6 +196,42 @@ function pageHandler(currentPage, pages) {
         }
     });
 })(jQuery);
+
+
+//-----------------PASSWORD STRENGTH ANALYZER----------------------------------
+var pass = document.getElementById("password");
+var str = document.getElementById("str");
+$("#password").on("input",function(){
+  this.value = this.value.replace(/\s/, '');
+});
+pass.onkeyup = function(){
+    var passval = pass.value;
+
+    var bad_regex = /^[a-z][^A-Z]\S{5,}$/;
+    var bad_regex2 = /^[A-Z][^a-z]\S{5,}$/;
+    var weak_regex = /^(?=.*[a-z])(?=.*[A-Z])\S{5,}$/;
+    var weak_regex2 = /^(?=.*[A-Z])(?=.*[0-9])\S{5,}$/;
+    var good_regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])\S{5,}$/;
+    var strong_regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^\&*+=._-])\S{5,}$/;
+
+    
+    if (passval.length < 6) {
+        $(str).addClass("text-danger").html("Too Short");
+    }
+    if (bad_regex.test(passval) || bad_regex2.test(passval)) {
+        $(str).addClass("text-warning").html("Bad");
+    }
+    if (weak_regex.test(passval) || weak_regex2.test(passval)) {
+        $(str).addClass("text-info").html("Weak");
+    }
+    if (good_regex.test(passval)) {
+        $(str).addClass("text-primary").html("Good");
+    }
+    if (strong_regex.test(passval)) {
+        $(str).addClass("text-success").html("Strong");
+    }
+}
+
 // document.getElementById("book-search-field").onkeyup = function(){
 //   var name_value = $("#book-search-field").val().toLowerCase();
 //   $(".book-class").each(function () {
