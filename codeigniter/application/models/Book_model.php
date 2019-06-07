@@ -19,7 +19,7 @@ class Book_model extends CI_Model
     }
 
     public function getBook($bookName, $start) {
-        $this->db->select("booktbl.book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
+        $this->db->select("booktbl.book_id, book_name, book_author,book_image, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
             ->from("booktbl")
             ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
             //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")

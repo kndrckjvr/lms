@@ -21,6 +21,9 @@ class BookApi extends CI_Controller
             if ($this->session->userdata("user_type") != 1) show_404();
         }
         $json_response = array();
+
+
+
         $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
         $this->form_validation->set_rules('book-code', 'Book Code', 'trim|required');
@@ -30,6 +33,7 @@ class BookApi extends CI_Controller
             foreach ($this->form_validation->error_array() as $key => $value) {
                 $json_response[$key] = $value;
             }
+
         } else {
             $data = array(
                 "book_name" => $this->input->post("book-name"),
@@ -55,17 +59,47 @@ class BookApi extends CI_Controller
                     $json_response = array("response" => 0, "book_code" => "The Book Code field must contain a unique value.");
                 }
             } else {
-                if ($bookId = $this->Book_model->insertBook($data)) {
-                    $data = array(
-                        "book_id" => $bookId, "book_code" => $this->input->post("book-code"),
-                        "status" => 1, "created_at" => strtotime("now")
-                    );
-                    if ($this->Book_model->insertBookItem($data)) {
-                        $json_response = array("response" => 1);
-                    } else {
-                        $json_response = array("response" => 0, "message" => "Error Found");
+                $config['upload_path'] = './images/';
+                $config['allowed_types'] = 'gif|jpg|png';
+                $this->load->library('upload',$config);
+
+                if ( ! $this->upload->do_upload('book-image-file')){
+                    // print_r($this->upload->display_errors());
+                    // echo $this->input->post('book-image-file');
+                    // die();
+                    echo json_encode($this->upload->display_errors());
+                }
+                else{
+                    $image = $this->upload->data('file_name');
+                    $config2['image_library'] = 'gd2';
+                    $config2['source_image'] = './images/'.$image;
+                    $config2['create_thumb'] = FALSE;
+                    // $config2['maintain_ratio'] = TRUE;
+                    $config2['width']         = 200;
+                    $config2['height']       = 250;
+                    $this->load->library('image_lib', $config2);
+                    if ( ! $this->image_lib->resize()){
+                        echo json_encode($this->image_lib->display_errors());
+                    }
+                    else{
+                        
+                        $this->image_lib->initialize($config2);
+                        $this->image_lib->resize();
+                        $data["book_image"] = $image;
+                        if ($bookId = $this->Book_model->insertBook($data)) {
+                            $data = array(
+                                "book_id" => $bookId, "book_code" => $this->input->post("book-code"),
+                                "status" => 1, "created_at" => strtotime("now")
+                            );
+                            if ($this->Book_model->insertBookItem($data)) {
+                                $json_response = array("response" => 1);
+                            } else {
+                                $json_response = array("response" => 0, "message" => "Error Found");
+                            }
+                        }
                     }
                 }
+                
             }
         }
         echo json_encode($json_response);
