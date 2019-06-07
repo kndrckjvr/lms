@@ -392,9 +392,5 @@
                 complete: complete()
             });
         }
-
-        $("#update-book").submit(function (e) {
-            e.preventDefault();
-        })
     });
 </script>
