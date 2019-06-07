@@ -15,28 +15,37 @@
                         </div>
                     </form>
                 </div>
-                <table class="table-sm table-hover col" id="search-book-table">
-                    <thead>
-                        <tr>
-                            <th>Book Name</th>
-                            <th>Book Author</th>
-                            <th>Book Section</th>
-                            <th class="text-center">Quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if ($books != null) foreach ($books as $book) { ?>
-                            <tr data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal" style="cursor: pointer;">
-                                <td><?= $book->book_name ?></td>
-                                <td><?= $book->book_author ?></td>
-                                <td><?= $book->section_name ?></td>
-                                <td class="text-center"><?= $book->book_qty ?></td>
-                            </tr>
-                        <?php } else { ?><tr>
-                                <td colspan="4" class="text-center">No Book Found.</td>
-                            </tr><?php } ?>
-                    </tbody>
-                </table>
+                <div class="row">
+                    <div class="col-md-12" >
+                        <div class="card-deck" id="book_card_columns">
+                            <?php if ($books != null) foreach ($books as $book) {
+                                // var_dump($book);
+                                // die();
+                                $book_image_name = $book->book_image != NULL ? $book->book_image : "no_image.png";
+                            ?>
+                            <div class="col-md-4">
+                               <div class="card mb-4" style="width: 18rem;">
+                                  <img class="card-img-top" src="<?=base_url('images/').$book_image_name?>" alt="Card image cap">
+                                  <div class="card-body">
+                                    <h5 class="card-title"><?= $book->book_name ?></h5>
+                                    <p class="card-text">
+                                        Book Author : <?= $book->book_author ?> <br>
+                                        Section Name : <?= $book->section_name ?> <br>
+                                        Book Quantity : <?= $book->book_qty ?>
+                                    </p>
+                                  </div>
+                                  <div class="card-body">
+                                    <button class="btn btn-primary" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal">Reserve</button>
+                                  </div>
+                                </div> 
+                            </div>
+
+                            <?php } else { ?>
+                                <h1>No Book Found.</h1>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
                 <nav class="mt-2" style="float: right;">
                     <ul class="pagination pagination-sm">
                         <li class="page-item disabled prev">
@@ -71,15 +80,30 @@
                 book_name: $("#book-search-field").val()
             },
             success: function success(res) {
-                $("#search-book-table tbody").html("");
+                $("#book_card_columns").html("");
 
                 if (res.bookData) {
                     res.bookData.forEach(element => {
-                        $("#search-book-table tbody").append(
-                            "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal' style='cursor: pointer;'><td>" + element.book_name + "</td><td>" + element.book_author + "</td><td>" + element.section_name + "</td><td class='text-center'>" + element.book_qty + "</td></tr>")
+                        var image = "<?=base_url()?>images/"+element.book_image;
+                        var noimage = "<?=base_url()?>images/no_image.png";
+                        var book_image = (element.book_image != '' ? image : noimage);
+                        console.log(element.book_image);
+                        $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>"+
+                          "<img class='card-img-top' wdith='200' height='250'  src='"+book_image+"' alt='Card image cap'>"+
+                          "<div class='card-body'>"+
+                            "<h5 class='card-title'>"+ element.book_name +"</h5>"+
+                            "<p class='card-text'> Book Author : "+element.book_author+" <br> Section Name: " +element.section_name+" <br> Book Quantity: "+element.book_qty+"</p>"+
+                          "</div>"+
+                          "<div class='card-body'>"+
+                            "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>"+
+                          "</div>"+
+                        "</div>"+
+                        "</div>")
+
+                        
                     });
                 } else {
-                    $("#search-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                    $("#book_card_columns").html("<h1>No Book Found.</h1>");
                 }
 
                 $(".page-item").removeClass("active");
@@ -107,14 +131,23 @@
                     book_name: $("#book-search-field").val()
                 },
                 success: function success(res) {
-                    $("#search-book-table tbody").html("");
+                    $("#book_card_columns").html("");
                     if (res.books) {
                         res.books.forEach(element => {
-                            $("#search-book-table tbody").append(
-                                "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal' style='cursor: pointer;'><td>" + element.book_name + "</td><td>" + element.book_author + "</td><td>" + element.section_name + "</td><td class='text-center'>" + element.book_qty + "</td></tr>")
+                            $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>"+
+                          "<img class='card-img-top' src='<?=base_url("images/no_image.png")?>' alt='Card image cap'>"+
+                          "<div class='card-body'>"+
+                            "<h5 class='card-title'>"+ element.book_name +"</h5>"+
+                            "<p class='card-text'> Book Author : "+element.book_author+" <br> Section Name: " +element.section_name+" <br> Book Quantity: "+element.book_qty+"</p>"+
+                          "</div>"+
+                          "<div class='card-body'>"+
+                            "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>"+
+                          "</div>"+
+                        "</div>"+
+                        "</div>")
                         });
                     } else {
-                        $("#search-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                        $("#book_card_columns").html("<h1>No Book Found.</h1>");
                     }
 
                     $("li.page-item.page-number").remove();

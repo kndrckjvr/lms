@@ -24,7 +24,7 @@
                     <div class="form-row mb-3">
                         <div class="col">
                             <label for="book-author">Book Code</label>
-                            <input type="text" class="form-control" id="book-code" name="book-code" disabled value="<?= $book_section_code ?>">
+                            <input type="text" class="form-control" id="book-code" name="book-code" readonly value="<?= $book_section_code ?>">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col">
@@ -70,7 +70,8 @@ jQuery(document).ready(function($) {
                 section_value: $(e.currentTarget).val()
             },
             success: function success(res) {
-                $("#book-code").val(res.value);
+                // $("#book-code").val(res.value);
+                document.getElementById("book-code").value = res.value;
             },
             error: function error(jqxhr, err, textStatus) {
                 errorHandler(jqxhr, err, textStatus);
@@ -96,6 +97,7 @@ jQuery(document).ready(function($) {
                     $("#book-create-form").trigger("reset");
                     showSnackbar("Successfully Added!");
                 } else {
+                    console.log(res);
                     if (res.book_name) {
                         $("#book-name + .invalid-feedback").html(res.book_name);
                         $("#book-name").addClass("is-invalid");
