@@ -55,7 +55,7 @@ class TransactionApi extends CI_Controller
                 if ($transactionData["amount_paid"] > ($penalties - $paid)) {
                     echo json_encode(array(
                         "response" => 0,
-                        "errorMessage" => "Amount Paid is greater than the penalty"
+                        "errorMessage" => "Payment is greater than the penalty"
                     ));
                     return;
                 }

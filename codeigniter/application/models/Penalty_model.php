@@ -18,4 +18,19 @@ class Penalty_model extends CI_Model
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
     }
+
+    public function getPenaltiesByPages($start = 0, $searchText = "")
+    {
+        $query = $this->db->limit(10, $start)
+            ->like("penalty_date", $searchText, "both")
+            ->get("penaltytbl");
+        return $query->num_rows() > 0 ? $query->result() : false;
+    }
+
+    public function getPenaltyPages($searchText = "")
+    {
+        $query = $this->db->like("penalty_date", $searchText, "both")
+        ->get("penaltytbl");
+        return ceil($query->num_rows() / 10);
+    }
 }

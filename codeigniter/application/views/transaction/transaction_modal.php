@@ -53,9 +53,12 @@
                 complete: complete()
             })
         });
+
         $("#manage-payment-modal").on("hidden.bs.modal", function() {
             user_id = 0;
+            $("#payment").val("");
         });
+
         $("#manage-payment-form").submit(function(e) {
             e.preventDefault();
             isLoading(true);
@@ -72,6 +75,13 @@
                     if(res.response == 0) {
                         swal(res.errorMessage + "!", {
                             icon: "warning",
+                        });
+                        return;
+                    } else if(res.response == 1) {
+                        swal("Successfully posted your payment!", {
+                            icon: "success",
+                        }).then(() => {
+                            $(".modal").modal("hide");
                         });
                         return;
                     }
