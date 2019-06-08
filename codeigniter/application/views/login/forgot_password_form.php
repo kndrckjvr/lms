@@ -41,8 +41,35 @@
     </div>
 </div>
 
-<!-- <script>
+<script>
     jQuery(document).ready(function($) {
-        
+        $("#submit-button").on('click', function (e) {
+            $(e.target.firstElementChild).show();
+            $(e.target.lastElementChild).html("Loading...");
+            $("input").removeClass("is-invalid");
+            $.ajax({
+                url: baseUrl + "userapi/reset_password",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    email: $("#email").val()
+                },
+                success: function success(res) {
+                    console.log(res);
+                    if (res.response) {
+                        window.location = baseUrl + "login";
+                    } else {
+                        $(e.target.firstElementChild).hide();
+                        $(e.target.lastElementChild).html("Submit");
+                        $("input").addClass("is-invalid");
+                        // $(".invalid-feedback").html(res.message);
+                        console.log(res);
+                    }
+                },
+                error: function error(err) {
+                    console.log(err.responseText);
+                }
+            });
+        });
     });
-</script> -->
+</script>

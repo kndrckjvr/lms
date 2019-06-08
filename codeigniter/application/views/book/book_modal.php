@@ -175,6 +175,44 @@
 </div>
 
 <script>
+    function reserveBook(e) {
+        swal({
+            title: "Reserve this Book?",
+            text: "This will be reserved to you.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((proceed) => {
+                if (proceed) {
+                    $.ajax({
+                        url: baseUrl + "transactionapi/usercreate",
+                        type: "POST",
+                        dataType: "JSON",
+                        data: {
+                            itembook_id: $(e).data("id")
+                        },
+                        success: function (res) {
+                            if (res.response) {
+                                swal("Book has been reserved!", {
+                                    icon: "success",
+                                }).then(() => {
+                                    $(".modal").modal("hide");
+                                });
+                                search();
+                            }
+                        },
+                        error: function error(jqxhr, err, textStatus) {
+                            errorHandler(jqxhr, err, textStatus);
+                        },
+                        complete: complete()
+                    });
+                } else {
+                    swal("No changes made.");
+                }
+            });
+    }
+
     jQuery(document).ready(function($) {
         var editing = false;
 

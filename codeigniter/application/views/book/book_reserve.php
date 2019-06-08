@@ -16,29 +16,29 @@
                     </form>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" >
+                    <div class="col-md-12">
                         <div class="card-deck" id="book_card_columns">
                             <?php if ($books != null) foreach ($books as $book) {
                                 // var_dump($book);
                                 // die();
                                 $book_image_name = $book->book_image != NULL ? $book->book_image : "no_image.png";
-                            ?>
-                            <div class="col-md-4">
-                               <div class="card mb-4" style="width: 18rem;">
-                                  <img class="card-img-top" src="<?=base_url('images/').$book_image_name?>" alt="Card image cap">
-                                  <div class="card-body">
-                                    <h5 class="card-title"><?= $book->book_name ?></h5>
-                                    <p class="card-text">
-                                        Book Author : <?= $book->book_author ?> <br>
-                                        Section Name : <?= $book->section_name ?> <br>
-                                        Book Quantity : <?= $book->book_qty ?>
-                                    </p>
-                                  </div>
-                                  <div class="card-body">
-                                    <button class="btn btn-primary" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal">Reserve</button>
-                                  </div>
-                                </div> 
-                            </div>
+                                ?>
+                                <div class="col-md-4">
+                                    <div class="card mb-4" style="width: 18rem;">
+                                        <img class="card-img-top" src="<?= base_url('images/') . $book_image_name ?>" alt="Card image cap">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?= $book->book_name ?></h5>
+                                            <p class="card-text">
+                                                Book Author : <?= $book->book_author ?> <br>
+                                                Section Name : <?= $book->section_name ?> <br>
+                                                Book Quantity : <?= $book->book_qty ?>
+                                            </p>
+                                        </div>
+                                        <div class="card-body">
+                                            <button class="btn btn-primary" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal">Reserve</button>
+                                        </div>
+                                    </div>
+                                </div>
 
                             <?php } else { ?>
                                 <h1>No Book Found.</h1>
@@ -84,23 +84,19 @@
 
                 if (res.bookData) {
                     res.bookData.forEach(element => {
-                        var image = "<?=base_url()?>images/"+element.book_image;
-                        var noimage = "<?=base_url()?>images/no_image.png";
-                        var book_image = (element.book_image != '' ? image : noimage);
-                        console.log(element.book_image);
-                        $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>"+
-                          "<img class='card-img-top' wdith='200' height='250'  src='"+book_image+"' alt='Card image cap'>"+
-                          "<div class='card-body'>"+
-                            "<h5 class='card-title'>"+ element.book_name +"</h5>"+
-                            "<p class='card-text'> Book Author : "+element.book_author+" <br> Section Name: " +element.section_name+" <br> Book Quantity: "+element.book_qty+"</p>"+
-                          "</div>"+
-                          "<div class='card-body'>"+
-                            "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>"+
-                          "</div>"+
-                        "</div>"+
-                        "</div>")
+                        $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>" +
+                        "<img class='card-img-top' src='" + baseUrl + "images/" + ((element.book_image == "") ? "no_image.png" : element.book_image) + "' alt='Card image cap'>" +
+                            "<div class='card-body'>" +
+                            "<h5 class='card-title'>" + element.book_name + "</h5>" +
+                            "<p class='card-text'> Book Author : " + element.book_author + " <br> Section Name: " + element.section_name + " <br> Book Quantity: " + element.book_qty + "</p>" +
+                            "</div>" +
+                            "<div class='card-body'>" +
+                            "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>")
 
-                        
+
                     });
                 } else {
                     $("#book_card_columns").html("<h1>No Book Found.</h1>");
@@ -134,17 +130,17 @@
                     $("#book_card_columns").html("");
                     if (res.books) {
                         res.books.forEach(element => {
-                            $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>"+
-                          "<img class='card-img-top' src='<?=base_url("images/no_image.png")?>' alt='Card image cap'>"+
-                          "<div class='card-body'>"+
-                            "<h5 class='card-title'>"+ element.book_name +"</h5>"+
-                            "<p class='card-text'> Book Author : "+element.book_author+" <br> Section Name: " +element.section_name+" <br> Book Quantity: "+element.book_qty+"</p>"+
-                          "</div>"+
-                          "<div class='card-body'>"+
-                            "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>"+
-                          "</div>"+
-                        "</div>"+
-                        "</div>")
+                            $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>" +
+                                "<img class='card-img-top' src='" + baseUrl + "images/" + ((element.book_image == "") ? "no_image.png" : element.book_image) + "' alt='Card image cap'>" +
+                                "<div class='card-body'>" +
+                                "<h5 class='card-title'>" + element.book_name + "</h5>" +
+                                "<p class='card-text'> Book Author : " + element.book_author + " <br> Section Name: " + element.section_name + " <br> Book Quantity: " + element.book_qty + "</p>" +
+                                "</div>" +
+                                "<div class='card-body'>" +
+                                "<button class='btn btn-primary' data-id='" + element.book_id + "' data-toggle='modal' data-target='#reserve-book-modal'>Reserve</button>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>")
                         });
                     } else {
                         $("#book_card_columns").html("<h1>No Book Found.</h1>");

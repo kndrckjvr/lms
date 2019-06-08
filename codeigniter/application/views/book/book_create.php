@@ -23,11 +23,6 @@
                     </div>
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book-author">Book Code</label>
-                            <input type="text" class="form-control" id="book-code" name="book-code" disabled value="<?= $book_section_code ?>">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col">
                             <label for="book-section">Book Section</label>
                             <select name="book-section" id="book-section" class="form-control">
                                 <?php
@@ -36,6 +31,11 @@
                                     }
                                 ?>
                             </select>
+                        </div>
+                        <div class="col">
+                            <label for="book-quantity">Book Quantity</label>
+                            <input type="text" class="form-control" id="book-quantity" name="book-quantity" placeholder="Enter Book Quantity">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-row mb-3">
