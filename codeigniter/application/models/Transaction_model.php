@@ -9,9 +9,9 @@ class Transaction_model extends CI_Model
         parent::__construct();
     }
 
-    public function getTransactions($where = NULL)
+    public function getTransactions($where = null)
     {
-        if ($where !== NULL) {
+        if ($where !== null) {
             $this->db->where($where);
         }
         $query = $this->db->limit(1)->order_by('id', "DESC")->get("transactionstbl");
@@ -59,5 +59,17 @@ class Transaction_model extends CI_Model
             ->like("username", $searchText, "both")
             ->get('transactiontbl');
         return ceil($query->num_rows() / 10);
+    }
+
+    public function getUserPenalties($where)
+    {
+        $query = $this->db->select("SUM(amount_paid) as penalty")->where($where)->get('transactiontbl');
+        return $query->num_rows() > 0 ? $query->result()[0]->penalty : 0;
+    }
+    
+    public function getUserPaid($where)
+    {
+        $query = $this->db->select("SUM(amount_paid) as paid")->where($where)->get('transactiontbl');
+        return $query->num_rows() > 0 ? $query->result()[0]->paid : 0;
     }
 }
