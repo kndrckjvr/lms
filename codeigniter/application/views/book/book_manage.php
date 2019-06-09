@@ -30,7 +30,8 @@
                                 <td><?= $book->book_name ?></td>
                                 <td><?= $book->book_author ?></td>
                                 <td><?= $book->section_name ?></td>
-                                <td class="text-center"><?= $book->book_qty ?></td>
+                                <!-- <td class="text-center"><?= $book->book_qty ?></td> -->
+                                <td class="text-center">0</td>
                             </tr>
                         <?php } else { ?><tr>
                                 <td colspan="4" class="text-center">No Book Found.</td>

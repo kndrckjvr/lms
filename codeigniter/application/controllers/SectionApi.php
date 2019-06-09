@@ -25,16 +25,18 @@ class SectionApi extends CI_Controller
         $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|is_unique[sectiontbl.section_code]');
 
         if ($this->form_validation->run() == FALSE) {
-            $json_response = array("response" => 0, 
-                "section_name" => form_error("section_name"), 
-                "section_code" => form_error("section_code"));
+            $json_response = array(
+                "response" => 0,
+                "section_name" => form_error("section_name"),
+                "section_code" => form_error("section_code")
+            );
         } else {
             $data = array(
                 "section_name" => $this->input->post("section_name"),
                 "section_code" => $this->input->post("section_code"),
                 "created_at" => strtotime("now")
             );
-            if($this->Section_model->insertSection($data)) {
+            if ($this->Section_model->insertSection($data)) {
                 $json_response = array("response" => 1);
             } else {
                 $json_response = array("response" => 0, "message" => "Error Found");
@@ -43,7 +45,8 @@ class SectionApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function getSection() {
+    public function getSection()
+    {
         $json_response["value"] = $this->Section_model->getSections(array("section_id" => $this->input->post("section_id")))[0];
         echo json_encode($json_response);
     }
@@ -63,7 +66,8 @@ class SectionApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function pageChange() {
+    public function pageChange()
+    {
         $json_response = array(
             "response" => 1,
             "currentPage" => $this->input->post("page"),
@@ -72,5 +76,22 @@ class SectionApi extends CI_Controller
         );
 
         echo json_encode($json_response);
+    }
+
+    public function data()
+    { 
+        echo json_encode(array(
+            array(
+                "author_id" => 1,
+                "author_name" => "Kendrick Cosca",
+                "author_sname" => "K. Cosca"
+            ),
+            
+            array(
+                "author_id" => 2,
+                "author_name" => "Angie Cosca",
+                "author_sname" => "A. Cosca"
+            )
+        ));
     }
 }

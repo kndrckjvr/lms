@@ -20,11 +20,12 @@ class BookApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         }
+        
         $json_response = array();
         
         $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
-        $this->form_validation->set_rules('book-code', 'Book Code', 'trim|required');
+        $this->form_validation->set_rules('book-quantity', 'Book Quantity', 'trim|required|numeric');
 
         if ($this->form_validation->run() == FALSE) {
             $json_response = array("response" => 0, "errors" => array());
@@ -37,7 +38,8 @@ class BookApi extends CI_Controller
                 "book_author" => $this->input->post("book-author"),
                 "section_id" => $this->input->post("book-section")
             );
-            
+
+            $authors = explode(",", $this->input->post("book-author"));
 
 
             // $data = array(
@@ -86,7 +88,7 @@ class BookApi extends CI_Controller
             //             echo $this->image_lib->display_errors();
             //         }
             //         else{
-                        
+
             //             $this->image_lib->initialize($config2);
             //             $this->image_lib->resize();
             //             if ($bookId = $this->Book_model->insertBook($data)) {
@@ -102,7 +104,7 @@ class BookApi extends CI_Controller
             //             }
             //         }
             //     }
-                
+
             // }
         }
         echo json_encode($json_response);
@@ -190,7 +192,8 @@ class BookApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function pageChange() {
+    public function pageChange()
+    {
         $json_response = array(
             "response" => 1,
             "currentPage" => $this->input->post("page"),

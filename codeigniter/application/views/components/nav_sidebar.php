@@ -37,6 +37,12 @@
                 "auth" => 1
             ),
             array(
+                "title" => "Author Manager",
+                "href" => "author/manager",
+                "icon" => "fa-book",
+                "auth" => 1
+            ),
+            array(
                 "title" => "Section Manager",
                 "href" => "section/manager",
                 "icon" => "fa-sort-alpha-up",

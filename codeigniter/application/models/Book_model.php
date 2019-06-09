@@ -19,15 +19,27 @@ class Book_model extends CI_Model
     }
 
     public function getBook($bookName, $start) {
-        $this->db->select("booktbl.book_id, book_name, book_author,book_image, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
-            ->from("booktbl")
-            ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
-            //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
-            ->like("book_name", $bookName, "both")
-            ->or_like("book_author", $bookName, "both")
-            ->or_like("section_name", $bookName, "both")
-            ->limit(10, $start)
-            ->where(array("sectiontbl.status" => 1));
+        // $this->db->select("booktbl.book_id, book_name, book_author, book_image, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
+        //     ->from("booktbl")
+        //     ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+        //     //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
+        //     ->like("book_name", $bookName, "both")
+        //     ->or_like("book_author", $bookName, "both")
+        //     ->or_like("section_name", $bookName, "both")
+        //     ->limit(10, $start)
+        //     ->where(array("sectiontbl.status" => 1));
+        $this->db
+            ->select("
+            b.book_id,
+            b.book_name,
+            GROUP_CONCAT(a.author_name ORDER BY a.author_name SEPARATOR ', ') AS book_author,
+            b.book_image,
+            section_name")
+            ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
+            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->like("b.book_name", $bookName, "both");
+            // ->or_like("book_author", $bookName, "both")
+            // ->or_like("section_name", $bookName, "both");
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
     }
@@ -84,14 +96,23 @@ class Book_model extends CI_Model
 
     public function getBookPages($bookName)
     {
-        $this->db->select("booktbl.book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
-            ->from("booktbl")
-            ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
-            //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
-            ->like("book_name", $bookName, "both")
-            ->or_like("book_author", $bookName, "both")
+        // $this->db->select("booktbl.book_id, book_name, book_author, section_name, (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = booktbl.book_id AND itembooktbl.status = 1) as book_qty")
+        //     ->from("booktbl")
+        //     ->join("sectiontbl", "booktbl.section_id = sectiontbl.section_id", "LEFT OUTER")
+        //     //->join("itembooktbl", "booktbl.book_id = itembooktbl.book_id", "LEFT OUTER")
+        //     ->like("book_name", $bookName, "both")
+        //     ->or_like("book_author", $bookName, "both")
+        //     ->or_like("section_name", $bookName, "both")
+        //     ->where(array("sectiontbl.status" => 1));
+        $this->db
+            ->select("*")
+            ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
+            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->like("b.book_name", $bookName, "both")
+            // ->or_like("book_author", $bookName, "both")
             ->or_like("section_name", $bookName, "both")
-            ->where(array("sectiontbl.status" => 1));
+            ->group_by("ab.book_id")
+            ->order_by("b.book_id");
         $query = $this->db->get();
         return ceil($query->num_rows() / 10);
     }

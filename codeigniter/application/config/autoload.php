@@ -137,5 +137,6 @@ $autoload['model'] = array(
     "Section_model",
     "Book_model",
     "Transaction_model",
-    "Penalty_model"
+    "Penalty_model",
+    "Author_model"
 );
