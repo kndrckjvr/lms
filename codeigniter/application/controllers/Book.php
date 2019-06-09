@@ -45,10 +45,9 @@ class Book extends CI_Controller {
     public function manager() {
         if($this->session->userdata("user_type") == 1) {
             $data = array("page_title" => "Library Management System | Book Manager",
-            "books" => $this->Book_model->getBook("", 0),
             "sections" => $this->Section_model->getSections(array("status" => 1)),
-            // "book_section_code" => $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code . sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => "1"))[0]->section_code_number + 1),
             "pages" => $this->Book_model->getBookPages(""),
+            "books" => $this->Book_model->getBook("", 0),
             "currentActive" => "Book Manager");
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");

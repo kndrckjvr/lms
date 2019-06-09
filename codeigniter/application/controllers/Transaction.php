@@ -33,7 +33,7 @@ class Transaction extends CI_Controller
             );
             if($this->session->userdata("user_type") == 0) {
                 $data["transactions"] = $this->Transaction_model->getTransaction(0, array("transactiontbl.user_id" => $this->session->userdata("user_token")));
-                $data["pages"] = $this->Transaction_model->getTransactionPages(array("user_id" => $this->session->userdata("user_token")));
+                $data["pages"] = $this->Transaction_model->getTransactionPages(array("transactiontbl.user_id" => $this->session->userdata("user_token")));
             }
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");

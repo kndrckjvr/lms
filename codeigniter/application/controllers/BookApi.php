@@ -115,7 +115,7 @@ class BookApi extends CI_Controller
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book_name"] = $this->Book_model->getBooks("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;
-        $json_response["books"] = $this->Book_model->getBookItems(array("booktbl.book_id" => $this->input->post("book_id")));
+        $json_response["books"] = $this->Book_model->getBookItems($this->input->post("book_id"));
         echo json_encode($json_response);
     }
 
@@ -126,7 +126,7 @@ class BookApi extends CI_Controller
         }
         $json_response = array();
         $json_response["response"] = 1;
-        $json_response["book"] = $this->Book_model->getSpecificBook(array("itembook_id" => $this->input->post("itembook_id"), "sectiontbl.status" => 1))[0];
+        $json_response["book"] = $this->Book_model->getSpecificBook($this->input->post("itembook_id"))[0];
         switch ($json_response["book"]->status) {
             case 1:
                 $json_response["remarks"] = "Available";
