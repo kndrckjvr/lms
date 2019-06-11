@@ -11,21 +11,20 @@
                     <!-- <form action="<?= base_url("bookapi/create") ?>" method="post"> -->
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book-name">Book Name</label>
-                            <input type="text" class="form-control" id="book-name" name="book-name" placeholder="Enter Book Name">
+                            <label for="book_name">Book Name</label>
+                            <input type="text" class="form-control" id="book_name" name="book_name" placeholder="Enter Book Name">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col">
-                            <label for="book-author">Book Author</label>
-                            <select class="form-control selectpicker with-ajax" multiple data-live-search="true" id="author-picker"></select>
-                            <div class="invalid-feedback"></div>
-                            <input type="hidden" name="book-author" id="book-author">
+                            <label for="book_author">Book Author</label>
+                            <select class="form-control selectpicker with-ajax" multiple data-live-search="true" id="book_author"></select>
+                            <div class="invalid-feedback" id="book-author-invalid"></div>
                         </div>
                     </div>
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book-section">Book Section</label>
-                            <select name="book-section" id="book-section" class="form-control">
+                            <label for="book_section">Book Section</label>
+                            <select name="book_section" id="book_section" class="form-control">
                                 <?php
                                 if ($sections) {
                                     foreach ($sections as $section) {
@@ -38,15 +37,15 @@
                             </select>
                         </div>
                         <div class="col">
-                            <label for="book-quantity">Book Quantity</label>
-                            <input type="number" min="1" class="form-control" id="book-quantity" name="book-quantity" placeholder="Enter Book Quantity">
+                            <label for="book_quantity">Book Quantity</label>
+                            <input type="number" min="1" class="form-control" id="book_quantity" name="book_quantity" placeholder="Enter Book Quantity">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book-image-file">Book Image File</label><br />
-                            <input type="file" name="book-image-file" id="book-image-file" style="display: none">
+                            <label for="book_image_file">Book Image File</label><br />
+                            <input type="file" name="book_image_file" id="book_image_file" style="display: none">
                             <div class="invalid-feedback"></div>
                             <div style="width: 150px; height: 200px; margin: 0 auto; background: #000; background-position: center; background-size: cover; cursor: pointer;" id="upload-image-div">
                                 <p class="text-center pt-5 text-white">Click to upload image</p>
@@ -55,6 +54,7 @@
                         <div class="col">
                         </div>
                     </div>
+                    <input type="hidden" class="is-invalid" name="book_author" id="book_author_hidden">
                     <button type="submit" class="btn btn-primary btn-block font-weight-bold" id="create-book">Submit</button>
                 </form>
             </div>
@@ -101,13 +101,14 @@
                 return array;
             }
         };
-        $("#author-picker")
+        $("#book_author")
             .selectpicker()
             .filter(".with-ajax")
             .ajaxSelectPicker(options);
 
         $("#book-create-form").submit(function(e) {
             $("input").removeClass("is-invalid");
+            $(".dropdown.bootstrap-select.show-tick.form-control").removeClass("is-invalid");
             isLoading(true);
             $.ajax({
                 url: baseUrl + "bookapi/create",
@@ -123,20 +124,17 @@
                         $("#book-create-form").trigger("reset");
                         showSnackbar("Successfully Added!");
                     } else {
-                        res.errors.forEach((element) => {
-                            console.log(element);
-                        });
                         if (res.book_name) {
-                            $("#book-name + .invalid-feedback").html(res.book_name);
-                            $("#book-name").addClass("is-invalid");
+                            $("#book_name + .invalid-feedback").html(res.book_name);
+                            $("#book_name").addClass("is-invalid");
                         }
                         if (res.book_author) {
-                            $("#book-author + .invalid-feedback").html(res.book_author);
-                            $("#book-author").addClass("is-invalid");
+                            $("#book-author-invalid").html(res.book_author);
+                            $(".dropdown.bootstrap-select.show-tick.form-control").addClass("is-invalid");
                         }
-                        if (res.book_code) {
-                            $("#book-code + .invalid-feedback").html(res.book_code);
-                            $("#book-code").addClass("is-invalid");
+                        if (res.book_quantity) {
+                            $("#book_quantity + .invalid-feedback").html(res.book_quantity);
+                            $("#book_quantity").addClass("is-invalid");
                         }
                     }
                 },
@@ -148,10 +146,10 @@
         });
 
         $("#upload-image-div").on('click', function() {
-            $("#book-image-file").click()
+            $("#book_image_file").click()
         });
 
-        $("#book-image-file").change(function() {
+        $("#book_image_file").change(function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
 
@@ -164,8 +162,8 @@
             $("#upload-image-div p").hide()
         });
 
-        $("#author-picker").on('change', function(e) {
-            $("#book-author").val($(e.currentTarget).val());
+        $("#book_author").on('change', function(e) {
+            $("#book_author_hidden").val($(e.currentTarget).val());
         });
     });
 </script>

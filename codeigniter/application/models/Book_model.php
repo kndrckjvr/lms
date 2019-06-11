@@ -24,7 +24,7 @@ class Book_model extends CI_Model
             ->select("
                     b.book_id,
                     b.book_name,
-                    GROUP_CONCAT(a.author_name ORDER BY a.author_name SEPARATOR ', ') AS book_author,
+                    GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author,
                     b.book_image,
                     section_name,
                     (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty
@@ -33,6 +33,7 @@ class Book_model extends CI_Model
             ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
             ->having("book_qty > 0")
             ->like("b.book_name", $bookName, "both")
+            ->group_by("b.book_id")
             ->limit(10, $start);
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
@@ -44,7 +45,7 @@ class Book_model extends CI_Model
             ->select("
                 itembook_id, 
                 book_name, 
-                GROUP_CONCAT(a.author_name ORDER BY a.author_name SEPARATOR ', ') AS book_author, 
+                GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author, 
                 book_code, 
                 itb.status, 
                 section_code, 
@@ -66,7 +67,7 @@ class Book_model extends CI_Model
                 b.book_id,
                 itembook_id,
                 book_name,
-                GROUP_CONCAT(a.author_name ORDER BY a.author_name SEPARATOR ', ') AS book_author, 
+                GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author, 
                 book_code, 
                 s.section_id, 
                 itb.status, 
@@ -77,20 +78,6 @@ class Book_model extends CI_Model
             ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id AND b.book_id = " . $data)
             ->group_by("itb.itembook_id");
         $query = $this->db->get();
-        return $query->num_rows() > 0 ? $query->result() : false;
-    }
-
-    public function isBookCodeUnique($data)
-    {
-        $this->db->where($data);
-        $query = $this->db->get("itembooktbl");
-        return ($query->num_rows() == 0);
-    }
-
-    public function bookAvailable($data)
-    {
-        $this->db->where($data);
-        $query = $this->db->get("booktbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 

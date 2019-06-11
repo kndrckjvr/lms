@@ -18,14 +18,21 @@ class Author_model extends CI_Model
     public function getAuthorsByPages($start = 0, $searchText = "")
     {
         $query = $this->db->limit(5, $start)
-            ->like("author_name", $searchText, "both")
+        ->like("author_name", $searchText, "both")
+        ->or_like("author_sname", $searchText, "both")
+        ->or_like("author_fname", $searchText, "both")
+        ->or_like("author_lname", $searchText, "both")
             ->get("authortbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
     public function getAuthorPages($searchText = "")
     {
-        $query = $this->db->like("author_name", $searchText, "both")
+        $query = $this->db
+        ->like("author_name", $searchText, "both")
+        ->or_like("author_sname", $searchText, "both")
+        ->or_like("author_fname", $searchText, "both")
+        ->or_like("author_lname", $searchText, "both")
         ->get("authortbl");
         return ceil($query->num_rows() / 5);
     }

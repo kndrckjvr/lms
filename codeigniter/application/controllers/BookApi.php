@@ -23,91 +23,63 @@ class BookApi extends CI_Controller
         
         $json_response = array();
         
-        $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
-        $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
-        $this->form_validation->set_rules('book-quantity', 'Book Quantity', 'trim|required|numeric');
+        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
+        $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
 
         if ($this->form_validation->run() == FALSE) {
-            $json_response = array("response" => 0, "errors" => array());
+            $json_response = array("response" => 0);
             foreach ($this->form_validation->error_array() as $key => $value) {
-                $json_response["errors"][$key] = $value;
+                $json_response[$key] = $value;
             }
         } else {
             $data = array(
-                "book_name" => $this->input->post("book-name"),
-                "book_author" => $this->input->post("book-author"),
-                "section_id" => $this->input->post("book-section")
+                "book_name" => $this->input->post("book_name"),
+                "book_image" => "",
+                "section_id" => $this->input->post("book_section")
             );
 
-            $authors = explode(",", $this->input->post("book-author"));
+            $authors = explode(",", $this->input->post("book_author"));
 
+            $this->load->library('upload');
 
-            // $data = array(
-            //     "book_name" => $this->input->post("book-name"),
-            //     "book_author" => $this->input->post("book-author"),
-            //     "section_id" => $this->input->post("book-section")
-            // );
-            // if ($bookData = $this->Book_model->bookAvailable($data)) {
-            //     $data = array(
-            //         "book_id" => $bookData[0]->book_id,
-            //         "book_code" => $this->input->post("book-code")
-            //     );
-            //     if ($this->Book_model->isBookCodeUnique($data)) {
-            //         $data = array(
-            //             "book_id" => $bookData[0]->book_id, "book_code" => $this->input->post("book-code"),
-            //             "status" => 1, "created_at" => strtotime("now")
-            //         );
-            //         if ($this->Book_model->insertBookItem($data)) {
-            //             $json_response = array("response" => 1);
-            //         } else {
-            //             $json_response = array("response" => 0, "message" => "Error Found");
-            //         }
-            //     } else {
-            //         $json_response = array("response" => 0, "book_code" => "The Book Code field must contain a unique value.");
-            //     }
-            // } else {
-            //     $config['upload_path'] = './assets/images/';
-            //     $config['allowed_types'] = 'gif|jpg|png';
-            //     $this->load->library('upload',$config);
+            if ($this->upload->do_upload('book_image_file')) {
+                $data["book_image"] = $this->upload->data('file_name');
 
-            //     if ( ! $this->upload->do_upload('book-image-file')){
-            //         print_r($this->upload->display_errors());
-            //         echo $this->input->post('profile_picture');
-            //         die();
-            //     }
-            //     else{
-            //         $image = $this->upload->data('file_name');
-            //         $config2['image_library'] = 'gd2';
-            //         $config2['source_image'] = './assets/profile_pictures/'.$image;
-            //         $config2['create_thumb'] = FALSE;
-            //         $config2['maintain_ratio'] = TRUE;
-            //         $config2['width']         = 200;
-            //         $config2['height']       = 200;
-            //         $this->load->library('image_lib', $config2);
-            //         if ( ! $this->image_lib->resize()){
-            //             echo $this->image_lib->display_errors();
-            //         }
-            //         else{
+                $config2['image_library']   = 'gd2';
+                $config2['source_image']    = './images/' . $data["book_image"];
+                $config2['create_thumb']    = FALSE;
+                $config2['maintain_ratio']  = TRUE;
+                $config2['width']           = 200;
+                $config2['height']          = 200;
 
-            //             $this->image_lib->initialize($config2);
-            //             $this->image_lib->resize();
-            //             if ($bookId = $this->Book_model->insertBook($data)) {
-            //                 $data = array(
-            //                     "book_id" => $bookId, "book_code" => $this->input->post("book-code"),
-            //                     "status" => 1, "created_at" => strtotime("now")
-            //                 );
-            //                 if ($this->Book_model->insertBookItem($data)) {
-            //                     $json_response = array("response" => 1);
-            //                 } else {
-            //                     $json_response = array("response" => 0, "message" => "Error Found");
-            //                 }
-            //             }
-            //         }
-            //     }
+                $this->load->library('image_lib', $config2);
 
-            // }
+                if (!$this->image_lib->resize()){
+                    echo $this->image_lib->display_errors();
+                }
+                else{
+                    $this->image_lib->initialize($config2);
+                    $this->image_lib->resize();
+                }
+            }
+            
+            if($bookId = $this->Book_model->insertBook($data)) {
+                $data = array(
+                    "book_id" => $bookId, 
+                    "book_code" => "",
+                    "status" => 1, 
+                    "created_at" => strtotime("now")
+                );
+                
+                for($i = 0; $i < $this->input->post("book_quantity"); $i++) {
+                    $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
+                    if ($this->Book_model->insertBookItem($data)) {
+                        $this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")));
+                    }
+                }
+            }
         }
-        echo json_encode($json_response);
     }
 
     public function getBooks()
