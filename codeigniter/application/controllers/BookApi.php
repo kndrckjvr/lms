@@ -21,14 +21,14 @@ class BookApi extends CI_Controller
             if ($this->session->userdata("user_type") != 1) show_404();
         }
         
-        $json_response = array();
+        $json_response = array("response" => 1);
         
-        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
+        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
         $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
 
         if ($this->form_validation->run() == FALSE) {
-            $json_response = array("response" => 0);
+            $json_response["response"] = 0;
             foreach ($this->form_validation->error_array() as $key => $value) {
                 $json_response[$key] = $value;
             }
@@ -71,15 +71,33 @@ class BookApi extends CI_Controller
                     "status" => 1, 
                     "created_at" => strtotime("now")
                 );
-                
+
+                // Populate authorbooktbl
+                foreach($authors as $value) {
+                    if(!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {                        
+                        $json_response["response"] = 0;
+                        $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
+                    }
+                }
+
+                // Populate itembooktbl
                 for($i = 0; $i < $this->input->post("book_quantity"); $i++) {
                     $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
                     if ($this->Book_model->insertBookItem($data)) {
-                        $this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")));
+                        if(!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                            $json_response["response"] = 0;
+                            $json_response["error"]["section"] = "Error Updating Section Code Number.";
+                        }
+                    } else {
+                        $json_response["response"] = 0;
+                        $json_response["error"]["itembook"] = "Error Inserting Item Book: ". $data["book_code"] . ".";
                     }
                 }
+
             }
         }
+
+        echo json_encode($json_response);
     }
 
     public function getBooks()

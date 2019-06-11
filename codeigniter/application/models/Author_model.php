@@ -36,4 +36,10 @@ class Author_model extends CI_Model
         ->get("authortbl");
         return ceil($query->num_rows() / 5);
     }
+
+    public function setBookAuthor($data)
+    {
+        $this->db->insert("authorbooktbl", $data);
+        return $this->db->affected_rows();
+    }
 }

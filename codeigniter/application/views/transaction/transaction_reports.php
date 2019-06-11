@@ -7,7 +7,7 @@
                 <ul style="list-style: none; line-height: 1;" class="m-0">
                     <li style="display: inline-block;" class="px-2 pr-0">
                         <span class="d-inline-block" data-toggle="tooltip" title="Print">
-                            <a href="#" role="button" class="btn-action-save" onclick="printReport()" data-id="batch-setting-card">
+                            <a href="#" role="button" onclick="printReport()">
                                 <i class="fas fa-print fa-sm fa-fw"></i>
                             </a>
                         </span>

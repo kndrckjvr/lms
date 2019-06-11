@@ -101,6 +101,7 @@
                 return array;
             }
         };
+
         $("#book_author")
             .selectpicker()
             .filter(".with-ajax")
@@ -119,9 +120,11 @@
                 cache: false,
                 dataType: "JSON",
                 success: function success(res) {
-                    console.log(res);
                     if (res.response) {
                         $("#book-create-form").trigger("reset");
+                        $('#book_author').val([]);
+                        $('#book_author').trigger('change.abs.preserveSelected');
+                        $('#book_author').selectpicker('refresh');
                         showSnackbar("Successfully Added!");
                     } else {
                         if (res.book_name) {
