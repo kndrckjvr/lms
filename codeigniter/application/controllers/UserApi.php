@@ -65,7 +65,8 @@ class UserApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function check_password($password){
+    public function check_password($password)
+    {
         $bad_regex = "/^[a-z][^A-Z]\S{5,}$/";
         $bad_regex2 = "/^[A-Z][^a-z]\S{5,}$/";
         $weak_regex = "/^(?=.*[a-z])(?=.*[A-Z])\S{5,}$/";
@@ -108,8 +109,8 @@ class UserApi extends CI_Controller
                 $code = random_string('alnum', 6);
                 $email = $this->input->post("email");
                 $data = array("password_code" => $code);
-                if ($this->User_model->resetPassword($data, array("email" => $email))) {
-                    $this->email->from('bryanbernardo9828@gmail.com', 'NAME');
+                if ($this->User_model->updateUser($data, array("email" => $email))) {
+                    $this->email->from('lms.email.manager@gmail.com', 'LMS | Forgot Password');
                     $this->email->to($email);
 
                     $this->email->subject('Reset Password');
@@ -152,7 +153,7 @@ class UserApi extends CI_Controller
                 }
             } else {
                 $data = array("password" => sha1($new_password));
-                if ($this->User_model->resetPassword($data, array("password_code" => $code))) {
+                if ($this->User_model->updateUser($data, array("password_code" => $code))) {
                     $json_response = array("response" => 1);
                 } else {
                     $json_response = array("response" => 0, "message" => "Error Found");
@@ -247,6 +248,46 @@ class UserApi extends CI_Controller
             "pages" => $this->User_model->getUserPages($this->input->post("search_text")),
             "userData" => $this->User_model->getUserByPages(($this->input->post("page") - 1) * 10, $this->input->post("search_text"))
         );
+
+        echo json_encode($json_response);
+    }
+
+    public function update()
+    {
+        $json_response = array(
+            "response" => 1
+        );
+
+        if($this->input->post("passwordChange") == "1") {
+            $this->form_validation->set_rules('password', 'Password', 'trim|required');
+            $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
+        }
+        
+        if($this->input->post("usernameChange") == "1") {
+            $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[usertbl.username]');
+        }
+
+        if ($this->form_validation->run() == FALSE) {
+            $json_response = array("response" => 0);
+            foreach ($this->form_validation->error_array() as $key => $value) {
+                $json_response[$key] = $value;
+            }
+        } else {
+            $data = array();
+            if($this->input->post("passwordChange") == "1") {
+                $data["password"] = sha1($this->input->post("password"));
+            }
+            
+            if($this->input->post("usernameChange") == "1") {
+                $data["username"] = $this->input->post("username");
+            }
+
+            if(!$this->User_model->updateUser($data, array("user_id" => $this->session->userdata("user_token")))) {
+                
+                $json_response["response"] = 0;
+                
+            }
+        }
 
         echo json_encode($json_response);
     }

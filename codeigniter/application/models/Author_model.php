@@ -18,10 +18,10 @@ class Author_model extends CI_Model
     public function getAuthorsByPages($start = 0, $searchText = "")
     {
         $query = $this->db->limit(5, $start)
-        ->like("author_name", $searchText, "both")
-        ->or_like("author_sname", $searchText, "both")
-        ->or_like("author_fname", $searchText, "both")
-        ->or_like("author_lname", $searchText, "both")
+            ->like("author_name", $searchText, "both")
+            ->or_like("author_sname", $searchText, "both")
+            ->or_like("author_fname", $searchText, "both")
+            ->or_like("author_lname", $searchText, "both")
             ->get("authortbl");
         return $query->num_rows() > 0 ? $query->result() : false;
     }
@@ -29,11 +29,11 @@ class Author_model extends CI_Model
     public function getAuthorPages($searchText = "")
     {
         $query = $this->db
-        ->like("author_name", $searchText, "both")
-        ->or_like("author_sname", $searchText, "both")
-        ->or_like("author_fname", $searchText, "both")
-        ->or_like("author_lname", $searchText, "both")
-        ->get("authortbl");
+            ->like("author_name", $searchText, "both")
+            ->or_like("author_sname", $searchText, "both")
+            ->or_like("author_fname", $searchText, "both")
+            ->or_like("author_lname", $searchText, "both")
+            ->get("authortbl");
         return ceil($query->num_rows() / 5);
     }
 
@@ -41,5 +41,11 @@ class Author_model extends CI_Model
     {
         $this->db->insert("authorbooktbl", $data);
         return $this->db->affected_rows();
+    }
+
+    public function createAuthor($data)
+    {
+        $this->db->insert("authortbl", $data);
+        return $this->db->insert_id();
     }
 }

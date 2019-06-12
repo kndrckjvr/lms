@@ -32,7 +32,7 @@ class User_model extends CI_Model
         return $this->db->affected_rows();
     }
 
-    public function resetPassword($ndata, $id = NULL)
+    public function updateUser($ndata, $id = NULL)
     {
         if (!empty($id)) {
             $this->db->where($id);
