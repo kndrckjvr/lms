@@ -52,6 +52,9 @@
                             </div>
                         </div>
                         <div class="col">
+                            <label for="publish_date">Publish Date</label>
+                            <input type="text" class="form-control datepicker" value="<?= date("m/d/Y", strtotime("now")) ?>" id="publish_date" name="publish_date">
+                            <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <input type="hidden" class="is-invalid" name="book_author" id="book_author_hidden">
@@ -65,6 +68,9 @@
 
 <script>
     jQuery(document).ready(function($) {
+        $('.datepicker').datepicker({
+            autoclose: true
+        });
         var options = {
             values: "a, b, c",
             ajax: {

@@ -7,6 +7,7 @@
     <script src="<?= base_url("js/bootstrap.min.js") ?>"></script>
     <script src="<?= base_url("js/bootstrap-select.min.js") ?>"></script>
     <script src="<?= base_url("js/ajax-bootstrap-select.min.js") ?>"></script>
+    <script src="<?= base_url("js/bootstrap-datepicker.min.js") ?>"></script>
     <script src="<?= base_url("js/template.js") ?>"></script>
     <script src="<?= base_url("js/sweetalert.min.js") ?>"></script>
     <script src="<?= base_url("js/custom.js") ?>"></script>

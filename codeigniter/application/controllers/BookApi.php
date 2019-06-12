@@ -26,6 +26,11 @@ class BookApi extends CI_Controller
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
         $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
+        $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
+
+        if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+            $json_response["publish_date"] = "The Publish Date field is not in the correct format.";
+        }
 
         if ($this->form_validation->run() == FALSE) {
             $json_response["response"] = 0;
@@ -33,10 +38,17 @@ class BookApi extends CI_Controller
                 $json_response[$key] = $value;
             }
         } else {
+            if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+                $json_response["response"] = 0;
+                echo json_encode($json_response);
+                return;
+            }
+
             $data = array(
                 "book_name" => $this->input->post("book_name"),
                 "book_image" => "",
-                "section_id" => $this->input->post("book_section")
+                "section_id" => $this->input->post("book_section"),
+                "publish_date" => strtotime($this->input->post("publish_date"))
             );
 
             $authors = explode(",", $this->input->post("book_author"));

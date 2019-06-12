@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?= base_url("css/all.min.css"); ?>">
     <link rel="stylesheet" href="<?= base_url("css/bootstrap.min.css"); ?>">
     <link rel="stylesheet" href="<?= base_url("css/bootstrap-select.css") ?>" />
+    <link rel="stylesheet" href="<?= base_url("css/bootstrap-datepicker3.standalone.min.css") ?>" />
     <link rel="stylesheet" href="<?= base_url("css/custom.css"); ?>">
     <script src="<?= base_url("js/jquery.min.js") ?>"></script>
     <script>

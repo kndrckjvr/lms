@@ -4,6 +4,15 @@
         <div class="card shadow mb-5">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Manage Penalty</h6>
+                <ul style="list-style: none; line-height: 1;" class="m-0">
+                    <li style="display: inline-block;" class="px-2 pr-0">
+                        <span class="d-inline-block" data-toggle="tooltip" title="Refresh">
+                            <a href="#book-manage" role="button" onclick="refreshData()">
+                                <i class="fas fa-sync-alt fa-sm fa-fw"></i>
+                            </a>
+                        </span>
+                    </li>
+                </ul>
             </div>
 
             <div class="card-body">
@@ -28,7 +37,7 @@
                         <?php foreach ($penalties as $penalty) : ?>
                             <tr>
                                 <td><?= $penalty->penalty_id ?></td>
-                                <td class="text-center"><?= date("F d, Y", $penalty->penalty_date) ?></td>
+                                <td class="text-center"><?= date("F j, Y", $penalty->penalty_date) ?></td>
                                 <td class="text-center"><?= $penalty->penalty_amount ?></td>
                                 <td class="text-center"><?= $penalty->penalty_day ?></td>
                             </tr>
@@ -44,7 +53,7 @@
                             <li class="page-item<?= (($i == 1) ? " active" : "") ?> page-number" onclick="changePage(<?= $i ?>)">
                                 <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
                             </li>
-                        <?php 
+                        <?php
                     } ?>
                         <li class="page-item<?= (($pages == 0 || $pages == 1) ? " disabled" : "") ?> next">
                             <button class="page-link" onclick="changePage('next')">Next</button>
@@ -76,9 +85,9 @@
                         $("#manage-penalty-table tbody").append(
                             "<tr>" +
                             "<td>" + element.penalty_id + "</td>" +
-                            "<td class='text-center'>" + element.penalty_date + "</td>" +
+                            "<td class='text-center'>" + formatDate(new Date(element.penalty_date * 1000)) + "</td>" +
                             "<td class='text-center'>" + element.penalty_amount + "</td>" +
-                            "<td class='text-center'>" + element.penalty_pay + "</td>" +
+                            "<td class='text-center'>" + element.penalty_day + "</td>" +
                             "</tr>")
                     });
                 } else {
@@ -91,6 +100,47 @@
                 currentPage = parseInt(res.currentPage);
 
                 pageHandler(currentPage, res.pages);
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    }
+
+    function refreshData() {
+        $.ajax({
+            url: baseUrl + "penaltyapi/search",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                search_text: $("#search-field").val()
+            },
+            success: function success(res) {
+                $("#manage-penalty-table tbody").html("");
+                if (res.penaltyData) {
+                    res.penaltyData.forEach(element => {
+                        $("#manage-penalty-table tbody").append(
+                            "<tr>" +
+                            "<td>" + element.penalty_id + "</td>" +
+                            "<td class='text-center'>" + element.penalty_date + "</td>" +
+                            "<td class='text-center'>" + element.penalty_amount + "</td>" +
+                            "<td class='text-center'>" + element.penalty_day + "</td>" +
+                            "</tr>")
+                    });
+                } else {
+                    $("#manage-penalty-table tbody").html("<td colspan='4' class='text-center'>No Penalty Found.</td>");
+                }
+
+                $("li.page-item.page-number").remove();
+
+                currentPage = 1;
+
+                pageHandler(currentPage, res.pages);
+
+                for (var i = 1; i <= res.pages; i++) {
+                    $("li.page-item.next").before("<li class='page-item" + ((i == 1) ? " active" : "") + " page-number' onclick='changePage(" + i + ")'><button class='page-link'>" + i + "</button></li>", )
+                }
             },
             error: function error(jqxhr, err, textStatus) {
                 errorHandler(jqxhr, err, textStatus);
@@ -115,11 +165,11 @@
                         res.penaltyData.forEach(element => {
                             $("#manage-penalty-table tbody").append(
                                 "<tr>" +
-                            "<td>" + element.penalty_id + "</td>" +
-                            "<td class='text-center'>" + element.penalty_date + "</td>" +
-                            "<td class='text-center'>" + element.penalty_amount + "</td>" +
-                            "<td class='text-center'>" + element.penalty_pay + "</td>" +
-                            "</tr>")
+                                "<td>" + element.penalty_id + "</td>" +
+                                "<td class='text-center'>" + element.penalty_date + "</td>" +
+                                "<td class='text-center'>" + element.penalty_amount + "</td>" +
+                                "<td class='text-center'>" + element.penalty_day + "</td>" +
+                                "</tr>")
                         });
                     } else {
                         $("#manage-penalty-table tbody").html("<td colspan='4' class='text-center'>No penalty Found.</td>");
