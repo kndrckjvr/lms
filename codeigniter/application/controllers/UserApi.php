@@ -255,16 +255,22 @@ class UserApi extends CI_Controller
     public function update()
     {
         $json_response = array(
-            "response" => 1
+            "response" => 1,
+            "wa" => $this->input->post("passwordChange"),
+            "we" => $this->input->post("usernameChange")
         );
 
-        if($this->input->post("passwordChange") == "1") {
+        if ($this->input->post("passwordChange") == "1") {
             $this->form_validation->set_rules('password', 'Password', 'trim|required');
             $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|matches[password]');
         }
-        
-        if($this->input->post("usernameChange") == "1") {
+
+        if ($this->input->post("usernameChange") == "1") {
             $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[usertbl.username]');
+        }
+
+        if ($this->input->post("usertypeChange") == "1") {
+            $this->form_validation->set_rules('user_type', 'User Type', 'trim|required');
         }
 
         if ($this->form_validation->run() == FALSE) {
@@ -274,21 +280,37 @@ class UserApi extends CI_Controller
             }
         } else {
             $data = array();
-            if($this->input->post("passwordChange") == "1") {
+            if ($this->input->post("passwordChange") == "1") {
                 $data["password"] = sha1($this->input->post("password"));
             }
-            
-            if($this->input->post("usernameChange") == "1") {
+
+            if ($this->input->post("usernameChange") == "1") {
                 $data["username"] = $this->input->post("username");
             }
 
-            if(!$this->User_model->updateUser($data, array("user_id" => $this->session->userdata("user_token")))) {
-                
-                $json_response["response"] = 0;
-                
+            if ($this->input->post("usertypeChange") == "1") {
+                $data["user_type"] = $this->input->post("user_type");
+            }
+
+            if ($this->input->post("user_id")) {
+                if (!$this->User_model->updateUser($data, array("user_id" => $this->input->post("user_id")))) {
+                    $json_response["response"] = 0;
+                }
+            } else {
+                if (!$this->User_model->updateUser($data, array("user_id" => $this->session->userdata("user_token")))) {
+                    $json_response["response"] = 0;
+                }
             }
         }
 
         echo json_encode($json_response);
+    }
+
+    public function getUserEditor()
+    {
+        echo json_encode(array(
+            "response" => 1,
+            "users" => $this->User_model->getUsers(array("user_id" => $this->input->post("user_id")))[0]
+        ));
     }
 }

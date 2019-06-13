@@ -7,47 +7,50 @@
             </div>
 
             <div class="card-body">
-                <form onsubmit="return false" method="post" id="user-profile-form">
-                    <button type="button" class="btn btn-primary btn-block mb-3" id="change-username">Change Username</button>
-                    <div class="form-row mb-3 change-username" style="display: none">
-                        <div class="col">
-                            <label>Username</label>
-                            <input type="text" class="form-control" id="current-username" value="<?= $username ?>" disabled>
-                            <div class="invalid-feedback"></div>
-                        </div>
-                        <div class="col">
-                            <label for="username">New Username</label>
-                            <input type="text" class="form-control" id="username" name="username">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-block mb-3" id="change-password">Change Password</button>
-                    <div class="change-password" style="display: none">
-                        <div class="form-row mb-3">
+                <div class="container-fluid">
+
+                    <form onsubmit="return false" method="post" id="user-profile-form">
+                        <button type="button" class="btn btn-primary btn-block mb-3" id="change-username">Change Username</button>
+                        <div class="form-row mb-3 change-username" style="display: none">
                             <div class="col">
-                                <label for="password">New Password</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <label>Username</label>
+                                <input type="text" class="form-control" id="current-username" value="<?= $username ?>" disabled>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col">
-                                <label for="confpassword">Confirm Password</label>
-                                <input type="password" class="form-control" id="confpassword" name="password">
+                                <label for="username">New Username</label>
+                                <input type="text" class="form-control" id="username" name="username">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-                        <div class="row">
-                            <p>Password strength: <strong id="str"></strong></p><br>
+                        <button type="button" class="btn btn-primary btn-block mb-3" id="change-password">Change Password</button>
+                        <div class="change-password" style="display: none">
+                            <div class="form-row mb-3">
+                                <div class="col">
+                                    <label for="password">New Password</label>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col">
+                                    <label for="confpassword">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confpassword" name="confpassword">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p>Password strength: <strong id="str"></strong></p><br>
+                            </div>
+                            <div class="row">
+                                <ul>
+                                    <li>Use minimum of 6 Characters</li>
+                                    <li>Besides letters, include at least a number or symbol (!@#$%^&*+=._-)</li>
+                                    <li>Password is case sensitive</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="row">
-                            <ul>
-                                <li>Use minimum of 6 Characters</li>
-                                <li>Besides letters, include at least a number or symbol (!@#$%^&*+=._-)</li>
-                                <li>Password is case sensitive</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block font-weight-bold" id="update-user-profile" style="display: none;">Submit</button>
-                </form>
+                        <button type="submit" class="btn btn-primary btn-block font-weight-bold" id="update-user-profile" style="display: none;">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

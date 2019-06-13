@@ -95,7 +95,7 @@ class BookApi extends CI_Controller
                 for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
                     $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
                     if ($this->Book_model->insertBookItem($data)) {
-                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                        if (!$this->Section_model->updateSection(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
                             $json_response["response"] = 0;
                             $json_response["error"]["section"] = "Error Updating Section Code Number.";
                         }
@@ -147,7 +147,7 @@ class BookApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function updateBook()
+    public function update()
     {
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
@@ -155,9 +155,11 @@ class BookApi extends CI_Controller
 
         $json_response = array("response" => 1);
 
-        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
+        $currentQuantity = $this->Book_model->getSpecificBook(array("b.book_id" => $this->input->post("book_id")))[0]->book_qty;
+
+        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
-        $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
+        $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric|greater_than_equal_to[' . $currentQuantity . ']');
         $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
 
         if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
@@ -178,7 +180,6 @@ class BookApi extends CI_Controller
 
             $data = array(
                 "book_name" => $this->input->post("book_name"),
-                "book_image" => "",
                 "section_id" => $this->input->post("book_section"),
                 "publish_date" => strtotime($this->input->post("publish_date"))
             );
@@ -187,11 +188,13 @@ class BookApi extends CI_Controller
 
             $this->load->library('upload');
 
+            $bookImage = "";
+
             if ($this->upload->do_upload('book_image_file')) {
-                $data["book_image"] = $this->upload->data('file_name');
+                $bookImage = $this->upload->data('file_name');
 
                 $config2['image_library']   = 'gd2';
-                $config2['source_image']    = './images/' . $data["book_image"];
+                $config2['source_image']    = './images/' . $bookImage;
                 $config2['create_thumb']    = FALSE;
                 $config2['maintain_ratio']  = TRUE;
                 $config2['width']           = 200;
@@ -205,36 +208,43 @@ class BookApi extends CI_Controller
                     $this->image_lib->initialize($config2);
                     $this->image_lib->resize();
                 }
+                
+                $data["book_image"] = $bookImage;
             }
 
-            if ($bookId = $this->Book_model->insertBook($data)) {
-                $data = array(
-                    "book_id" => $bookId,
-                    "book_code" => "",
-                    "status" => 1,
-                    "created_at" => strtotime("now")
-                );
+            $this->Book_model->updateBook("booktbl", $data, array("book_id" => $this->input->post("book_id")));
 
-                // Populate authorbooktbl
-                foreach ($authors as $value) {
-                    if (!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {
-                        $json_response["response"] = 0;
-                        $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
-                    }
+            $data = array(
+                "book_id" => $this->input->post("book_id"),
+                "book_code" => "",
+                "status" => 1,
+                "created_at" => strtotime("now")
+            );
+
+            // Remove Authors and Book
+            $this->Book_model->updateBook("authorbooktbl", array("status" => "0"), array("book_id" => $this->input->post("book_id")));
+
+            // Populate authorbooktbl
+            foreach ($authors as $value) {
+                if (!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $this->input->post("book_id")))) {
+                    $json_response["response"] = 0;
+                    $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
                 }
+            }
 
-                // Populate itembooktbl
-                for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
-                    $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
-                    if ($this->Book_model->insertBookItem($data)) {
-                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
-                            $json_response["response"] = 0;
-                            $json_response["error"]["section"] = "Error Updating Section Code Number.";
-                        }
-                    } else {
+            $newQuantity = $this->input->post("book_quantity") - $currentQuantity;
+
+            // Populate itembooktbl
+            for ($i = 0; $i < $newQuantity; $i++) {
+                $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
+                if ($this->Book_model->insertBookItem($data)) {
+                    if (!$this->Section_model->updateSection(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
                         $json_response["response"] = 0;
-                        $json_response["error"]["itembook"] = "Error Inserting Item Book: " . $data["book_code"] . ".";
+                        $json_response["error"]["section"] = "Error Updating Section Code Number.";
                     }
+                } else {
+                    $json_response["response"] = 0;
+                    $json_response["error"]["itembook"] = "Error Inserting Item Book: " . $data["book_code"] . ".";
                 }
             }
         }
@@ -273,7 +283,9 @@ class BookApi extends CI_Controller
         $authorSname = array_map("trim", explode(",", $json_response["book"]->book_author_sname));
         $keys = array("author_id", "author_name", "author_sname");
         $authorArray = array_map(null, $authorId, $authorName, $authorSname);
-        $json_response["book"]->author_value = array_map(function ($e) use ($keys) {return array_combine($keys, $e);}, $authorArray);
+        $json_response["book"]->author_value = array_map(function ($e) use ($keys) {
+            return array_combine($keys, $e);
+        }, $authorArray);
 
         // print_r($json_response);
         echo json_encode($json_response);

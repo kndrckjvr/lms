@@ -22,7 +22,7 @@ class SectionApi extends CI_Controller
         }
 
         $this->form_validation->set_rules('section_name', 'Section Name', 'trim|required|is_unique[sectiontbl.section_name]');
-        $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|is_unique[sectiontbl.section_code]');
+        $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|is_unique[sectiontbl.section_code]|alpha|min_length[2]');
 
         if ($this->form_validation->run() == FALSE) {
             $json_response = array(
@@ -78,20 +78,32 @@ class SectionApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function data()
-    { 
-        echo json_encode(array(
-            array(
-                "author_id" => 1,
-                "author_name" => "Kendrick Cosca",
-                "author_sname" => "K. Cosca"
-            ),
-            
-            array(
-                "author_id" => 2,
-                "author_name" => "Angie Cosca",
-                "author_sname" => "A. Cosca"
-            )
-        ));
+    public function update()
+    {
+        $json_response = array(
+            "response" => 1
+        );
+
+        if (!$this->Section_model->getSections(array("section_id" => $this->input->post("section_id")))[0]->section_name == $this->input->post("section_name"))
+            $this->form_validation->set_rules('section_name', 'Section Name', 'trim|required|is_unique[sectiontbl.section_name]');
+        $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|alpha|min_length[2]');
+
+        if ($this->form_validation->run() == FALSE) {
+            $json_response["response"] = 0;
+            foreach ($this->form_validation->error_array() as $key => $value) {
+                $json_response[$key] = $value;
+            }
+        } else {
+            $data = array(
+                "section_name" => $this->input->post("section_name"),
+                "section_code" => $this->input->post("section_code")
+            );
+
+            if (!$this->Section_model->updateSection($data, array("section_id" => $this->input->post("section_id")))) {
+                $json_response["response"] = 0;
+            }
+        }
+
+        echo json_encode($json_response);
     }
 }

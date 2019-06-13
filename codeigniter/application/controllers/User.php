@@ -39,6 +39,7 @@ class User extends CI_Controller
             $this->load->view("components/nav_sidebar");
             $this->load->view("user/user_create");
             $this->load->view("user/user_manage");
+            $this->load->view("user/user_modal");
             $this->load->view("templates/footer", $data);
         } else {
             show_404();
