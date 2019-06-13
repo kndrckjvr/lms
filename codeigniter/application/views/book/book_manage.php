@@ -56,7 +56,7 @@
                                 <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
                             </li>
                         <?php } ?>
-                        <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?> next">
+                        <li class="page-item<?= (($pages == 0 || $pages == 1) ? " disabled" : "") ?> next">
                             <button class="page-link" onclick="changePage('next')">Next</button>
                         </li>
                     </ul>

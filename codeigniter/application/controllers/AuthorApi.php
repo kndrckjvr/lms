@@ -41,8 +41,8 @@ class AuthorApi extends CI_Controller
             "response" => 1
         );
 
-        $this->form_validation->set_rules('author_first_name', 'Author First Name', 'trim|required|alpha_dash');
-        $this->form_validation->set_rules('author_last_name', 'Author Last Name', 'trim|required|alpha_dash');
+        $this->form_validation->set_rules('author_first_name', 'Author First Name', 'trim|required');
+        $this->form_validation->set_rules('author_last_name', 'Author Last Name', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $json_response = array("response" => 0);
@@ -59,6 +59,53 @@ class AuthorApi extends CI_Controller
 
             if ($authorId = $this->Author_model->createAuthor($data)) {
                 $json_response["author_id"] = $authorId;
+            }
+        }
+
+        echo json_encode($json_response);
+    }
+
+    public function getAuthor()
+    {
+        $data = $this->Author_model->getAuthors(array("author_id" => $this->input->post("author_id")));
+        $json_response = array(
+            "response" => 1,
+            "value" => array(
+                "author_name" => $data[0]->author_name,
+                "author_fname" => $data[0]->author_fname,
+                "author_lname" => $data[0]->author_lname
+            )
+        );
+
+        echo json_encode($json_response);
+    }
+
+    public function update()
+    {
+        $json_response = array(
+            "response" => 1,
+            "fname" => $this->input->post("author_first_name"),
+            "lname" => $this->input->post("author_last_name")
+        );
+
+        $this->form_validation->set_rules('author_first_name', 'Author First Name', 'trim|required');
+        $this->form_validation->set_rules('author_last_name', 'Author Last Name', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $json_response["response"] = 0;
+            foreach ($this->form_validation->error_array() as $key => $value) {
+                $json_response[$key] = $value;
+            }
+        } else {
+            $data = array(
+                "author_name" => ucwords($this->input->post("author_first_name") . " " . $this->input->post("author_last_name")),
+                "author_fname" => ucwords($this->input->post("author_first_name")),
+                "author_lname" => ucwords($this->input->post("author_last_name")),
+                "author_sname" => strtoupper($this->input->post("author_first_name")[0]) . ". " . ucwords($this->input->post("author_last_name"))
+            );
+
+            if (!$this->Author_model->updateAuthor($data, array("author_id" => $this->input->post("author_id")))) {
+                $json_response["response"] = 0;
             }
         }
 

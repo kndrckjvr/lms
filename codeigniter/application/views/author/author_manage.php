@@ -3,7 +3,7 @@
     <div class="col-10">
         <div class="card shadow mb-5">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Manage Section</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Manage Author</h6>
             </div>
 
             <div class="card-body">
@@ -15,22 +15,24 @@
                         </div>
                     </form>
                 </div>
-                <table class="table-sm table-hover col" id="manage-section-table">
+                <table class="table-sm table-hover col" id="manage-author-table">
                     <thead>
                         <tr>
-                            <th class="w-75">Section Name</th>
-                            <th style="width: 15%">Section Code</th>
-                            <th style="width: 10%" class="text-center">Status</th>
+                            <th style="width: 40%">Author Name</th>
+                            <th style="width: 20%">Author First Name</th>
+                            <th style="width: 20%">Author Last Name</th>
+                            <th style="width: 20%">Author Short Name</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($sections as $section) : ?>
-                            <tr data-id="<?= $section->section_id ?>" data-toggle="modal" data-target="#manage-section-modal" style="cursor: pointer;">
-                                <td><?= $section->section_name ?></td>
-                                <td><?= $section->section_code ?></td>
-                                <td class="text-center"><span class="badge badge-<?php echo ($section->status == 1) ? "success" : "danger"; ?>"><?php echo ($section->status == 1) ? "Active" : "Inactive"; ?></span></td>
+                        <?php foreach ($authors as $author) { ?>
+                            <tr data-id="<?= $author->author_id ?>" data-toggle="modal" data-target="#manage-author-modal" style="cursor: pointer;">
+                                <td><?= $author->author_name ?></td>
+                                <td><?= $author->author_fname ?></td>
+                                <td><?= $author->author_lname ?></td>
+                                <td><?= $author->author_sname ?></td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </tbody>
                 </table>
                 <nav class="mt-2" style="float: right;">
@@ -59,7 +61,7 @@
     function changePage(e) {
         isLoading(true);
         $.ajax({
-            url: baseUrl + "sectionapi/pagechange",
+            url: baseUrl + "authorapi/pagechange",
             type: "POST",
             dataType: "JSON",
             data: {
@@ -67,18 +69,19 @@
                 search_text: $("#search-field").val()
             },
             success: function success(res) {
-                $("#manage-section-table tbody").html("");
-                if (res.sectionData) {
-                    res.sectionData.forEach(element => {
-                        $("#manage-section-table tbody").append(
-                            "<tr data-id='" + element.section_id + "' data-toggle='modal' data-target='#manage-section-modal' style='cursor: pointer;'>" +
-                            "<td>" + element.section_name + "</td>" +
-                            "<td>" + element.section_code + "</td>" +
-                            "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? 'success' : 'danger') + "'>" + ((element.status == 1) ? 'Active' : 'Inactive') + "</span></td>" +
+                $("#manage-author-table tbody").html("");
+                if (res.authorData) {
+                    res.authorData.forEach(element => {
+                        $("#manage-author-table tbody").append(
+                            "<tr data-id='" + element.author_id + "' data-toggle='modal' data-target='#manage-author-modal' style='cursor: pointer;'>" +
+                            "<td>" + element.author_name + "</td>" +
+                            "<td>" + element.author_fname + "</td>" +
+                            "<td>" + element.author_lname + "</td>" +
+                            "<td>" + element.author_sname + "</td>" +
                             "</tr>")
                     });
                 } else {
-                    $("#manage-section-table tbody").html("<td colspan='4' class='text-center'>No Section Found.</td>");
+                    $("#manage-author-table tbody").html("<td colspan='4' class='text-center'>No author Found.</td>");
                 }
 
                 $(".page-item").removeClass("active");
@@ -99,25 +102,26 @@
         $("#search-field").donetyping(function() {
             isLoading(true)
             $.ajax({
-                url: baseUrl + "sectionapi/searchsection",
+                url: baseUrl + "authorapi/search",
                 type: "POST",
                 dataType: "JSON",
                 data: {
                     search_text: $("#search-field").val()
                 },
                 success: function success(res) {
-                    $("#manage-section-table tbody").html("");
-                    if (res.sectionData) {
-                        res.sectionData.forEach(element => {
-                            $("#manage-section-table tbody").append(
-                                "<tr data-id='" + element.section_id + "' data-toggle='modal' data-target='#manage-section-modal' style='cursor: pointer;'>" +
-                                "<td>" + element.section_name + "</td>" +
-                                "<td>" + element.section_code + "</td>" +
-                                "<td class='text-center'><span class='badge badge-" + ((element.status == 1) ? 'success' : 'danger') + "'>" + ((element.status == 1) ? 'Active' : 'Inactive') + "</span></td>" +
+                    $("#manage-author-table tbody").html("");
+                    if (res.authorData) {
+                        res.authorData.forEach(element => {
+                            $("#manage-author-table tbody").append(
+                                "<tr data-id='" + element.author_id + "' data-toggle='modal' data-target='#manage-author-modal' style='cursor: pointer;'>" +
+                                "<td>" + element.author_name + "</td>" +
+                                "<td>" + element.author_fname + "</td>" +
+                                "<td>" + element.author_lname + "</td>" +
+                                "<td>" + element.author_sname + "</td>" +
                                 "</tr>")
                         });
                     } else {
-                        $("#manage-section-table tbody").html("<td colspan='4' class='text-center'>No Section Found.</td>");
+                        $("#manage-author-table tbody").html("<td colspan='4' class='text-center'>No author Found.</td>");
                     }
 
                     $("li.page-item.page-number").remove();

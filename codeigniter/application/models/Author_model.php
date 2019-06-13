@@ -48,4 +48,11 @@ class Author_model extends CI_Model
         $this->db->insert("authortbl", $data);
         return $this->db->insert_id();
     }
+
+    public function updateAuthor($data, $where)
+    {
+        $this->db->where($where);
+        $this->db->update("authortbl", $data);
+        return $this->db->insert_id();
+    }
 }
