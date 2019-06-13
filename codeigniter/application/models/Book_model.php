@@ -68,6 +68,8 @@ class Book_model extends CI_Model
                 itembook_id,
                 book_name,
                 GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author, 
+                GROUP_CONCAT(a.author_id ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author_id, 
+                GROUP_CONCAT(a.author_sname ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author_sname, 
                 book_code, 
                 s.section_id, 
                 itb.status, 
@@ -75,7 +77,8 @@ class Book_model extends CI_Model
             ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
             ->join("itembooktbl as itb", "b.book_id = itb.book_id", "INNER JOIN")
-            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id AND b.book_id = " . $data)
+            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->where($data)
             ->group_by("itb.itembook_id");
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;

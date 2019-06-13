@@ -20,9 +20,9 @@ class BookApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         }
-        
+
         $json_response = array("response" => 1);
-        
+
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
         $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
@@ -67,45 +67,43 @@ class BookApi extends CI_Controller
 
                 $this->load->library('image_lib', $config2);
 
-                if (!$this->image_lib->resize()){
+                if (!$this->image_lib->resize()) {
                     echo $this->image_lib->display_errors();
-                }
-                else{
+                } else {
                     $this->image_lib->initialize($config2);
                     $this->image_lib->resize();
                 }
             }
-            
-            if($bookId = $this->Book_model->insertBook($data)) {
+
+            if ($bookId = $this->Book_model->insertBook($data)) {
                 $data = array(
-                    "book_id" => $bookId, 
+                    "book_id" => $bookId,
                     "book_code" => "",
-                    "status" => 1, 
+                    "status" => 1,
                     "created_at" => strtotime("now")
                 );
 
                 // Populate authorbooktbl
-                foreach($authors as $value) {
-                    if(!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {                        
+                foreach ($authors as $value) {
+                    if (!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {
                         $json_response["response"] = 0;
                         $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
                     }
                 }
 
                 // Populate itembooktbl
-                for($i = 0; $i < $this->input->post("book_quantity"); $i++) {
+                for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
                     $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
                     if ($this->Book_model->insertBookItem($data)) {
-                        if(!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
                             $json_response["response"] = 0;
                             $json_response["error"]["section"] = "Error Updating Section Code Number.";
                         }
                     } else {
                         $json_response["response"] = 0;
-                        $json_response["error"]["itembook"] = "Error Inserting Item Book: ". $data["book_code"] . ".";
+                        $json_response["error"]["itembook"] = "Error Inserting Item Book: " . $data["book_code"] . ".";
                     }
                 }
-
             }
         }
 
@@ -128,7 +126,7 @@ class BookApi extends CI_Controller
         }
         $json_response = array();
         $json_response["response"] = 1;
-        $json_response["book"] = $this->Book_model->getSpecificBook($this->input->post("itembook_id"))[0];
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("itb.itembook_id" => $this->input->post("itembook_id")))[0];
         switch ($json_response["book"]->status) {
             case 1:
                 $json_response["remarks"] = "Available";
@@ -203,6 +201,22 @@ class BookApi extends CI_Controller
             "bookData" => $this->Book_model->getBook($this->input->post("book_name"), ($this->input->post("page") - 1) * 10)
         );
 
+        echo json_encode($json_response);
+    }
+
+    public function getBookEditor()
+    {
+        $json_response["response"] = 1;
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("b.book_id" => $this->input->post("book_id")))[0];
+
+        $authorId = array_map("trim", explode(",", $json_response["book"]->book_author_id));
+        $authorName = array_map("trim", explode(",", $json_response["book"]->book_author));
+        $authorSname = array_map("trim", explode(",", $json_response["book"]->book_author_sname));
+        $keys = array("author_id", "author_name", "author_sname");
+        $authorArray = array_map(null, $authorId, $authorName, $authorSname);
+        $json_response["book"]->author_value = array_map(function ($e) use ($keys) {return array_combine($keys, $e);}, $authorArray);
+
+        // print_r($json_response);
         echo json_encode($json_response);
     }
 }
