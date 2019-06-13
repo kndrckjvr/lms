@@ -1,4 +1,4 @@
-<div class="modal fade" id="manage-book-modal" tabindex="-1" role="dialog" aria-labelledby="manage-book-modal-title" aria-hidden="true">
+    <div class="modal fade" id="manage-book-modal" tabindex="-1" role="dialog" aria-labelledby="manage-book-modal-title" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -41,12 +41,12 @@
                     <input type="hidden" name="book_id" id="book-id">
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book_name">Book Name</label>
-                            <input type="text" class="form-control" id="book_name" name="book_name" placeholder="Enter Book Name">
+                            <label for="book_name_editor">Book Name</label>
+                            <input type="text" class="form-control" id="book_name_editor" name="book_name" placeholder="Enter Book Name">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="col">
-                            <label for="book_author">Book Author</label>
+                            <label for="book_author_editor">Book Author</label>
                             <select class="form-control selectpicker with-ajax" multiple data-live-search="true" id="book_author_editor">
                                 <option value="1" data-subtext="K. Cosca" selected>
                                     Kendrick Cosca
@@ -57,8 +57,8 @@
                     </div>
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book_section">Book Section</label>
-                            <select name="book_section" id="book_section" class="form-control">
+                            <label for="book_section_editor">Book Section</label>
+                            <select name="book_section" id="book_section_editor" class="form-control">
                                 <?php
                                 if ($sections) {
                                     foreach ($sections as $section) {
@@ -71,27 +71,27 @@
                             </select>
                         </div>
                         <div class="col">
-                            <label for="book_quantity">Book Quantity</label>
-                            <input type="number" min="1" class="form-control" id="book_quantity" name="book_quantity" placeholder="Enter Book Quantity">
+                            <label for="book_quantity_editor">Book Quantity</label>
+                            <input type="number" min="1" class="form-control" id="book_quantity_editor" name="book_quantity" placeholder="Enter Book Quantity">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-row mb-3">
                         <div class="col">
-                            <label for="book_image_file">Book Image File</label><br />
-                            <input type="file" name="book_image_file" id="book_image_file" style="display: none">
+                            <label for="book_image_file_editor">Book Image File</label><br />
+                            <input type="file" name="book_image_file" id="book_image_file_editor" style="display: none">
                             <div class="invalid-feedback"></div>
-                            <div style="width: 150px; height: 200px; margin: 0 auto; background: #000; background-position: center; background-size: cover; cursor: pointer;" id="upload-image-div">
-                                <p class="text-center pt-5 text-white">Click to upload image</p>
+                            <div style="width: 150px; height: 200px; margin: 0 auto; background: #000; cursor: pointer;" id="upload-image-div-editor">
+                                <!-- <p class="text-center pt-5 text-white">Click to upload image</p> -->
                             </div>
                         </div>
                         <div class="col">
-                            <label for="publish_date">Publish Date</label>
-                            <input type="text" class="form-control datepicker" value="<?= date("m/d/Y", strtotime("now")) ?>" id="publish_date" name="publish_date">
+                            <label for="publish_date_editor">Publish Date</label>
+                            <input type="text" class="form-control datepicker" value="<?= date("m/d/Y", strtotime("now")) ?>" id="publish_date_editor" name="publish_date">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <input type="hidden" class="is-invalid" name="book_author" id="book_author_hidden">
+                    <input type="hidden" class="is-invalid" name="book_author" id="book_author_hidden_editor">
                     <button type="submit" class="btn btn-primary btn-block font-weight-bold" id="create-book">Submit</button>
                 </form>
             </div>
@@ -322,13 +322,16 @@
             }
         };
 
+        $("#book_author_editor").on('change', function(e) {
+            $("#book_author_hidden_editor").val($(e.currentTarget).val());
+        });
+
         $("#book_author_editor")
             .selectpicker()
             .filter(".with-ajax")
             .ajaxSelectPicker(options);
 
         $("#edit-book-modal").on('show.bs.modal', function(e) {
-            console.log($("#book-id").val());
             $.ajax({
                 url: baseUrl + "bookapi/getbookeditor",
                 type: "POST",
@@ -339,7 +342,17 @@
                 success: function success(res) {
                     $("#edit-book-modal-title").html("Edit: " + res.book.book_name);
                     $("#book_author_editor").html("");
+                    $("#book_name_editor").val(res.book.book_name);
+                    $("#book_section_editor").val(res.book.section_id);
+                    $("#book_quantity_editor").val(res.book.book_qty);
+                    $("#publish_date_editor").val(formatDate(new Date(res.book.publish_date * 1000)));
+                    $("#upload-image-div-editor").css("background", "");                    
                     
+                    $("#upload-image-div-editor").css({
+                        "background-image": "url(" + baseUrl + "images/" + ((res.book.book_image == "") ? "no_image.png" : res.book.book_image) + ")",
+                        "background-position": "center",
+                        "background-size": "cover"
+                    });
                     res.book.author_value.forEach(element => {
                         $("#book_author_editor").append("<option value='" + element.author_id + "' data-subtext='" + element.author_sname + "' selected>" + element.author_name + "</option>");
                     });

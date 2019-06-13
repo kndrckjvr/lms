@@ -67,9 +67,11 @@
 
 <script>
     jQuery(document).ready(function($) {
+        
         $('.datepicker').datepicker({
             autoclose: true
         });
+
         var options = {
             values: "a, b, c",
             ajax: {

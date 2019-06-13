@@ -73,7 +73,10 @@ class Book_model extends CI_Model
                 book_code, 
                 s.section_id, 
                 itb.status, 
-                section_code
+                section_code,
+                publish_date,
+                book_image,
+                (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty
             ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
             ->join("itembooktbl as itb", "b.book_id = itb.book_id", "INNER JOIN")
