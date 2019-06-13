@@ -8,7 +8,6 @@
             
             <div class="card-body">
                 <form onsubmit="return false" method="post" id="section-create-form">
-                <!-- <form action="<?= base_url("bookapi/create") ?>" method="post"> -->
                     <div class="form-row mb-3">
                         <div class="col">
                             <label for="section-name">Section Name</label>

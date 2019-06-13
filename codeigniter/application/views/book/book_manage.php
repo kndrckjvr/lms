@@ -1,9 +1,18 @@
-<div class="row mt-4">
+<div class="row mt-4" id="book-manage">
     <div class="col-1"></div>
     <div class="col-10">
         <div class="card shadow mb-5">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Manage Books</h6>
+                <ul style="list-style: none; line-height: 1;" class="m-0">
+                    <li style="display: inline-block;" class="px-2 pr-0">
+                        <span class="d-inline-block" data-toggle="tooltip" title="Refresh">
+                            <a href="#book-manage" role="button" onclick="refreshData()">
+                                <i class="fas fa-sync-alt fa-sm fa-fw"></i>
+                            </a>
+                        </span>
+                    </li>
+                </ul>
             </div>
 
             <div class="card-body">
@@ -47,7 +56,7 @@
                                 <button class="page-link"><?php echo $i . (($i == 1) ? "<span class='sr-only'>(current)</span>" : ""); ?></button>
                             </li>
                         <?php } ?>
-                        <li class="page-item<?= (($pages == 0) ? " disabled" : "") ?> next">
+                        <li class="page-item<?= (($pages == 0 || $pages == 1) ? " disabled" : "") ?> next">
                             <button class="page-link" onclick="changePage('next')">Next</button>
                         </li>
                     </ul>
@@ -96,8 +105,45 @@
         });
     }
 
+    function refreshData() {
+        isLoading(true)
+        $.ajax({
+            url: baseUrl + "bookapi/searchbook",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                book_name: $("#search-field").val()
+            },
+            success: function success(res) {
+                $("#manage-book-table tbody").html("");
+                if (res.books) {
+                    res.books.forEach(element => {
+                        $("#manage-book-table tbody").append(
+                            "<tr data-id='" + element.book_id + "' data-toggle='modal' data-target='#manage-book-modal' style='cursor: pointer;'><td>" + element.book_name + "</td><td>" + element.book_author + "</td><td>" + element.section_name + "</td><td class='text-center'>" + element.book_qty + "</td></tr>")
+                    });
+                } else {
+                    $("#manage-book-table tbody").html("<td colspan='4' class='text-center'>No Book Found.</td>");
+                }
+
+                $("li.page-item.page-number").remove();
+
+                currentPage = 1;
+
+                pageHandler(currentPage, res.pages);
+
+                for (var i = 1; i <= res.pages; i++) {
+                    $("li.page-item.next").before("<li class='page-item" + ((i == 1) ? " active" : "") + " page-number' onclick='changePage(" + i + ")'><button class='page-link'>" + i + "</button></li>", )
+                }
+            },
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
+            complete: complete()
+        });
+    }
+
     jQuery(document).ready(function($) {
-        $("#search-field").donetyping(function() {
+        $("#search-field").donetyping(function () {
             isLoading(true)
             $.ajax({
                 url: baseUrl + "bookapi/searchbook",

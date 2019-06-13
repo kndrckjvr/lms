@@ -67,3 +67,81 @@
         <div class="col-1"></div>
     </div>
 </div>
+
+<script>
+$("#password").on("input",function(){
+  this.value = this.value.replace(/\s/, '');
+});
+
+$("#password").on("keyup", function(){
+    var passval = this.value;
+
+    var bad_regex = /^[a-z][^A-Z]\S{5,}$/;
+    var bad_regex2 = /^[A-Z][^a-z]\S{5,}$/;
+    var weak_regex = /^(?=.*[a-z])(?=.*[A-Z])\S{5,}$/;
+    var weak_regex2 = /^(?=.*[A-Z])(?=.*[0-9])\S{5,}$/;
+    var good_regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])\S{5,}$/;
+    var strong_regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^\&*+=._-])\S{5,}$/;
+
+    
+    if (passval.length < 6) {
+        $("#str").css("color", "#e74a3b").html("Too Short");
+    }
+    if (bad_regex.test(passval) || bad_regex2.test(passval)) {
+        $("#str").css("color", "#f6c23e").html("Bad");
+    }
+    if (weak_regex.test(passval) || weak_regex2.test(passval)) {
+        $("#str").css("color", "#36b9cc").html("Weak");
+    }
+    if (good_regex.test(passval)) {
+        $("#str").css("color", "#lcc88a").html("Good");
+    }
+    if (strong_regex.test(passval)) {
+        $("#str").css("color", "#4e73df").html("Strong");
+    }
+});
+
+$("#register-button").on('click', function (e) {
+    $(e.target.firstElementChild).show();
+    $(e.target.lastElementChild).html("Loading...");
+    $("input").removeClass("is-invalid");
+    $.ajax({
+        url: baseUrl + "userapi/register",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            username: $("#username").val(),
+            email: $("#email").val(),
+            password: $("#password").val(),
+            confirm_password: $("#confirm_password").val()
+        },
+        success: function success(res) {
+            if (res.response) {
+                window.location = baseUrl + "login";
+            } else {
+                $(e.target.firstElementChild).hide();
+                $(e.target.lastElementChild).html("Register");
+                if (res.username) {
+                    $("#username + .invalid-feedback").html(res.username);
+                    $("#username").addClass("is-invalid");
+                }
+                if (res.email) {
+                    $("#email + .invalid-feedback").html(res.email);
+                    $("#email").addClass("is-invalid");
+                }
+                if (res.password) {
+                    $("#password + .invalid-feedback").html(res.password);
+                    $("#password").addClass("is-invalid");
+                }
+                if (res.confirm_password) {
+                    $("#confirm_password + .invalid-feedback").html(res.confirm_password);
+                    $("#confirm_password").addClass("is-invalid");
+                }
+            }
+        },
+        error: function error(err) {
+            console.target.log(err);
+        }
+    });
+});
+</script>

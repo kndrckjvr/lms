@@ -2,7 +2,6 @@
 
 $config['protocol'] = "smtp";
 $config['smtp_host'] = "ssl://smtp.gmail.com";
-// $config['smtp_host'] = "smtp.gmail.com:465";
 $config['ss']['verify_peer'] = false;
 $config['ss']['verify_peer_name'] = false;
 $config['ss']['allow_self_signed'] = true;
@@ -11,8 +10,8 @@ $config['charset'] =  "utf-8";
 $config['newline'] = "\r\n";
 $config['mailtype'] = "html";
 
-$config['smtp_user'] = "bryanbernardo9828@gmail.com";
-$config['smtp_pass'] = "bryankbernardo9828";
+$config['smtp_user'] = "lms.email.manager@gmail.com";
+$config['smtp_pass'] = "LMS!2019";
 
 
 

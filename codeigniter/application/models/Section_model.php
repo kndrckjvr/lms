@@ -26,12 +26,18 @@ class Section_model extends CI_Model
 
     public function getCurrentCode($where)
     {
-        $query = $this->db->select("section_code_number, section_code")
+        $query = $this->db->select("section_code_number")
             ->from("sectiontbl")
             ->where($where)
             ->limit(1);
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
+    }
+
+    public function updateCurrentCode($data, $where) {
+        $this->db->where($where);
+        $this->db->update("sectiontbl", $data);
+        return $this->db->affected_rows();
     }
 
     public function getSectionByPages($start, $searchText = "")

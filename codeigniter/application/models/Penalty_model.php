@@ -33,4 +33,10 @@ class Penalty_model extends CI_Model
         ->get("penaltytbl");
         return ceil($query->num_rows() / 10);
     }
+
+    public function createPenalty($data)
+    {
+        $this->db->insert("penaltytbl", $data);
+        return $this->db->insert_id();
+    }
 }

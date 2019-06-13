@@ -20,84 +20,93 @@ class BookApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         }
-        $json_response = array();
-        echo json_encode($this->input->post("book-name"));
-        $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
-        $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
-        $this->form_validation->set_rules('book-code', 'Book Code', 'trim|required');
+
+        $json_response = array("response" => 1);
+
+        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
+        $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
+        $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
+
+        if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+            $json_response["publish_date"] = "The Publish Date field is not in the correct format.";
+        }
 
         if ($this->form_validation->run() == FALSE) {
-            $json_response = array("response" => 0);
+            $json_response["response"] = 0;
             foreach ($this->form_validation->error_array() as $key => $value) {
                 $json_response[$key] = $value;
             }
         } else {
+            if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+                $json_response["response"] = 0;
+                echo json_encode($json_response);
+                return;
+            }
 
             $data = array(
-                "book_name" => $this->input->post("book-name"),
-                "book_author" => $this->input->post("book-author"),
-                "section_id" => $this->input->post("book-section")
+                "book_name" => $this->input->post("book_name"),
+                "book_image" => "",
+                "section_id" => $this->input->post("book_section"),
+                "publish_date" => strtotime($this->input->post("publish_date"))
             );
-            if ($bookData = $this->Book_model->bookAvailable($data)) {
-                $data = array(
-                    "book_id" => $bookData[0]->book_id,
-                    "book_code" => $this->input->post("book-code")
-                );
-                if ($this->Book_model->isBookCodeUnique($data)) {
-                    $data = array(
-                        "book_id" => $bookData[0]->book_id, "book_code" => $this->input->post("book-code"),
-                        "status" => 1, "created_at" => strtotime("now")
-                    );
-                    if ($this->Book_model->insertBookItem($data)) {
-                        $json_response = array("response" => 1);
-                    } else {
-                        $json_response = array("response" => 0, "message" => "Error Found");
-                    }
-                } else {
-                    $json_response = array("response" => 0, "book_code" => "The Book Code field must contain a unique value.");
-                }
-            } else {
-                $config['upload_path'] = './assets/images/';
-                $config['allowed_types'] = 'gif|jpg|png';
-                $this->load->library('upload',$config);
 
-                if ( ! $this->upload->do_upload('book-image-file')){
-                    print_r($this->upload->display_errors());
-                    echo $this->input->post('profile_picture');
-                    die();
+            $authors = explode(",", $this->input->post("book_author"));
+
+            $this->load->library('upload');
+
+            if ($this->upload->do_upload('book_image_file')) {
+                $data["book_image"] = $this->upload->data('file_name');
+
+                $config2['image_library']   = 'gd2';
+                $config2['source_image']    = './images/' . $data["book_image"];
+                $config2['create_thumb']    = FALSE;
+                $config2['maintain_ratio']  = TRUE;
+                $config2['width']           = 200;
+                $config2['height']          = 200;
+
+                $this->load->library('image_lib', $config2);
+
+                if (!$this->image_lib->resize()) {
+                    echo $this->image_lib->display_errors();
+                } else {
+                    $this->image_lib->initialize($config2);
+                    $this->image_lib->resize();
                 }
-                else{
-                    $image = $this->upload->data('file_name');
-                    $config2['image_library'] = 'gd2';
-                    $config2['source_image'] = './assets/profile_pictures/'.$image;
-                    $config2['create_thumb'] = FALSE;
-                    $config2['maintain_ratio'] = TRUE;
-                    $config2['width']         = 200;
-                    $config2['height']       = 200;
-                    $this->load->library('image_lib', $config2);
-                    if ( ! $this->image_lib->resize()){
-                        echo $this->image_lib->display_errors();
+            }
+
+            if ($bookId = $this->Book_model->insertBook($data)) {
+                $data = array(
+                    "book_id" => $bookId,
+                    "book_code" => "",
+                    "status" => 1,
+                    "created_at" => strtotime("now")
+                );
+
+                // Populate authorbooktbl
+                foreach ($authors as $value) {
+                    if (!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {
+                        $json_response["response"] = 0;
+                        $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
                     }
-                    else{
-                        
-                        $this->image_lib->initialize($config2);
-                        $this->image_lib->resize();
-                        if ($bookId = $this->Book_model->insertBook($data)) {
-                            $data = array(
-                                "book_id" => $bookId, "book_code" => $this->input->post("book-code"),
-                                "status" => 1, "created_at" => strtotime("now")
-                            );
-                            if ($this->Book_model->insertBookItem($data)) {
-                                $json_response = array("response" => 1);
-                            } else {
-                                $json_response = array("response" => 0, "message" => "Error Found");
-                            }
+                }
+
+                // Populate itembooktbl
+                for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
+                    $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
+                    if ($this->Book_model->insertBookItem($data)) {
+                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                            $json_response["response"] = 0;
+                            $json_response["error"]["section"] = "Error Updating Section Code Number.";
                         }
+                    } else {
+                        $json_response["response"] = 0;
+                        $json_response["error"]["itembook"] = "Error Inserting Item Book: " . $data["book_code"] . ".";
                     }
                 }
-                
             }
         }
+
         echo json_encode($json_response);
     }
 
@@ -106,7 +115,7 @@ class BookApi extends CI_Controller
         $json_response = array();
         $json_response["response"] = 1;
         $json_response["book_name"] = $this->Book_model->getBooks("booktbl", array("book_id" => $this->input->post("book_id")))[0]->book_name;
-        $json_response["books"] = $this->Book_model->getBookItems(array("booktbl.book_id" => $this->input->post("book_id")));
+        $json_response["books"] = $this->Book_model->getBookItems($this->input->post("book_id"));
         echo json_encode($json_response);
     }
 
@@ -117,7 +126,7 @@ class BookApi extends CI_Controller
         }
         $json_response = array();
         $json_response["response"] = 1;
-        $json_response["book"] = $this->Book_model->getSpecificBook(array("itembook_id" => $this->input->post("itembook_id"), "sectiontbl.status" => 1))[0];
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("itb.itembook_id" => $this->input->post("itembook_id")))[0];
         switch ($json_response["book"]->status) {
             case 1:
                 $json_response["remarks"] = "Available";
@@ -143,34 +152,93 @@ class BookApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         }
-        $json_response = array();
 
-        $this->form_validation->set_rules('book-name', 'Book Name', 'trim|required');
-        $this->form_validation->set_rules('book-author', 'Book Author', 'trim|required');
+        $json_response = array("response" => 1);
+
+        $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
+        $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
+        $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
+
+        if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+            $json_response["publish_date"] = "The Publish Date field is not in the correct format.";
+        }
 
         if ($this->form_validation->run() == FALSE) {
-            $json_response = array("response" => 0);
+            $json_response["response"] = 0;
             foreach ($this->form_validation->error_array() as $key => $value) {
                 $json_response[$key] = $value;
             }
         } else {
+            if (!preg_match("/^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])\/[0-9]{4}$/", $this->input->post("publish_date"))) {
+                $json_response["response"] = 0;
+                echo json_encode($json_response);
+                return;
+            }
+
             $data = array(
-                "book_name" => $this->input->post("book-name"),
-                "book_author" => $this->input->post("book-author")
+                "book_name" => $this->input->post("book_name"),
+                "book_image" => "",
+                "section_id" => $this->input->post("book_section"),
+                "publish_date" => strtotime($this->input->post("publish_date"))
             );
-            $where = array(
-                "book_id" => $this->input->post("book-id")
-            );
-            // foreach ($this->input->post() as $key => $value) {
-            //     if ($key != "book_id")
-            //         $data[$key] = $value;
-            //     else
-            //         $where[$key] = $value;
-            // }
-            if ($this->Book_model->updateBook("booktbl", $data, $where)) {
-                $json_response["response"] = 1;
+
+            $authors = explode(",", $this->input->post("book_author"));
+
+            $this->load->library('upload');
+
+            if ($this->upload->do_upload('book_image_file')) {
+                $data["book_image"] = $this->upload->data('file_name');
+
+                $config2['image_library']   = 'gd2';
+                $config2['source_image']    = './images/' . $data["book_image"];
+                $config2['create_thumb']    = FALSE;
+                $config2['maintain_ratio']  = TRUE;
+                $config2['width']           = 200;
+                $config2['height']          = 200;
+
+                $this->load->library('image_lib', $config2);
+
+                if (!$this->image_lib->resize()) {
+                    echo $this->image_lib->display_errors();
+                } else {
+                    $this->image_lib->initialize($config2);
+                    $this->image_lib->resize();
+                }
+            }
+
+            if ($bookId = $this->Book_model->insertBook($data)) {
+                $data = array(
+                    "book_id" => $bookId,
+                    "book_code" => "",
+                    "status" => 1,
+                    "created_at" => strtotime("now")
+                );
+
+                // Populate authorbooktbl
+                foreach ($authors as $value) {
+                    if (!$this->Author_model->setBookAuthor(array("author_id" => $value, "book_id" => $bookId))) {
+                        $json_response["response"] = 0;
+                        $json_response["error"]["author"] = "Unable to insert author_id: " . $value . ".";
+                    }
+                }
+
+                // Populate itembooktbl
+                for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
+                    $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
+                    if ($this->Book_model->insertBookItem($data)) {
+                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                            $json_response["response"] = 0;
+                            $json_response["error"]["section"] = "Error Updating Section Code Number.";
+                        }
+                    } else {
+                        $json_response["response"] = 0;
+                        $json_response["error"]["itembook"] = "Error Inserting Item Book: " . $data["book_code"] . ".";
+                    }
+                }
             }
         }
+
         echo json_encode($json_response);
     }
 
@@ -183,7 +251,8 @@ class BookApi extends CI_Controller
         echo json_encode($json_response);
     }
 
-    public function pageChange() {
+    public function pageChange()
+    {
         $json_response = array(
             "response" => 1,
             "currentPage" => $this->input->post("page"),
@@ -191,6 +260,22 @@ class BookApi extends CI_Controller
             "bookData" => $this->Book_model->getBook($this->input->post("book_name"), ($this->input->post("page") - 1) * 10)
         );
 
+        echo json_encode($json_response);
+    }
+
+    public function getBookEditor()
+    {
+        $json_response["response"] = 1;
+        $json_response["book"] = $this->Book_model->getSpecificBook(array("b.book_id" => $this->input->post("book_id")))[0];
+
+        $authorId = array_map("trim", explode(",", $json_response["book"]->book_author_id));
+        $authorName = array_map("trim", explode(",", $json_response["book"]->book_author));
+        $authorSname = array_map("trim", explode(",", $json_response["book"]->book_author_sname));
+        $keys = array("author_id", "author_name", "author_sname");
+        $authorArray = array_map(null, $authorId, $authorName, $authorSname);
+        $json_response["book"]->author_value = array_map(function ($e) use ($keys) {return array_combine($keys, $e);}, $authorArray);
+
+        // print_r($json_response);
         echo json_encode($json_response);
     }
 }

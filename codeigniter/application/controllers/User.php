@@ -50,12 +50,13 @@ class User extends CI_Controller
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
                 "page_title" => "Library Management System",
-                "currentActive" => "User Profile"
+                "currentActive" => "User Profile",
+                "username" => $this->User_model->getUsers(array("user_id" => $userid))[0]->username
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
-            $this->load->view("components/wip");
-            //$this->load->view("user/user_profile");
+            // $this->load->view("components/wip");
+            $this->load->view("user/user_profile");
             $this->load->view("templates/footer");
         } else {
             show_404();
