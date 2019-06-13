@@ -30,7 +30,7 @@ class Book_model extends CI_Model
                     (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty
                 ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
-            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
             ->having("book_qty > 0")
             ->like("b.book_name", $bookName, "both")
             ->group_by("b.book_id")
@@ -53,7 +53,7 @@ class Book_model extends CI_Model
             ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
             ->join("itembooktbl as itb", "b.book_id = itb.book_id", "INNER JOIN")
-            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id AND b.book_id = " . $where)
+            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id AND b.book_id = " . $where)
             ->group_by("itb.itembook_id")
             ->limit(10, $start); // changing book manager to a more user friendly
         $query = $this->db->get();
@@ -80,7 +80,7 @@ class Book_model extends CI_Model
             ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
             ->join("itembooktbl as itb", "b.book_id = itb.book_id", "INNER JOIN")
-            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
             ->where($data)
             ->group_by("itb.itembook_id");
         $query = $this->db->get();
@@ -113,7 +113,7 @@ class Book_model extends CI_Model
         $this->db
             ->select("*")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
-            ->where("ab.book_id = b.book_id AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
             ->like("b.book_name", $bookName, "both")
             // ->or_like("book_author", $bookName, "both")
             ->or_like("section_name", $bookName, "both")
