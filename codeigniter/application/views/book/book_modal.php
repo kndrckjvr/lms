@@ -113,8 +113,8 @@
                     <tbody>
                         <tr>
                             <td class="w-25">
-                                <div style="width: 150px; height: 200px; margin: 0 auto; background: #000; background-position: center; background-size: cover;" id="upload-image-div">
-                                    <p class="text-center pt-5 text-white">No Image Uploaded</p>
+                                <div style="width: 150px; height: 200px; margin: 0 auto; background: #000; background-position: center; background-size: cover;" id="upload-image-div-change-status">
+                                    <!-- <p class="text-center pt-5 text-white">No Image Uploaded</p> -->
                                 </div>
                             </td>
                             <td class="w-75">
@@ -346,9 +346,8 @@
                     $("#book_section_editor").val(res.book.section_id);
                     $("#book_quantity_editor").val(res.book.book_qty);
                     $("#publish_date_editor").val(formatDate(new Date(res.book.publish_date * 1000)));
-                    $("#upload-image-div-editor").css("background", "");                    
-                    
                     $("#upload-image-div-editor").css({
+                        "background" : "",
                         "background-image": "url(" + baseUrl + "images/" + ((res.book.book_image == "") ? "no_image.png" : res.book.book_image) + ")",
                         "background-position": "center",
                         "background-size": "cover"
@@ -445,6 +444,12 @@
                     $("#book-section-field").val(res.book.section_id);
                     $("#book-code-field").val(res.book.section_code + res.book.book_code);
                     $("#remarks-field").html(res.remarks);
+                    $("#upload-image-div-change-status").css({
+                        "background" : "",
+                        "background-image": "url(" + baseUrl + "images/" + ((res.book.book_image == "") ? "no_image.png" : res.book.book_image) + ")",
+                        "background-position": "center",
+                        "background-size": "cover"
+                    });
                     $("#change-status-book-item-modal-table tbody button").attr("data-token", res.book.itembook_id);
                     switch (res.book.status) {
                         case "1":
