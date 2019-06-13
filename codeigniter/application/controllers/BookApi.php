@@ -95,7 +95,7 @@ class BookApi extends CI_Controller
                 for ($i = 0; $i < $this->input->post("book_quantity"); $i++) {
                     $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
                     if ($this->Book_model->insertBookItem($data)) {
-                        if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                        if (!$this->Section_model->updateSection(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
                             $json_response["response"] = 0;
                             $json_response["error"]["section"] = "Error Updating Section Code Number.";
                         }
@@ -238,7 +238,7 @@ class BookApi extends CI_Controller
             for ($i = 0; $i < $newQuantity; $i++) {
                 $data["book_code"] = sprintf("%'.03d", $this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number);
                 if ($this->Book_model->insertBookItem($data)) {
-                    if (!$this->Section_model->updateCurrentCode(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
+                    if (!$this->Section_model->updateSection(array("section_code_number" => ($this->Section_model->getCurrentCode(array("section_id" => $this->input->post("book_section")))[0]->section_code_number + 1)), array("section_id" => $this->input->post("book_section")))) {
                         $json_response["response"] = 0;
                         $json_response["error"]["section"] = "Error Updating Section Code Number.";
                     }

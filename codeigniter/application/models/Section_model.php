@@ -34,7 +34,7 @@ class Section_model extends CI_Model
         return $query->num_rows() > 0 ? $query->result() : false;
     }
 
-    public function updateCurrentCode($data, $where) {
+    public function updateSection($data, $where) {
         $this->db->where($where);
         $this->db->update("sectiontbl", $data);
         return $this->db->affected_rows();
