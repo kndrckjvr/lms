@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Book extends CI_Controller
 {
 
+    // This function is when the controller is used this will automatically called.
     public function __construct()
     {
         parent::__construct();
@@ -12,6 +13,7 @@ class Book extends CI_Controller
         }
     }
 
+    // This function is for rendering book/search and only the user can access this page
     public function search()
     {
         if ($this->session->userdata("user_type") == 0) {

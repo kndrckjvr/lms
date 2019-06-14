@@ -3,6 +3,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Author extends CI_Controller
 {
+    // This function renders the author/manager page
+    // only the admin can access this page.
     public function manager()
     {
         if ($this->session->userdata("user_type") == 1) {

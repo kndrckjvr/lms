@@ -3,11 +3,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class UserApi extends CI_Controller
 {
-
+    // This function is when the controller is used this will automatically called.
+    // This function is for checking if th
     public function __construct()
     {
         parent::__construct();
-        $this->load->library(array("user_agent", "form_validation", 'email'));
+        $this->load->library(array("user_agent", "form_validation"));
+        if ($this->agent->is_mobile()) {
+            if (empty($this->input->post("token"))) show_404();
+        } else {
+            return;
+        }
     }
 
     public function login()
@@ -178,7 +184,7 @@ class UserApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         } elseif ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) show_404();
+            if (empty($this->input->post("token"))) show_404();
         } else {
             return;
         }
@@ -208,7 +214,7 @@ class UserApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         } elseif ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) show_404();
+            if (empty($this->input->post("token"))) show_404();
         } else {
             return;
         }

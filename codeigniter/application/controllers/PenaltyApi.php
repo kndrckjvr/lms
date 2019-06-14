@@ -3,12 +3,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class PenaltyApi extends CI_Controller
 {
+    // This function is when the controller is used this will automatically called.
+    // This function is for checking if th
     public function __construct()
     {
         parent::__construct();
         $this->load->library(array("user_agent", "form_validation"));
         if ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) show_404();
+            if (empty($this->input->post("token"))) show_404();
+        } else if ($this->agent->is_browser()) {
+            if (empty($this->session->userdata("user_token"))) show_404();
         } else {
             return;
         }
