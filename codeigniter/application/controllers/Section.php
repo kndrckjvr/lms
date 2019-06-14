@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Section extends CI_Controller
 {
-    
+
     public function manager()
     {
         if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {

@@ -208,7 +208,7 @@ class BookApi extends CI_Controller
                     $this->image_lib->initialize($config2);
                     $this->image_lib->resize();
                 }
-                
+
                 $data["book_image"] = $bookImage;
             }
 

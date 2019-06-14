@@ -66,7 +66,7 @@ class Transaction_model extends CI_Model
         $query = $this->db->select("SUM(amount_paid) as penalty")->where($where)->get('transactiontbl');
         return $query->num_rows() > 0 ? $query->result()[0]->penalty : 0;
     }
-    
+
     public function getUserPaid($where)
     {
         $query = $this->db->select("SUM(amount_paid) as paid")->where($where)->get('transactiontbl');

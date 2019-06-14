@@ -14,10 +14,9 @@
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Reset Password</h6>
                 </div>
-                
+
                 <div class="card-body">
                     <form onsubmit="return false" method="post">
-                    <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
                                 <label for="email">Email</label>
@@ -43,7 +42,7 @@
 
 <script>
     jQuery(document).ready(function($) {
-        $("#submit-button").on('click', function (e) {
+        $("#submit-button").on('click', function(e) {
             $(e.target.firstElementChild).show();
             $(e.target.lastElementChild).html("Loading...");
             $("input").removeClass("is-invalid");

@@ -17,7 +17,6 @@
 
                 <div class="card-body">
                     <form method="post" id="login-form">
-                        <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
                                 <label for="username">Username</label>

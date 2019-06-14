@@ -48,10 +48,10 @@ class TransactionApi extends CI_Controller
                 // save transaction amount paid
                 $transactionData["itembook_id"] = 0;
                 $transactionData["amount_paid"] = $this->input->post("payment");
-                
+
                 $penalties = $this->Transaction_model->getUserPenalties(array("user_id" => $this->input->post("user_id"), "status" => "3"));
                 $paid = $this->Transaction_model->getUserPaid(array("user_id" => $this->input->post("user_id"), "status" => "4"));
-                
+
                 if ($transactionData["amount_paid"] > ($penalties - $paid)) {
                     echo json_encode(array(
                         "response" => 0,

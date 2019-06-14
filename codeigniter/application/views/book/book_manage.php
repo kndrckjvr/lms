@@ -143,7 +143,7 @@
     }
 
     jQuery(document).ready(function($) {
-        $("#search-field").donetyping(function () {
+        $("#search-field").donetyping(function() {
             isLoading(true)
             $.ajax({
                 url: baseUrl + "bookapi/searchbook",

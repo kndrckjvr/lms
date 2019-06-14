@@ -14,7 +14,7 @@ class Penalty_model extends CI_Model
         $this->db->from("penaltytbl")
             ->where("penalty_date <", $where)
             ->limit(1)
-            ->order_by('penalty_id',"DESC");
+            ->order_by('penalty_id', "DESC");
         $query = $this->db->get();
         return $query->num_rows() > 0 ? $query->result() : false;
     }
@@ -30,7 +30,7 @@ class Penalty_model extends CI_Model
     public function getPenaltyPages($searchText = "")
     {
         $query = $this->db->like("penalty_date", $searchText, "both")
-        ->get("penaltytbl");
+            ->get("penaltytbl");
         return ceil($query->num_rows() / 10);
     }
 

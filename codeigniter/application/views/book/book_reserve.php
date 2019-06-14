@@ -85,7 +85,7 @@
                 if (res.bookData) {
                     res.bookData.forEach(element => {
                         $("#book_card_columns").append("<div class='col-md-4'><div class='card mb-4' style='width: 18rem;'>" +
-                        "<img class='card-img-top' src='" + baseUrl + "images/" + ((element.book_image == "") ? "no_image.png" : element.book_image) + "' alt='Card image cap'>" +
+                            "<img class='card-img-top' src='" + baseUrl + "images/" + ((element.book_image == "") ? "no_image.png" : element.book_image) + "' alt='Card image cap'>" +
                             "<div class='card-body'>" +
                             "<h5 class='card-title'>" + element.book_name + "</h5>" +
                             "<p class='card-text'> Book Author : " + element.book_author + " <br> Section Name: " + element.section_name + " <br> Book Quantity: " + element.book_qty + "</p>" +
