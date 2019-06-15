@@ -69,7 +69,8 @@
     jQuery(document).ready(function($) {
 
         $('.datepicker').datepicker({
-            autoclose: true
+            autoclose: true,
+            endDate: new Date(<?= strtotime("now") ?> * 1000)
         });
 
         var options = {

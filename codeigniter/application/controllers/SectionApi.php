@@ -28,7 +28,7 @@ class SectionApi extends CI_Controller
 
         // Data Validation
         $this->form_validation->set_rules('section_name', 'Section Name', 'trim|required|is_unique[sectiontbl.section_name]');
-        $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|is_unique[sectiontbl.section_code]|alpha|min_length[2]');
+        $this->form_validation->set_rules('section_code', 'Section Code', 'trim|required|is_unique[sectiontbl.section_code]|alpha|min_length[2]|max_length[3]');
 
         // Check if the validation rules are fulfilled
         if ($this->form_validation->run() == FALSE) {
@@ -40,8 +40,8 @@ class SectionApi extends CI_Controller
         } else {
             // Process Data
             $data = array(
-                "section_name" => $this->input->post("section_name"),
-                "section_code" => $this->input->post("section_code"),
+                "section_name" => preg_replace('/\s+/', ' ', ucwords(strtolower($this->input->post("section_name")))),
+                "section_code" => strtoupper($this->input->post("section_code")),
                 "created_at" => strtotime("now")
             );
 
