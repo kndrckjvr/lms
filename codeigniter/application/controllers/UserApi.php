@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class UserApi extends CI_Controller
 {
     // This function is when the controller is used this will automatically called.
-    // This function is for checking if th
+    // This function checks if the application is accessed by a mobile device
     public function __construct()
     {
         parent::__construct();

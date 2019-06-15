@@ -3,6 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Transaction extends CI_Controller
 {
+
+    // This function is for rendering transaction/pay 
+    // and admins only can access this
     public function pay()
     {
         if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
@@ -22,6 +25,7 @@ class Transaction extends CI_Controller
         }
     }
 
+    // This function is for rendering transaction/reports 
     public function reports()
     {
         if ($this->session->userdata("user_token")) {
