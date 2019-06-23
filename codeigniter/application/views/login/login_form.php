@@ -68,7 +68,7 @@
             dataType: "JSON",
             success: function success(res) {
                 if (res.response) {
-                    window.location = baseUrl + "user";
+                    window.location.href = baseUrl + "user";
                 } else {
                     $("span.spinner-border.spinner-border-sm").hide();
                     $("#login-button").html("Login");
@@ -76,9 +76,9 @@
                     $(".invalid-feedback").html(res.message);
                 }
             },
-            error: function error(err) {
-                console.target.log(err);
-            }
+            error: function error(jqxhr, err, textStatus) {
+                errorHandler(jqxhr, err, textStatus);
+            },
         });
     });
 </script>

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class BookApi extends CI_Controller
+class Bookapi extends CI_Controller
 {
     // This function is when the controller is used this will automatically called.
     // This function checks if the application is accessed by a mobile device / in a web browser
@@ -37,6 +37,7 @@ class BookApi extends CI_Controller
         // Data Validations
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required|is_unique[booktbl.book_name]');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book_description', 'Book Description', 'trim|required');
         $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric');
         $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
 
@@ -65,6 +66,7 @@ class BookApi extends CI_Controller
                 "book_name" => $this->input->post("book_name"),
                 "book_image" => "",
                 "section_id" => $this->input->post("book_section"),
+                "book_description" => $this->input->post("book_description"),                
                 "publish_date" => strtotime($this->input->post("publish_date"))
             );
 
@@ -191,6 +193,8 @@ class BookApi extends CI_Controller
 
         $this->form_validation->set_rules('book_name', 'Book Name', 'trim|required');
         $this->form_validation->set_rules('book_author', 'Book Author', 'trim|required');
+        $this->form_validation->set_rules('book_description', 'Book Description', 'trim|required');
+        $this->form_validation->set_rules('book_section', 'Book Section', 'trim|required');
         $this->form_validation->set_rules('book_quantity', 'Book Quantity', 'trim|required|numeric|greater_than_equal_to[' . $currentQuantity . ']');
         $this->form_validation->set_rules('publish_date', 'Publish Date', 'trim|required');
 

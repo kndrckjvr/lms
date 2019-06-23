@@ -116,7 +116,7 @@ $("#register-button").on('click', function (e) {
         },
         success: function success(res) {
             if (res.response) {
-                window.location = baseUrl + "login";
+                window.location.href = baseUrl + "login";
             } else {
                 $(e.target.firstElementChild).hide();
                 $(e.target.lastElementChild).html("Register");

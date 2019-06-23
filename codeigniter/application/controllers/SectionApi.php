@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class SectionApi extends CI_Controller
+class Sectionapi extends CI_Controller
 {
     // This function checks if the application is accessed by a mobile device / in a web browser
     // and only the admin can access this API.
@@ -12,7 +12,7 @@ class SectionApi extends CI_Controller
         if ($this->agent->is_mobile()) {
             if (empty($this->input->post("token")) || $this->input->post("user_token") != 1) show_404();
         } else if ($this->agent->is_browser()) {
-            if (empty($this->session->userdata("user_token")) || $this->session->userdata("user_token") != 1) show_404();
+            if (empty($this->session->userdata("user_token")) || $this->session->userdata("user_type") != 1) show_404();
         } else {
             return;
         }
@@ -118,6 +118,26 @@ class SectionApi extends CI_Controller
             if (!$this->Section_model->updateSection($data, array("section_id" => $this->input->post("section_id")))) {
                 $json_response["response"] = 0;
             }
+        }
+
+        echo json_encode($json_response);
+    }
+
+    public function statusChange()
+    {
+        // Default Response Data
+        $json_response = array(
+            "response" => 1
+        );
+
+        // Process Data
+        $data = array(
+            "status" => $this->input->post("status")
+        );
+
+        // Update Section Data
+        if (!$this->Section_model->updateSection($data, array("section_id" => $this->input->post("section_id")))) {
+            $json_response["response"] = 0;
         }
 
         echo json_encode($json_response);

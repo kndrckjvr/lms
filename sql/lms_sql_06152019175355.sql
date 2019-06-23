@@ -21,8 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `lms_sql`
 --
-CREATE DATABASE IF NOT EXISTS `lms_sql` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `lms_sql`;
+CREATE DATABASE IF NOT EXISTS `librar20_lms` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `librar20_lms`;
 
 -- --------------------------------------------------------
 

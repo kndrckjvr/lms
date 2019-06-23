@@ -37,7 +37,7 @@
                         <?php foreach ($penalties as $penalty) : ?>
                             <tr>
                                 <td><?= $penalty->penalty_id ?></td>
-                                <td class="text-center"><?= date("F j, Y", $penalty->penalty_date) ?></td>
+                                <td class="text-center"><?= date("F j, Y g:i:s A ", $penalty->penalty_date) ?></td>
                                 <td class="text-center"><?= $penalty->penalty_amount ?></td>
                                 <td class="text-center"><?= $penalty->penalty_day ?></td>
                             </tr>

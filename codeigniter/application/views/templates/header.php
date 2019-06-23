@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="<?= base_url("css/bootstrap-select.css") ?>" />
     <link rel="stylesheet" href="<?= base_url("css/bootstrap-datepicker3.standalone.min.css") ?>" />
     <link rel="stylesheet" href="<?= base_url("css/custom.css"); ?>">
+    <link rel="shortcut icon" href="<?= base_url("favicon.ico"); ?>" type="image/x-icon">
+    <link rel="icon" href="<?= base_url("favicon.ico"); ?>" type="image/x-icon">
     <script src="<?= base_url("js/jquery.min.js") ?>"></script>
     <script>
         var baseUrl = "<?= base_url() ?>";

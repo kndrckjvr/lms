@@ -13,6 +13,8 @@ class User extends CI_Controller
                 "penalty" => $this->Transaction_model->getUserPenalties(array("user_id" => $this->session->userdata("user_token"), "status" => "3")) - $this->Transaction_model->getUserPaid(array("user_id" => $this->session->userdata("user_token"), "status" => "4")),
                 "allpenalties" => $this->Transaction_model->getUserPenalties(array("status" => "3")),
                 "allpaid" => $this->Transaction_model->getUserPaid(array("status" => "4")),
+                "logs" => $this->Log_model->getLogsByPages(array("user_id" => $userid)),
+                "pages" => $this->Log_model->getLogPages(array("user_id" => $userid)),
                 "currentActive" => "Dashboard"
             );
             $this->load->view("templates/header", $data);

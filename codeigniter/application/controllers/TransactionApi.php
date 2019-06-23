@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-class TransactionApi extends CI_Controller
+class Transactionapi extends CI_Controller
 {
     // This function is when the controller is used this will automatically called.
     // This function is for checking if th

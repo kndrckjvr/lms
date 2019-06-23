@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class PenaltyApi extends CI_Controller
+class Penaltyapi extends CI_Controller
 {
     // This function is when the controller is used this will automatically called.
     // This function checks if the application is accessed by a mobile device / in a web browser
@@ -13,7 +13,7 @@ class PenaltyApi extends CI_Controller
         if ($this->agent->is_mobile()) {
             if (empty($this->input->post("token")) || $this->input->post("user_token") != 1) show_404();
         } else if ($this->agent->is_browser()) {
-            if (empty($this->session->userdata("user_token")) || $this->session->userdata("user_token") != 1) show_404();
+            if (empty($this->session->userdata("user_token")) || $this->session->userdata("user_type") != 1) show_404();
         } else {
             return;
         }

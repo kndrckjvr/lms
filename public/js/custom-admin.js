@@ -9,8 +9,13 @@ function formatDate(date) {
     var day = date.getDate();
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
-
-    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+    var hours = date.getHours();
+    var ampm = hours >= 12 ? ' pm' : ' am';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    return monthNames[monthIndex] + ' ' + day + ', ' + year + ' ' + hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2) + ampm;
 }
 
 function complete() {

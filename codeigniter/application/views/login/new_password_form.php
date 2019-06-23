@@ -66,7 +66,7 @@
             success: function success(res) {
                 // console.log(res);
                 if (res.response) {
-                    window.location = baseUrl + "login";
+                    window.location.href = baseUrl + "login";
                 } else {
                     $(e.target.firstElementChild).hide();
                     $(e.target.lastElementChild).html("Submit");
