@@ -14,10 +14,9 @@
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Reset Password</h6>
                 </div>
-                
+
                 <div class="card-body">
                     <form onsubmit="return false" method="post">
-                    <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
                                 <label for="new_password">New Password</label>
@@ -48,43 +47,43 @@
 </div>
 
 <script>
-$("#new-password-button").on('click', function (e) {
-    $(e.target.firstElementChild).show();
-    $(e.target.lastElementChild).html("Loading...");
-    $("input").removeClass("is-invalid");
-    var getthisURL = window.location;
-    var code = getthisURL.pathname.split('/')[5];
-    $.ajax({
-        url: baseUrl + "userapi/reset_password_confirm",
-        type: "POST",
-        dataType: "JSON",
-        data: {
-            new_password: $("#new_password").val(),
-            confirm_new_password: $("#confirm_new_password").val(),
-            code: code
+    $("#new-password-button").on('click', function(e) {
+        $(e.target.firstElementChild).show();
+        $(e.target.lastElementChild).html("Loading...");
+        $("input").removeClass("is-invalid");
+        var getthisURL = window.location;
+        var code = getthisURL.pathname.split('/')[5];
+        $.ajax({
+            url: baseUrl + "userapi/reset_password_confirm",
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                new_password: $("#new_password").val(),
+                confirm_new_password: $("#confirm_new_password").val(),
+                code: code
 
-        },
-        success: function success(res) {
-            // console.log(res);
-            if (res.response) {
-                window.location = baseUrl + "login";
-            } else {
-                $(e.target.firstElementChild).hide();
-                $(e.target.lastElementChild).html("Submit");
-                if (res.new_password) {
-                    $("#new_password + .invalid-feedback").html(res.new_password);
-                    $("#new_password").addClass("is-invalid");
+            },
+            success: function success(res) {
+                // console.log(res);
+                if (res.response) {
+                    window.location.href = baseUrl + "login";
+                } else {
+                    $(e.target.firstElementChild).hide();
+                    $(e.target.lastElementChild).html("Submit");
+                    if (res.new_password) {
+                        $("#new_password + .invalid-feedback").html(res.new_password);
+                        $("#new_password").addClass("is-invalid");
+                    }
+                    if (res.confirm_new_password) {
+                        $("#confirm_new_password + .invalid-feedback").html(res.confirm_new_password);
+                        $("#confirm_new_password").addClass("is-invalid");
+                    }
                 }
-                if (res.confirm_new_password) {
-                    $("#confirm_new_password + .invalid-feedback").html(res.confirm_new_password);
-                    $("#confirm_new_password").addClass("is-invalid");
-                }
+            },
+            error: function error(err) {
+                // console.target.log(err);
+                console.log(err);
             }
-        },
-        error: function error(err) {
-            // console.target.log(err);
-            console.log(err);
-        }
+        });
     });
-});
 </script>

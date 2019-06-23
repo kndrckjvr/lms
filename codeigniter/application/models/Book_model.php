@@ -24,6 +24,7 @@ class Book_model extends CI_Model
             ->select("
                     b.book_id,
                     b.book_name,
+                    book_description,
                     GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author,
                     b.book_image,
                     section_name,
@@ -67,11 +68,14 @@ class Book_model extends CI_Model
                 b.book_id,
                 itembook_id,
                 book_name,
+                book_description,
                 GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author, 
                 GROUP_CONCAT(a.author_id ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author_id, 
                 GROUP_CONCAT(a.author_sname ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author_sname, 
                 book_code, 
                 s.section_id, 
+                section_name, 
+                section_code, 
                 itb.status, 
                 section_code,
                 publish_date,
@@ -111,13 +115,11 @@ class Book_model extends CI_Model
     public function getBookPages($bookName)
     {
         $this->db
-            ->select("*")
-            ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
-            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->select("b.book_id")
+            ->from("booktbl as b, sectiontbl as s")
+            ->where("b.section_id = s.section_id")
             ->like("b.book_name", $bookName, "both")
-            // ->or_like("book_author", $bookName, "both")
-            ->or_like("section_name", $bookName, "both")
-            ->group_by("ab.book_id")
+            ->group_by("b.book_id")
             ->order_by("b.book_id");
         $query = $this->db->get();
         return ceil($query->num_rows() / 10);

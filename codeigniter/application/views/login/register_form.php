@@ -17,7 +17,6 @@
                 
                 <div class="card-body">
                     <form onsubmit="return false" method="post">
-                    <!-- <form action="<?= base_url("userapi/login") ?>" method="post"> -->
                         <div class="row">
                             <div class="col mb-4">
                                 <label for="username">Username</label>
@@ -117,7 +116,7 @@ $("#register-button").on('click', function (e) {
         },
         success: function success(res) {
             if (res.response) {
-                window.location = baseUrl + "login";
+                window.location.href = baseUrl + "login";
             } else {
                 $(e.target.firstElementChild).hide();
                 $(e.target.lastElementChild).html("Register");

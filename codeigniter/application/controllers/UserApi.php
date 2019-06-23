@@ -1,13 +1,19 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class UserApi extends CI_Controller
+class Userapi extends CI_Controller
 {
-
+    // This function is when the controller is used this will automatically called.
+    // This function checks if the application is accessed by a mobile device
     public function __construct()
     {
         parent::__construct();
-        $this->load->library(array("user_agent", "form_validation", 'email'));
+        $this->load->library(array("user_agent", "form_validation"));
+        if ($this->agent->is_mobile()) {
+            if (empty($this->input->post("token"))) show_404();
+        } else {
+            return;
+        }
     }
 
     public function login()
@@ -16,6 +22,19 @@ class UserApi extends CI_Controller
             if ($userData = $this->User_model->hasValidCredentials($this->input->post("username", TRUE), $this->input->post("password", TRUE))) {
                 $this->session->set_userdata("user_token", $userData[0]->user_id);
                 $this->session->set_userdata("user_type", $userData[0]->user_type);
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+                $this->Log_model->createLog(array(
+                    "ip_address" => $ip,
+                    "user_id" => $userData[0]->user_id,
+                    "login_date_time" => strtotime("now"),
+                    "status" => 1
+                ));
                 echo json_encode(array("response" => 1));
             } else {
                 echo json_encode(array("response" => 0, "message" => "No User Found"));
@@ -169,6 +188,19 @@ class UserApi extends CI_Controller
 
     public function logout()
     {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        $this->Log_model->createLog(array(
+            "ip_address" => $ip,
+            "user_id" => $this->session->userdata("user_token"),
+            "login_date_time" => strtotime("now"),
+            "status" => 0
+        ));
         $this->session->sess_destroy();
         redirect("login", "location");
     }
@@ -178,7 +210,7 @@ class UserApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         } elseif ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) show_404();
+            if (empty($this->input->post("token"))) show_404();
         } else {
             return;
         }
@@ -208,7 +240,7 @@ class UserApi extends CI_Controller
         if ($this->agent->is_browser()) {
             if ($this->session->userdata("user_type") != 1) show_404();
         } elseif ($this->agent->is_mobile()) {
-            if (empty($this->session->post("token"))) show_404();
+            if (empty($this->input->post("token"))) show_404();
         } else {
             return;
         }
@@ -312,5 +344,19 @@ class UserApi extends CI_Controller
             "response" => 1,
             "users" => $this->User_model->getUsers(array("user_id" => $this->input->post("user_id")))[0]
         ));
+    }
+
+    public function getUserIpAddr()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            //ip from share internet
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            //ip pass from proxy
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
     }
 }

@@ -48,8 +48,8 @@
                             <div class="col">
                                 <label for="book_author_editor">Book Author</label>
                                 <select class="form-control selectpicker with-ajax" multiple data-live-search="true" id="book_author_editor">
-                                    <option value="1" data-subtext="K. Cosca" selected>
-                                        Kendrick Cosca
+                                    <option value="" data-subtext="" selected>
+
                                     </option>
                                 </select>
                                 <div class="invalid-feedback" id="book-author-invalid"></div>
@@ -57,18 +57,13 @@
                         </div>
                         <div class="form-row mb-3">
                             <div class="col">
-                                <label for="book_section_editor">Book Section</label>
-                                <select name="book_section" id="book_section_editor" class="form-control">
-                                    <?php
-                                    if ($sections) {
-                                        foreach ($sections as $section) {
-                                            echo "<option value='$section->section_id'>$section->section_name</option>";
-                                        }
-                                    } else {
-                                        echo "<option>No Sections Found.</option>";
-                                    }
-                                    ?>
+                                <label for="book_section">Book Section</label>
+                                <select class="form-control selectpicker with-ajax" data-live-search="true" id="book_section_editor">
+                                    <option value="" data-subtext="" selected>
+
+                                    </option>
                                 </select>
+                                <div class="invalid-feedback" id="book-section-invalid"></div>
                             </div>
                             <div class="col">
                                 <label for="book_quantity_editor">Book Quantity</label>
@@ -91,7 +86,15 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label for="book_description_editor">Book Description</label>
+                                <textarea name="book_description" id="book_description_editor" cols="30" rows="10" placeholder="Enter Book Description" class="form-control" style="resize: none"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
                         <input type="hidden" class="is-invalid" name="book_author" id="book_author_hidden_editor">
+                        <input type="hidden" class="is-invalid" name="book_section" id="book_section_hidden_editor">
                         <button type="submit" class="btn btn-primary btn-block font-weight-bold" id="create-book">Submit</button>
                     </form>
                 </div>
@@ -269,6 +272,7 @@
                                         icon: "success",
                                     }).then(() => {
                                         $(".modal").modal("hide");
+                                        window.location.href = baseUrl + "book/reserve";
                                     });
                                     search();
                                 }
@@ -322,6 +326,43 @@
                 }
             };
 
+            var options2 = {
+                values: "a, b, c",
+                ajax: {
+                    url: baseUrl + "sectionapi/searchSection",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        search_text: "{{{q}}}"
+                    }
+                },
+                locale: {
+                    emptyTitle: "Select and Begin Typing"
+                },
+                log: 3,
+                preprocessData: function(data) {
+                    var i,
+                        l = data.sectionData.length,
+                        array = [];
+                    if (l) {
+                        for (i = 0; i < l; i++) {
+                            array.push(
+                                $.extend(true, data.sectionData[i], {
+                                    text: data.sectionData[i].section_name,
+                                    value: data.sectionData[i].section_id,
+                                    data: {
+                                        subtext: data.sectionData[i].section_code
+                                    }
+                                })
+                            );
+                        }
+                    }
+                    // You must always return a valid array when processing data. The
+                    // data argument passed is a clone and cannot be modified directly.
+                    return array;
+                }
+            };
+
             $("#book-edit-form").submit(function(e) {
                 e.stopPropagation();
                 $("input").removeClass("is-invalid");
@@ -344,6 +385,10 @@
                                 $("#book_name_editor + .invalid-feedback").html(res.book_name);
                                 $("#book_name_editor").addClass("is-invalid");
                             }
+                            if (res.book_description) {
+                                $("#book_description_editor + .invalid-feedback").html(res.book_description);
+                                $("#book_description_editor").addClass("is-invalid");
+                            }
                             if (res.book_author) {
                                 $("#book-author-invalid-modal").html(res.book_author);
                                 $(".dropdown.bootstrap-select.show-tick.form-control").addClass("is-invalid");
@@ -365,10 +410,19 @@
                 $("#book_author_hidden_editor").val($(e.currentTarget).val());
             });
 
+            $("#book_section_editor").on('change', function(e) {
+                $("#book_section_hidden_editor").val($(e.currentTarget).val());
+            });
+
             $("#book_author_editor")
                 .selectpicker()
                 .filter(".with-ajax")
                 .ajaxSelectPicker(options);
+
+            $("#book_section_editor")
+                .selectpicker()
+                .filter(".with-ajax")
+                .ajaxSelectPicker(options2);
 
             $("#publish_date_editor").datepicker().on('show.bs.modal', function(event) {
                 event.stopPropagation();
@@ -384,23 +438,30 @@
                     },
                     success: function success(res) {
                         $("#edit-book-modal-title").html("Edit: " + res.book.book_name);
-                        $("#book_author_editor").html("");
                         $("#book_name_editor").val(res.book.book_name);
-                        $("#book_section_editor").val(res.book.section_id);
                         $("#book_quantity_editor").val(res.book.book_qty);
+                        $("#book_description_editor").val(res.book.book_description);
                         $("#publish_date_editor").datepicker('update', new Date(res.book.publish_date * 1000));
                         $("#book_author_hidden_editor").val(res.book.book_author_id);
+                        $("#book_section_hidden_editor").val(res.book.section_id);
                         $("#upload-image-div-editor").css({
                             "background": "",
                             "background-image": "url(" + baseUrl + "images/" + ((res.book.book_image == "") ? "no_image.png" : res.book.book_image) + ")",
                             "background-position": "center",
                             "background-size": "cover"
                         });
+
+                        $("#book_author_editor").html("");
+                        $("#book_section_editor").html("");
+
                         res.book.author_value.forEach(element => {
                             $("#book_author_editor").append("<option value='" + element.author_id + "' data-subtext='" + element.author_sname + "' selected>" + element.author_name + "</option>");
                         });
 
+                        $("#book_section_editor").html("<option value='" + res.book.section_id + "' data-subtext='" + res.book.section_code + "' selected>" + res.book.section_name + "</option>");
+
                         $("#book_author_editor").selectpicker("refresh");
+                        $("#book_section_editor").selectpicker("refresh");
                     },
                     error: function error(jqxhr, err, textStatus) {
                         errorHandler(jqxhr, err, textStatus);

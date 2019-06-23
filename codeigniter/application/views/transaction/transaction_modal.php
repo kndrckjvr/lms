@@ -72,12 +72,12 @@
                     status: 4
                 },
                 success: function(res) {
-                    if(res.response == 0) {
+                    if (res.response == 0) {
                         swal(res.errorMessage + "!", {
                             icon: "warning",
                         });
                         return;
-                    } else if(res.response == 1) {
+                    } else if (res.response == 1) {
                         swal("Successfully posted your payment!", {
                             icon: "success",
                         }).then(() => {

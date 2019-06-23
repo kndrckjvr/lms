@@ -5,10 +5,10 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Create User</h6>
             </div>
-            
+
             <div class="card-body">
                 <form onsubmit="return false" method="post" id="user-create-form">
-                <!-- <form action="<?= base_url("userapi/create") ?>" method="post"> -->
+                    <!-- <form action="<?= base_url("userapi/create") ?>" method="post"> -->
                     <div class="form-row mb-3">
                         <div class="col">
                             <label for="username">Username</label>
@@ -43,41 +43,41 @@
 </div>
 
 <script>
-jQuery(document).ready(function($) {
-    
+    jQuery(document).ready(function($) {
 
-$("#create-user").on('click', function () {
-    $("input").removeClass("is-invalid");
-        isLoading(true);
-        $.ajax({
-            url: baseUrl + "userapi/create",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                username: $("#username").val(),
-                password: $("#password").val(),
-                user_type: $("#user").prop("checked") ? 0 : 1
-            },
-            success: function success(res) {
-                if (res.response) {
-                    $("#user-create-form").trigger("reset");
-                    showSnackbar("Successfully Added!");
-                } else {
-                    if (res.username) {
-                        $("#username + .invalid-feedback").html(res.username);
-                        $("#username").addClass("is-invalid");
+
+        $("#create-user").on('click', function() {
+            $("input").removeClass("is-invalid");
+            isLoading(true);
+            $.ajax({
+                url: baseUrl + "userapi/create",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    username: $("#username").val(),
+                    password: $("#password").val(),
+                    user_type: $("#user").prop("checked") ? 0 : 1
+                },
+                success: function success(res) {
+                    if (res.response) {
+                        $("#user-create-form").trigger("reset");
+                        showSnackbar("Successfully Added!");
+                    } else {
+                        if (res.username) {
+                            $("#username + .invalid-feedback").html(res.username);
+                            $("#username").addClass("is-invalid");
+                        }
+                        if (res.password) {
+                            $("#password + .invalid-feedback").html(res.password);
+                            $("#password").addClass("is-invalid");
+                        }
                     }
-                    if (res.password) {
-                        $("#password + .invalid-feedback").html(res.password);
-                        $("#password").addClass("is-invalid");
-                    }
-                }
-            },
-            error: function error(jqxhr, err, textStatus) {
-                errorHandler(jqxhr, err, textStatus);
-            },
-            complete: complete()
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            });
         });
     });
-});
 </script>

@@ -39,7 +39,7 @@
                             foreach ($transactions as $transaction) { ?>
                                 <tr data-id="<?= $transaction->transaction_id ?>" data-toggle="modal" data-target="#manage-user-modal" style="cursor: pointer;">
                                     <td class="text-center"><?= $transaction->transaction_id ?></td>
-                                    <td class="text-center"><?= date("F j, Y", $transaction->transaction_date) ?></td>
+                                    <td class="text-center"><?= date("F j, Y g:i:s A", $transaction->transaction_date) ?></td>
                                     <td class="text-center"><span class="badge badge-<?= $transaction_status[$transaction->status - 1] ?>"><?= $transaction_type[$transaction->status - 1] ?></span></td>
                                     <td class="text-center"><span class="badge badge-<?php echo ($transaction->user_type == 1) ? "info" : "primary"; ?>"><?php echo ($transaction->user_type == 1) ? "<i class='fas fa-user-shield'></i>" : "<i class='fas fa-user-alt'></i>"; ?>&nbsp;<?= $transaction->username ?></span></td>
                                 </tr>

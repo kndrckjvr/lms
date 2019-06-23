@@ -116,13 +116,13 @@
                         $("#current-username").val($("#username").val());
                         $("#username").val("");
                         $("#update-user-profile").hide();
-                        
+
                         if (changeUsername) {
                             changeUsername = false;
                             $("#change-username").fadeIn();
                             $(".change-username").hide();
                         }
-                        
+
                         if (changePassword) {
                             changePassword = false;
                             $("#change-password").fadeIn();

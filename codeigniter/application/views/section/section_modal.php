@@ -77,6 +77,52 @@
             });
         });
 
+        $("#available-button").on('click', function(e) {
+            $.ajax({
+                url: baseUrl + "sectionapi/statuschange",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    status: 1,
+                    section_id: $("#section-id-field").val()
+                },
+                success: function success(res) {
+                    if (res.response) {
+                        $(".modal").modal("hide");
+                        showSnackbar("Section Activated!");
+                        window.location.href = baseUrl + "section/manager";
+                    }
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            });
+        });
+
+        $("#disable-button").on('click', function(e) {
+            $.ajax({
+                url: baseUrl + "sectionapi/statuschange",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    status: 0,
+                    section_id: $("#section-id-field").val()
+                },
+                success: function success(res) {
+                    if (res.response) {
+                        $(".modal").modal("hide");
+                        showSnackbar("Section Deactivated!");
+                        window.location.href = baseUrl + "section/manager";
+                    }
+                },
+                error: function error(jqxhr, err, textStatus) {
+                    errorHandler(jqxhr, err, textStatus);
+                },
+                complete: complete()
+            });
+        });
+
         $("#manage-section-modal").on('hidden.bs.modal', function(e) {
             $("#section-name-field").attr("disabled", "true");
             $("#section-code-field").attr("disabled", "true");

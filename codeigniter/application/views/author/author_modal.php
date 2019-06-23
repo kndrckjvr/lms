@@ -69,7 +69,7 @@
                     if (res.response) {
                         $("#author-edit-form").trigger("reset");
                         showSnackbar("Successfully Added!");
-                            $(".modal").modal("hide");
+                        $(".modal").modal("hide");
                     } else {
                         if (res.author_first_name) {
                             $("#author-first-name-modal + .invalid-feedback").html(res.author_first_name);
@@ -79,7 +79,7 @@
                             $("#author-last-name-modal + .invalid-feedback").html(res.author_last_name);
                             $("#author-last-name-modal").addClass("is-invalid");
                         }
-                        if(res.author_first_name == null && res.author_last_name == null) {
+                        if (res.author_first_name == null && res.author_last_name == null) {
                             showSnackbar("Successfully Updated!");
                             $(".modal").modal("hide");
                         }

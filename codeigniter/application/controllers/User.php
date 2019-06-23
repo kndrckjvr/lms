@@ -3,18 +3,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class User extends CI_Controller
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
+    // This function is for rendering user
     public function index()
     {
         if ($userid = $this->session->userdata("user_token")) {
             $data = array(
                 "page_title" => "Library Management System",
                 "username" => $this->User_model->getUsers(array("user_id" => $userid))[0]->username,
+                "penalty" => $this->Transaction_model->getUserPenalties(array("user_id" => $this->session->userdata("user_token"), "status" => "3")) - $this->Transaction_model->getUserPaid(array("user_id" => $this->session->userdata("user_token"), "status" => "4")),
+                "allpenalties" => $this->Transaction_model->getUserPenalties(array("status" => "3")),
+                "allpaid" => $this->Transaction_model->getUserPaid(array("status" => "4")),
+                "logs" => $this->Log_model->getLogsByPages(array("user_id" => $userid)),
+                "pages" => $this->Log_model->getLogPages(array("user_id" => $userid)),
                 "currentActive" => "Dashboard"
             );
             $this->load->view("templates/header", $data);
@@ -26,6 +26,8 @@ class User extends CI_Controller
         }
     }
 
+    // This function is for rendering user
+    // only the admins can access this
     public function manager()
     {
         if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
@@ -46,6 +48,7 @@ class User extends CI_Controller
         }
     }
 
+    // This function is for rendering user
     public function profile()
     {
         if ($userid = $this->session->userdata("user_token")) {
@@ -56,7 +59,6 @@ class User extends CI_Controller
             );
             $this->load->view("templates/header", $data);
             $this->load->view("components/nav_sidebar");
-            // $this->load->view("components/wip");
             $this->load->view("user/user_profile");
             $this->load->view("templates/footer");
         } else {
@@ -64,6 +66,7 @@ class User extends CI_Controller
         }
     }
 
+    // Logs out the User
     public function logout()
     {
         redirect("userapi/logout");

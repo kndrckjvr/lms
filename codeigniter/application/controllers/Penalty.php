@@ -3,7 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Penalty extends CI_Controller
 {
-    
+
+    // This function is for rendering penalty/manager 
+    // and admins only can access this
     public function manager()
     {
         if ($this->session->userdata("user_token") && $this->session->userdata("user_type") == 1) {
