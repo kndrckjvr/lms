@@ -15,33 +15,36 @@
                         </div>
                     </form>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card-deck" id="book_card_columns">
-                            <?php if ($books != null) foreach ($books as $book) {
-                                $book_image_name = $book->book_image != NULL ? $book->book_image : "no_image.png";
-                                ?>
-                                <div class="col-md-4">
-                                    <div class="card mb-4" style="width: 18rem;">
-                                        <img class="card-img-top" src="<?= base_url('images/') . $book_image_name ?>" alt="Card image cap">
-                                        <div class="card-body">
-                                            <h5 class="card-title"><?= $book->book_name ?></h5>
-                                            <p class="card-text">
-                                                <strong>Book Author : </strong><?= $book->book_author ?> <br>
-                                                <strong>Section Name : </strong><?= $book->section_name ?> <br>
-                                                <strong>Book Description : </strong><?= ($book->book_description == "" ? "None" : $book->book_description) ?> <br>
-                                                <strong>Book Quantity : </strong><?= $book->book_qty ?>
-                                            </p>
-                                        </div>
-                                        <div class="card-body">
-                                            <button class="btn btn-primary" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal">Reserve</button>
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card-deck" id="book_card_columns">
+                                <?php if ($books != null) foreach ($books as $book) {
+                                    $book_image_name = $book->book_image != NULL ? $book->book_image : "no_image.png";
+                                    ?>
+                                    <div class="col-4">
+                                        <div class="card mb-4" style="width: 100%;">
+                                            <img class="card-img-top img-fluid" src="<?= base_url('images/') . $book_image_name ?>" alt="Card image cap" style="width: 100%">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><?= $book->book_name ?></h5>
+                                                <p class="card-text">
+                                                    <strong>Book Author : </strong><?= $book->book_author ?> <br>
+                                                    <strong>Section Name : </strong><?= $book->section_name ?> <br>
+                                                    <strong>Book Description : </strong><?= ($book->book_description == "" ? "None" : $book->book_description) ?> <br>
+                                                    <strong>Book Quantity : </strong><?= $book->book_qty ?>
+                                                </p>
+                                            </div>
+                                            <div class="card-body">
+                                                <button class="btn btn-primary" data-id="<?= $book->book_id ?>" data-toggle="modal" data-target="#reserve-book-modal">Reserve</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                            <?php } else { ?>
-                                <h1 class="text-center w-100">No Book Found.</h1>
-                            <?php } ?>
+                                <?php } else { ?>
+                                    <h1 class="text-center w-100">No Book Found.</h1>
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
                 </div>

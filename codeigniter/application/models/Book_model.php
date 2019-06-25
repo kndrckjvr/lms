@@ -28,11 +28,12 @@ class Book_model extends CI_Model
                     GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author,
                     b.book_image,
                     section_name,
-                    (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty
+                    (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty,
+                    (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id) as book_qt
                 ")
             ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
             ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
-            ->having("book_qty > 0")
+            ->having("book_qt > 0")
             ->like("b.book_name", $bookName, "both")
             ->group_by("b.book_id")
             ->limit(10, $start);
@@ -115,12 +116,20 @@ class Book_model extends CI_Model
     public function getBookPages($bookName)
     {
         $this->db
-            ->select("b.book_id")
-            ->from("booktbl as b, sectiontbl as s")
-            ->where("b.section_id = s.section_id")
+            ->select("
+                    b.book_id,
+                    b.book_name,
+                    book_description,
+                    GROUP_CONCAT(a.author_name ORDER BY ab.authorbook_id SEPARATOR ', ') AS book_author,
+                    b.book_image,
+                    section_name,
+                    (SELECT COUNT(itembook_id) FROM itembooktbl WHERE book_id = b.book_id AND itembooktbl.status = 1) as book_qty
+                ")
+            ->from("authorbooktbl as ab, authortbl as a, booktbl as b, sectiontbl as s")
+            ->where("ab.book_id = b.book_id AND ab.status = 1 AND ab.author_id = a.author_id AND b.section_id = s.section_id")
+            ->having("book_qty > 0")
             ->like("b.book_name", $bookName, "both")
-            ->group_by("b.book_id")
-            ->order_by("b.book_id");
+            ->group_by("b.book_id");
         $query = $this->db->get();
         return ceil($query->num_rows() / 10);
     }
